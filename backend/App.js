@@ -1,7 +1,10 @@
 // Import the express module
 const express=require('express');
+const cors = require('cors');
 // Create an instance of the express application
 const app=express();
+
+app.use(cors())
 // Specify a port number for the server
 const port=5000;
 // Start the server and listen to the port
