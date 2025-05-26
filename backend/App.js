@@ -1,16 +1,23 @@
-// Import the express module
 const express=require('express');
-const cors = require('cors');
-// Create an instance of the express application
-const app=express();
-
-app.use(cors())
-// Specify a port number for the server
+const admin = require("firebase-admin");
+const serviceAccount = require("./permissions.json");
+const app = express();
+const cors = require("cors");
 const port=5000;
-// Start the server and listen to the port
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+//Setting up Firebase-admin privileges:
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+const db = admin.firestore();
+
+//Hosting the backend on port 5000
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-// use middleware to parse json request bodies
-app.use(express.json());
+
 
