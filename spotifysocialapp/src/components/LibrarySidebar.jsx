@@ -5,7 +5,7 @@ import { FaMusic, FaUser, FaList, FaHeart } from 'react-icons/fa';
 
 const LibrarySidebar = () => {
   return (
-    <Box bg="#43b164" p={4} minW="200px" height="100vh">
+    <Box bg="#1b1b1b" p={4} minW="200px" height="100vh">
       <VStack align="start" spacing={6}>
         <Text fontWeight="bold" fontSize="lg">Library</Text>
         
