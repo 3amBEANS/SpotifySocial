@@ -33,7 +33,12 @@ export default function Navbar() {
         <Box className="nav">
           <HStack spacing={6}>
             {["Profile", "Discover", "Library", "Forum", "Inbox"].map((label) => (
-              <Button key={label} className="nav-button" onClick={() => handleNavigation(label)}>
+              <Button
+                key={label}
+                size={"sm"}
+                className="nav-button"
+                onClick={() => handleNavigation(label)}
+              >
                 {label}
               </Button>
             ))}

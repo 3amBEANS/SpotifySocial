@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -21,16 +21,24 @@ import {
   WrapItem,
   Grid,
   GridItem,
-} from "@chakra-ui/react"
-import { SearchIcon } from "@chakra-ui/icons"
-import { FaCommentDots, FaUsers, FaClock, FaThumbtack, FaHeart, FaComment, FaShare } from "react-icons/fa"
-import { FaArrowTrendUp } from 'react-icons/fa6'
-import { useNavigate } from "react-router-dom"
+} from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
+import {
+  FaCommentDots,
+  FaUsers,
+  FaClock,
+  FaThumbtack,
+  FaHeart,
+  FaComment,
+  FaShare,
+} from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 export default function ForumPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const navigate = useNavigate();  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const navigate = useNavigate();
 
   const forums = [
     {
@@ -180,25 +188,33 @@ export default function ForumPage() {
         },
       ],
     },
-  ]
+  ];
 
-  const categories = ["all", "Discovery", "Discussion", "Events", "Production", "Collecting", "Education"]
+  const categories = [
+    "all",
+    "Discovery",
+    "Discussion",
+    "Events",
+    "Production",
+    "Collecting",
+    "Education",
+  ];
 
   const filteredForums = forums.filter((forum) => {
     const matchesSearch =
       forum.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      forum.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || forum.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+      forum.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || forum.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const handleForumClick = (forumId) => {
-    navigate(`/forum/${forumId}`)
-  }
+    navigate(`/forum/${forumId}`);
+  };
 
   const handleLikePost = (postId) => {
-    console.log("Liked post:", postId)
-  }
+    console.log("Liked post:", postId);
+  };
 
   return (
     <Box minH="100vh" p={4} bg="black">
@@ -211,11 +227,13 @@ export default function ForumPage() {
                 Community Forums
               </Text>
               <Badge bg="spotify.primary" color="black" px={3} py={1}>
-                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()} members
+                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "}
+                members
               </Badge>
             </Flex>
             <Text color="whiteAlpha.600">
-              Join discussions about music, discover new artists, and connect with fellow music lovers
+              Join discussions about music, discover new artists, and connect with fellow music
+              lovers
             </Text>
           </VStack>
 
@@ -263,11 +281,24 @@ export default function ForumPage() {
           {/* Forums Grid */}
           <VStack spacing={6} align="stretch">
             {filteredForums.map((forum) => (
-              <Card key={forum.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
+              <Card
+                key={forum.id}
+                bg="#1a1a1a"
+                border="none"
+                _hover={{ bg: "#222" }}
+                transition="background 0.2s"
+              >
                 <CardHeader pb={4}>
                   <Flex justify="space-between" align="flex-start">
                     <HStack spacing={3} align="flex-start">
-                      <Flex w={12} h={12} borderRadius="lg" bg="spotify.primary" align="center" justify="center">
+                      <Flex
+                        w={12}
+                        h={12}
+                        borderRadius="lg"
+                        bg="spotify.primary"
+                        align="center"
+                        justify="center"
+                      >
                         <Icon as={FaCommentDots} color="white" boxSize={6} />
                       </Flex>
                       <Box flex={1}>
@@ -282,7 +313,9 @@ export default function ForumPage() {
                           >
                             {forum.name}
                           </Text>
-                          {forum.isPinned && <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />}
+                          {forum.isPinned && (
+                            <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />
+                          )}
                           {forum.isPopular && (
                             <Badge bg="spotify.secondary" color="white">
                               <HStack spacing={1}>
@@ -334,7 +367,12 @@ export default function ForumPage() {
                         onClick={() => handleForumClick(forum.id)}
                       >
                         <HStack spacing={3} align="flex-start">
-                          <Avatar size="sm" src={post.authorAvatar} bg="spotify.tertiary" color="white" />
+                          <Avatar
+                            size="sm"
+                            src={post.authorAvatar}
+                            bg="spotify.tertiary"
+                            color="white"
+                          />
                           <Box flex={1} minW={0}>
                             <Text
                               color="white"
@@ -358,8 +396,8 @@ export default function ForumPage() {
                                 _hover={{ color: "spotify.primary" }}
                                 leftIcon={<Icon as={FaHeart} />}
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleLikePost(post.id)
+                                  e.stopPropagation();
+                                  handleLikePost(post.id);
                                 }}
                               >
                                 {post.likes}
@@ -438,7 +476,9 @@ export default function ForumPage() {
               </GridItem>
               <GridItem>
                 <Text fontSize="2xl" fontWeight="bold" color="white">
-                  {filteredForums.reduce((total, forum) => total + forum.postCount, 0).toLocaleString()}
+                  {filteredForums
+                    .reduce((total, forum) => total + forum.postCount, 0)
+                    .toLocaleString()}
                 </Text>
                 <Text fontSize="sm" color="whiteAlpha.600">
                   Total Posts
@@ -446,7 +486,9 @@ export default function ForumPage() {
               </GridItem>
               <GridItem>
                 <Text fontSize="2xl" fontWeight="bold" color="white">
-                  {filteredForums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}
+                  {filteredForums
+                    .reduce((total, forum) => total + forum.memberCount, 0)
+                    .toLocaleString()}
                 </Text>
                 <Text fontSize="sm" color="whiteAlpha.600">
                   Community Members
@@ -457,5 +499,5 @@ export default function ForumPage() {
         </VStack>
       </Box>
     </Box>
-  )
+  );
 }

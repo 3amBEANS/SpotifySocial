@@ -8,8 +8,10 @@ import {
   Heading,
   Button,
   Divider,
+  Image,
 } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
+import SpotifyLogo from "../assets/spotify.png";
 import "../styles/loginPage.css";
 
 export default function LoginPage() {
@@ -28,7 +30,10 @@ export default function LoginPage() {
         <VStack className="login-content">
           {/* Sign-in section */}
           <VStack className="login-section">
-            <Heading className="login-heading">Sign In with Spotify</Heading>
+            <Heading className="login-heading">
+              Sign In with <img src={SpotifyLogo} alt="Spotify logo" className="spotify-logo" />
+              Spotify
+            </Heading>
             <Text className="login-text">
               Access your favorite music and playlists by signing in with your Spotify account.
             </Text>
@@ -37,7 +42,7 @@ export default function LoginPage() {
               href="https://test-spotify-site.local:5050/login"
               className="login-button"
             >
-              Sign in with Spotify
+              Sign in with Spotify <ExternalLinkIcon />
             </Button>
           </VStack>
 
@@ -47,7 +52,9 @@ export default function LoginPage() {
           <VStack className="login-section">
             <Heading className="login-heading">Don't have a Spotify Account?</Heading>
             <Text className="login-text">Creating a Spotify account is free!</Text>
-            <Button className="login-button">Register</Button>
+            <Button className="login-button">
+              Register <ExternalLinkIcon />
+            </Button>
           </VStack>
         </VStack>
       </Box>

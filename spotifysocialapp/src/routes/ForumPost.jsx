@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -20,17 +20,25 @@ import {
   Icon,
   Wrap,
   WrapItem,
-} from "@chakra-ui/react"
-import { SearchIcon, ArrowBackIcon } from "@chakra-ui/icons"
-import { FaHeart, FaComment, FaShare, FaThumbtack, FaClock, FaPlus, FaFilter } from "react-icons/fa"
-import { FaArrowTrendUp } from 'react-icons/fa6'
-import { useParams } from 'react-router-dom';
+} from "@chakra-ui/react";
+import { SearchIcon, ArrowBackIcon } from "@chakra-ui/icons";
+import {
+  FaHeart,
+  FaComment,
+  FaShare,
+  FaThumbtack,
+  FaClock,
+  FaPlus,
+  FaFilter,
+} from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
 
 export default function ForumPost() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("recent")
-  const [showNewPostForm, setShowNewPostForm] = useState(false)
-  const [newPost, setNewPost] = useState({ title: "", content: "" })
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
+  const [showNewPostForm, setShowNewPostForm] = useState(false);
+  const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
 
   // Mock forum data
@@ -40,7 +48,7 @@ export default function ForumPost() {
     description: "Share and discover the latest tracks, albums, and artists",
     memberCount: 15420,
     postCount: 3240,
-  }
+  };
 
   // Mock posts data
   const [posts, setPosts] = useState([
@@ -104,38 +112,42 @@ export default function ForumPost() {
       isPopular: false,
       tags: ["dark-ambient", "recommendations", "atmospheric"],
     },
-  ])
+  ]);
 
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+      post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1
-    if (!a.isPinned && b.isPinned) return 1
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
 
     switch (sortBy) {
       case "popular":
-        return b.likes - a.likes
+        return b.likes - a.likes;
       case "replies":
-        return b.replies - a.replies
+        return b.replies - a.replies;
       default: // recent
-        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
     }
-  })
+  });
 
   const handleLikePost = (postId) => {
     setPosts(
       posts.map((post) =>
         post.id === postId
-          ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
-          : post,
-      ),
-    )
-  }
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
+      )
+    );
+  };
 
   const handleCreatePost = () => {
     if (newPost.title.trim() && newPost.content.trim()) {
@@ -152,12 +164,12 @@ export default function ForumPost() {
         isPinned: false,
         isPopular: false,
         tags: [],
-      }
-      setPosts([post, ...posts])
-      setNewPost({ title: "", content: "" })
-      setShowNewPostForm(false)
+      };
+      setPosts([post, ...posts]);
+      setNewPost({ title: "", content: "" });
+      setShowNewPostForm(false);
     }
-  }
+  };
 
   return (
     <Box minH="100vh" p={4} bg="black">
@@ -212,7 +224,11 @@ export default function ForumPost() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSortBy(sortBy === "recent" ? "popular" : sortBy === "popular" ? "replies" : "recent")}
+                onClick={() =>
+                  setSortBy(
+                    sortBy === "recent" ? "popular" : sortBy === "popular" ? "replies" : "recent"
+                  )
+                }
                 borderColor="whiteAlpha.200"
                 color="white"
                 _hover={{ bg: "whiteAlpha.100" }}
@@ -265,7 +281,12 @@ export default function ForumPost() {
                     rows={4}
                   />
                   <HStack spacing={2}>
-                    <Button onClick={handleCreatePost} bg="spotify.primary" color="black" _hover={{ opacity: 0.9 }}>
+                    <Button
+                      onClick={handleCreatePost}
+                      bg="spotify.primary"
+                      color="black"
+                      _hover={{ opacity: 0.9 }}
+                    >
                       Post
                     </Button>
                     <Button
@@ -286,7 +307,13 @@ export default function ForumPost() {
           {/* Posts */}
           <VStack spacing={4} align="stretch">
             {sortedPosts.map((post) => (
-              <Card key={post.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
+              <Card
+                key={post.id}
+                bg="#1a1a1a"
+                border="none"
+                _hover={{ bg: "#222" }}
+                transition="background 0.2s"
+              >
                 <CardHeader pb={3}>
                   <HStack spacing={3} align="flex-start">
                     <Avatar size="md" src={post.authorAvatar} bg="spotify.tertiary" color="white" />
@@ -295,7 +322,9 @@ export default function ForumPost() {
                         <Text fontWeight="semibold" color="white">
                           {post.title}
                         </Text>
-                        {post.isPinned && <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />}
+                        {post.isPinned && (
+                          <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />
+                        )}
                         {post.isPopular && (
                           <Badge bg="spotify.secondary" color="white">
                             <HStack spacing={1}>
@@ -325,7 +354,12 @@ export default function ForumPost() {
                       <Wrap spacing={1}>
                         {post.tags.map((tag, index) => (
                           <WrapItem key={index}>
-                            <Badge variant="outline" borderColor="whiteAlpha.200" color="whiteAlpha.600" fontSize="xs">
+                            <Badge
+                              variant="outline"
+                              borderColor="whiteAlpha.200"
+                              color="whiteAlpha.600"
+                              fontSize="xs"
+                            >
                               #{tag}
                             </Badge>
                           </WrapItem>
@@ -341,7 +375,9 @@ export default function ForumPost() {
                         onClick={() => handleLikePost(post.id)}
                         color={post.isLiked ? "spotify.primary" : "whiteAlpha.600"}
                         _hover={{ color: "spotify.primary" }}
-                        leftIcon={<Icon as={FaHeart} fill={post.isLiked ? "currentColor" : "none"} />}
+                        leftIcon={
+                          <Icon as={FaHeart} fill={post.isLiked ? "currentColor" : "none"} />
+                        }
                       >
                         {post.likes}
                       </Button>
@@ -383,5 +419,5 @@ export default function ForumPost() {
         </VStack>
       </Box>
     </Box>
-  )
+  );
 }

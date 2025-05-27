@@ -140,7 +140,7 @@ export default function UserProfile() {
                         color="black"
                         _hover={{ opacity: 0.9 }}
                         leftIcon={<CheckIcon />}
-                        style={{color: "white"}}
+                        style={{ color: "white" }}
                       >
                         Save
                       </Button>
