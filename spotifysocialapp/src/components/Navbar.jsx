@@ -25,14 +25,14 @@ export default function Navbar() {
         {/* Nav absolutely centered */}
         <Box className="nav">
           <HStack spacing={6}>
-            {["Home", "Discover", "Inbox", "Profile", "Forum"].map((label) => (
+            {["Home", "Discover", "Library", "Forum", "Inbox"].map((label) => (
               <Button key={label} className="nav-button">
                 {label}
               </Button>
             ))}
           </HStack>
         </Box>
-
+        
         {/* Search flush right */}
         <Box className="search">
           <InputGroup className="search-group">
