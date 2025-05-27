@@ -1,4 +1,6 @@
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const admin = require("firebase-admin");
 const serviceAccount = require("./permissions.json");
 const app = express();
@@ -16,7 +18,15 @@ admin.initializeApp({
 const db = admin.firestore();
 module.exports = db;
 
+const loginRouter = require("./Login");
+app.use("/login", loginRouter);
+
+const options = {
+  key: fs.readFileSync("test-spotify-site.local-key.pem"),
+  cert: fs.readFileSync("test-spotify-site.local.pem"),
+};
+
 //Hosting the backend on port 5000
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+https.createServer(options, app).listen(port, () => {
+  console.log(`HTTPS Server is running on https://test-spotify-site.local:${port}`);
 });

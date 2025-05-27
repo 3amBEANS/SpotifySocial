@@ -20,6 +20,7 @@ export const router = createBrowserRouter([
       { path: "forum", element: <Forum /> },
       { path: "forum/:id", element: <ForumPost/> },
       { path: "inbox", element: <Inbox /> }
+
     ],
   },
 ]);

@@ -32,7 +32,11 @@ export default function LoginPage() {
             <Text className="login-text">
               Access your favorite music and playlists by signing in with your Spotify account.
             </Text>
-            <Button as={RouterLink} to="/profile" className="login-button">
+            <Button
+              as="a"
+              href="https://test-spotify-site.local:5000/login"
+              className="login-button"
+            >
               Sign in with Spotify
             </Button>
           </VStack>
