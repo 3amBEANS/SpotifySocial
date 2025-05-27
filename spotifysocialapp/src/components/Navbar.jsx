@@ -13,6 +13,8 @@ import {
 import { SearchIcon } from "@chakra-ui/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -43,7 +45,9 @@ export default function Navbar() {
       <Flex className="navbar-container">
         {/* Logo flush left */}
         <Box className="logo">
-          <Text className="logo-text">Spotify Connect</Text>
+          <HStack spacing={2}>
+            <Link to="/home"><Text className="logo-text">Spotify Connect</Text></Link>
+          </HStack>
         </Box>
 
         {/* vertical divider */}
