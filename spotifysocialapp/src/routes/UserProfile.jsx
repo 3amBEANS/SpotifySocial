@@ -63,7 +63,7 @@ export default function UserProfile() {
   };
 
   return (
-    <Box minH="100vh" p={4} bg="black">
+    <Box minH="100vh" p={4}>
       <Box maxW="4xl" mx="auto">
         <VStack spacing={6} align="stretch">
           {/* Header */}
@@ -140,7 +140,7 @@ export default function UserProfile() {
                         color="black"
                         _hover={{ opacity: 0.9 }}
                         leftIcon={<CheckIcon />}
-                        style={{color: "white"}}
+                        style={{ color: "white" }}
                       >
                         Save
                       </Button>
