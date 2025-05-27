@@ -9,14 +9,8 @@ import {
   InputGroup,
   InputLeftElement,
   Input,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Divider as ChakraDivider,
 } from "@chakra-ui/react";
-import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { IoLibrary } from "react-icons/io5";
+import { SearchIcon } from "@chakra-ui/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Navbar.css";
 
@@ -24,6 +18,17 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // nav labels in order
+  const navItems = ["Profile", "Discover", "Library", "Forum", "Inbox"];
+
+  // Decide if a given label is "active"
+  const isActive = (label) => {
+    if (label === "Library") {
+      return pathname.startsWith("/library");
+    }
+    return pathname === `/${label.toLowerCase()}`;
+  };
 
   const handleNavigation = (label) => {
     if (label === "Library") {
@@ -47,52 +52,11 @@ export default function Navbar() {
         {/* Nav absolutely centered */}
         <HStack spacing={4} className="nav-links">
           {navItems.map((label) => {
-            // Library needs dropdown
-            if (label === "Library") {
-              return (
-                <Menu key={label}>
-                  <MenuButton as={Button} className={`nav-link ${isActive(label) ? "active" : ""}`}>
-                    <Box display="inline-flex" alignItems="center">
-                      {label}
-                      <ChevronDownIcon className="chevron-icon" />
-                    </Box>
-                  </MenuButton>
-
-                  <MenuList className="menu-list">
-                    <MenuItem className="menu-item" onClick={() => navigate("/library")}>
-                      <IoLibrary />
-                      <Text className="menu-item-title">My Library</Text>
-                      <Text className="menu-item-desc">View your full library</Text>
-                    </MenuItem>
-
-                    <ChakraDivider className="menu-divider" />
-                    <MenuItem className="menu-item" onClick={() => navigate("/userlikedsongs")}>
-                      <Text className="menu-item-title">Liked Songs</Text>
-                      <Text className="menu-item-desc">Your saved tracks</Text>
-                    </MenuItem>
-
-                    <ChakraDivider className="menu-divider" />
-                    <MenuItem className="menu-item" onClick={() => navigate("/usertopartists")}>
-                      <Text className="menu-item-title">Top Artists</Text>
-                      <Text className="menu-item-desc">Your most-played artists</Text>
-                    </MenuItem>
-
-                    <ChakraDivider className="menu-divider" />
-                    <MenuItem className="menu-item" onClick={() => navigate("/usertopsongs")}>
-                      <Text className="menu-item-title">Top Songs</Text>
-                      <Text className="menu-item-desc">Your most-played songs</Text>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              );
-            }
-
-            // All other items (including Profile)
             return (
               <Button
                 key={label}
                 className={`nav-link ${isActive(label) ? "active" : ""}`}
-                onClick={() => navigate(`/${label.toLowerCase()}`)}
+                onClick={() => handleNavigation(label)}
               >
                 {label}
               </Button>
