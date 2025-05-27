@@ -22,7 +22,7 @@ router.get("/public", async (req, res) => {
   }
 });
 
-// ✅ POST /api/users/seed
+// POST /api/users/seed
 router.post("/seed", async (req, res) => {
   try {
     const mockUsers = [
