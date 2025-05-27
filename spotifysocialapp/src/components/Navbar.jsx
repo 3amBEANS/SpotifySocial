@@ -16,7 +16,11 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleNavigation = (label) => {
-    navigate(`/${label.toLowerCase()}`);
+    if (label === "Library") {
+      navigate(`/library/liked-songs`);
+    } else {
+      navigate(`/${label.toLowerCase()}`);
+    }
   };
 
   return (
