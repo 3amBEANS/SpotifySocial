@@ -34,7 +34,7 @@ export default function LoginPage() {
             </Text>
             <Button
               as="a"
-              href="https://test-spotify-site.local:5000/login"
+              href="https://test-spotify-site.local:5050/login"
               className="login-button"
             >
               Sign in with Spotify

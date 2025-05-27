@@ -5,7 +5,7 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./permissions.json");
 const app = express();
 const cors = require("cors");
-const port = 5000;
+const port = 5050;
 
 app.use(cors());
 app.use(express.json());
@@ -26,7 +26,7 @@ const options = {
   cert: fs.readFileSync("test-spotify-site.local.pem"),
 };
 
-//Hosting the backend on port 5000
+//Hosting the backend on port 5050
 https.createServer(options, app).listen(port, () => {
   console.log(`HTTPS Server is running on https://test-spotify-site.local:${port}`);
 });
