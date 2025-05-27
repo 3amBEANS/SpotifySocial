@@ -1,8 +1,7 @@
 .header {
   background-color: #43b164;
   width: 100%;
-  position: relative;
-  padding: 12px 0;
+  padding: 0.75rem 0;
 }
 
 .navbar-container {
@@ -22,50 +21,111 @@
   color: white;
 }
 
-/* Nav absolutely centered */
-.nav {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+.logo-divider {
+  width: 2px;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  margin: 0 2rem;
 }
-.nav-button {
-  background-color: white;
-  color: #000000;
-  font-size: 0.875rem;
-  padding: 0.4rem 1rem;
+
+/* nav-links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem !important;
+  /* background: #246e024f !important; */
   border-radius: 6px;
-  border: none;
+}
+.nav-link {
+  color: white !important;
+  border-radius: 6px !important;
+  padding: 1rem 1rem;
+  background: transparent !important;
+  display: flex;
+  align-items: center;
+}
+.nav-link:hover {
+  background: rgba(30, 114, 41, 0.466) !important;
+}
+.nav-link.active {
+  background: white !important;
+  color: #000 !important;
+}
+.nav-link.active .chevron-icon {
+  color: #000 !important;
+}
+
+/* little arrow next to Profile */
+.chevron-icon {
+  font-size: 1.3rem;
+  margin-left: 0.1rem;
+  color: white !important;
+}
+
+/* profile dropdown */
+.menu-list {
+  border-radius: 10px !important;
+}
+.menu-item {
+  flex-direction: column;
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+}
+.menu-item:hover {
+  background: #326bad27 !important;
+}
+.menu-item-title {
+  font-weight: bold;
+  color: black;
+}
+.menu-item-desc {
+  font-size: 0.875rem;
+  color: gray;
+}
+.menu-divider {
+  margin: 0;
+}
+
+/* spacer */
+.spacer {
+  flex: 1;
+}
+
+/* Search flush right */
+.search-container {
+  margin-right: 1rem;
+}
+.search-button {
+  color: white !important;
+  background: transparent !important;
   cursor: pointer;
 }
-.nav-button:hover {
-  background-color: rgb(76, 129, 51);
+.search-button:hover {
+  background: rgba(30, 114, 41, 0.466) !important;
 }
-
-/* 3) Search flush right */
-.search {
-  margin-left: auto;
-  padding-right: 1.5rem;
-}
-.search-group {
-  position: relative;
-  width: 100%;
-  max-width: 220px;
+.search-expanded {
+  background: white !important;
+  border-radius: 6px !important;
 }
 .search-icon {
-  position: absolute;
-  top: 50%;
-  color: #ffffff;
-  pointer-events: none;
+  /*icon when expanded */
+  color: #000000;
 }
 .search-input {
-  width: 100%;
-  padding-left: 2.25rem; /* icon + spacing */
-  height: 2rem;
-  border-radius: 0.375rem;
-  color: white;
+  color: #000;
+  background: transparent;
 }
 
+/* logout */
 .logout-button {
   margin-right: 1.5rem;
+  color: white;
+  background: transparent;
+  border: none;
+}
+.logout-button:hover {
+  background: white;
+  color: #43b164;
 }
