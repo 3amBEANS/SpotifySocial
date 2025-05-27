@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
       { path: "discover", element: <Discover /> },
       { path: "library", element: <Library /> },
       { path: "forum", element: <Forum /> },
-      { path: "inbox", element: <Inbox /> }
+      { path: "inbox", element: <Inbox /> },
     ],
   },
 ]);
