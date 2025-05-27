@@ -223,7 +223,9 @@ export default function ForumPost() {
               <Button
                 onClick={() => setShowNewPostForm(!showNewPostForm)}
                 bg="spotify.primary"
-                color="black"
+                color="FFFFFFDE"
+                border="1px solid"
+                borderColor="white"
                 _hover={{ opacity: 0.9 }}
                 leftIcon={<Icon as={FaPlus} />}
               >
@@ -265,7 +267,7 @@ export default function ForumPost() {
                     rows={4}
                   />
                   <HStack spacing={2}>
-                    <Button onClick={handleCreatePost} bg="spotify.primary" color="black" _hover={{ opacity: 0.9 }}>
+                    <Button onClick={handleCreatePost} bg="spotify.primary" variant="outline" color="white" _hover={{ opacity: 0.9 }}>
                       Post
                     </Button>
                     <Button

@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import "../styles/Navbar.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function Navbar() {
         {/* Logo flush left */}
         <Box className="logo">
           <HStack spacing={2}>
-            <Text className="logo-text">Spotify Connect</Text>
+            <Link to="/home"><Text className="logo-text">Spotify Connect</Text></Link>
           </HStack>
         </Box>
 
