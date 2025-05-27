@@ -10,8 +10,20 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import "../styles/Navbar.css";
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 export default function Navbar() {
+
+
+  const navigate = useNavigate(); 
+
+  const handleNavigation = (label) => {
+      navigate(`/${label.toLowerCase()}`);
+  };
+
   return (
     <Box as="header" className="header">
       <Flex className="navbar-container">
@@ -25,8 +37,10 @@ export default function Navbar() {
         {/* Nav absolutely centered */}
         <Box className="nav">
           <HStack spacing={6}>
-            {["Home", "Discover", "Library", "Forum", "Inbox"].map((label) => (
-              <Button key={label} className="nav-button">
+            {["Profile", "Discover", "Library", "Forum", "Inbox"].map((label) => (
+              <Button key={label}
+               className="nav-button" 
+               onClick={() => handleNavigation(label)}>
                 {label}
               </Button>
             ))}

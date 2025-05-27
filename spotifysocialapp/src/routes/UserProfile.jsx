@@ -140,6 +140,7 @@ export default function UserProfile() {
                         color="black"
                         _hover={{ opacity: 0.9 }}
                         leftIcon={<CheckIcon />}
+                        style={{color: "white"}}
                       >
                         Save
                       </Button>
@@ -406,7 +407,7 @@ export default function UserProfile() {
                           Liked Songs
                         </Text>
                       </HStack>
-                      <Badge bg="spotify.primary" color="black">
+                      <Badge bg="spotify.primary" color="white">
                         247 songs
                       </Badge>
                     </HStack>
