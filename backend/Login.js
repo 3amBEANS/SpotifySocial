@@ -7,7 +7,7 @@ const querystring = require("querystring");
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const redirectURI = "https://test-spotify-site.local:5000/login/callback";
+const redirectURI = "https://test-spotify-site.local:5050/login/callback";
 
 const generateRandomString = (length) => {
   let text = ``;
