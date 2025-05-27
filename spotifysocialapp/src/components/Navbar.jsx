@@ -11,7 +11,7 @@ import {
 import { SearchIcon } from "@chakra-ui/icons";
 import "../styles/Navbar.css";
 
-export default function Header() {
+export default function Navbar() {
   return (
     <Box as="header" className="header">
       <Flex className="navbar-container">
