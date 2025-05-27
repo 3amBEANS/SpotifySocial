@@ -26,7 +26,7 @@ const LibrarySidebar = () => {
         </Box>
         
         {/* Top Artists Tab */} 
-        <Box 
+        <Box as={RouterLink} to="/library/top-artists" 
           display="flex" 
           alignItems="center"
           p={2}
@@ -42,7 +42,7 @@ const LibrarySidebar = () => {
         </Box>
         
         {/* Top Songs Tab */} 
-        <Box 
+        <Box as={RouterLink} to="/library/top-songs"
           display="flex" 
           alignItems="center"
           p={2}
