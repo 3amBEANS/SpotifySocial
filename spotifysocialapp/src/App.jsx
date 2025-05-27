@@ -1,11 +1,11 @@
 import Navbar from "./components/Navbar";
-import Home from "./routes/Home";
+import Login from "./routes/LoginPage";
 
 function App() {
   return (
     <>
       <Navbar />
-      <Home />
+      <Login />
     </>
   );
 }
