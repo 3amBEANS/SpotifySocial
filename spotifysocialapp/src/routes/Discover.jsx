@@ -19,7 +19,7 @@ export default function Discover() {
 
   useEffect(() => {
     axios
-      .get("https://localhost:5050/api/users/public", { withCredentials: false })
+      .get("https://test-spotify-site.local:5050/api/users/public", { withCredentials: false })
       .then((res) => {
         console.log("Public users response:", res.data);
         setUsers(res.data);
