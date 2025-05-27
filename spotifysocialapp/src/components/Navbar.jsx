@@ -32,7 +32,7 @@ export default function Navbar() {
             ))}
           </HStack>
         </Box>
-        
+
         {/* Search flush right */}
         <Box className="search">
           <InputGroup className="search-group">
@@ -42,6 +42,14 @@ export default function Navbar() {
             <Input className="search-input" placeholder="Search in site" />
           </InputGroup>
         </Box>
+        <Button
+          as="a"
+          href="https://test-spotify-site.local:5000/logout"
+          size="sm"
+          className="logout-button"
+        >
+          Log out
+        </Button>
       </Flex>
     </Box>
   );
