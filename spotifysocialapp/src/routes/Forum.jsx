@@ -226,9 +226,8 @@ export default function ForumPage() {
               <Text fontSize="3xl" fontWeight="bold" color="white">
                 Community Forums
               </Text>
-              <Badge bg="spotify.primary" color="black" px={3} py={1}>
-                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "}
-                members
+              <Badge bg="spotify.primary" color="FFFFFFDE" px={3} py={1}>
+                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "} members
               </Badge>
             </Flex>
             <Text color="whiteAlpha.600">
@@ -263,10 +262,10 @@ export default function ForumPage() {
                     onClick={() => setSelectedCategory(category)}
                     bg={selectedCategory === category ? "spotify.primary" : "transparent"}
                     borderColor="spotify.primary"
-                    color={selectedCategory === category ? "black" : "spotify.primary"}
+                    color={selectedCategory === category ? "FFFFFFDE" : "spotify.primary"}
                     _hover={{
                       bg: selectedCategory === category ? "spotify.primary" : "spotify.primary",
-                      color: selectedCategory === category ? "black" : "black",
+                      color: selectedCategory === category ? "FFFFFFDE" : "FFFFFFFF",
                     }}
                     textTransform="capitalize"
                     whiteSpace="nowrap"
