@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react"
 import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa"
 import { FaArrowTrendUp } from 'react-icons/fa6'
+import { useNavigate} from "react-router-dom";
 
 export default function HomePage() {
   // Mock data
@@ -102,6 +103,7 @@ export default function HomePage() {
       isOnline: true,
     },
   ]
+  const navigate = useNavigate();
 
   return (
     <Box minH="100vh" bg="black">
@@ -370,7 +372,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => navigate('/profile')}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -383,7 +385,7 @@ export default function HomePage() {
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Icon as={FaUsers} color="black" boxSize={8} />
+                      <Icon as={FaUsers} color="white" boxSize={8} />
                     </Box>
                     <Text fontWeight="bold" color="white">
                       User Profile
@@ -401,7 +403,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => navigate('/library/liked-songs')}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -414,7 +416,7 @@ export default function HomePage() {
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Icon as={FaHeart} color="black" boxSize={8} />
+                      <Icon as={FaHeart} color="white" boxSize={8} />
                     </Box>
                     <Text fontWeight="bold" color="white">
                       Liked Songs
@@ -432,7 +434,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => (navigate('/library/top-artists'))}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -445,7 +447,7 @@ export default function HomePage() {
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Icon as={FaMusic} color="black" boxSize={8} />
+                      <Icon as={FaMusic} color="white" boxSize={8} />
                     </Box>
                     <Text fontWeight="bold" color="white">
                       Top Artists
@@ -463,7 +465,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (window.location.href = "/")}
+                onClick={() => (navigate('/library/top-songs'))}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -476,7 +478,7 @@ export default function HomePage() {
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Icon as={FaArrowTrendUp} color="black" boxSize={8} />
+                      <Icon as={FaArrowTrendUp} color="white" boxSize={8} />
                     </Box>
                     <Text fontWeight="bold" color="white">
                       Top Songs
