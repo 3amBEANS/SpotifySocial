@@ -30,7 +30,7 @@ const options = {
   cert: fs.readFileSync("test-spotify-site.local.pem"),
 };
 
-//Hosting the backend on port 5000
+//Hosting the backend on port 5050
 https.createServer(options, app).listen(port, () => {
   console.log(`HTTPS Server is running on https://test-spotify-site.local:${port}`);
 });
