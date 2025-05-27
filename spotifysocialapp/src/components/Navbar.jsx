@@ -1,0 +1,49 @@
+import {
+  Box,
+  Flex,
+  HStack,
+  Circle,
+  Text,
+  Button,
+  InputGroup,
+  InputLeftElement,
+  Input,
+} from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
+import "../styles/Navbar.css";
+
+export default function Header() {
+  return (
+    <Box as="header" className="header">
+      <Flex className="navbar-container">
+        {/* Logo flush left */}
+        <Box className="logo">
+          <HStack spacing={2}>
+            <Text className="logo-text">Spotify Connect</Text>
+          </HStack>
+        </Box>
+
+        {/* Nav absolutely centered */}
+        <Box className="nav">
+          <HStack spacing={6}>
+            {["Home", "Discover", "Inbox", "Profile", "Forum"].map((label) => (
+              <Button key={label} className="nav-button">
+                {label}
+              </Button>
+            ))}
+          </HStack>
+        </Box>
+
+        {/* Search flush right */}
+        <Box className="search">
+          <InputGroup className="search-group">
+            <InputLeftElement className="search-icon">
+              <SearchIcon />
+            </InputLeftElement>
+            <Input className="search-input" placeholder="Search in site" />
+          </InputGroup>
+        </Box>
+      </Flex>
+    </Box>
+  );
+}
