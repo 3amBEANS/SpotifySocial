@@ -11,9 +11,9 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import "../styles/Navbar.css";
-import { Link, useNavigate } from "react-router-dom";
+
 
 
 export default function Navbar() {
