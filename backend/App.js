@@ -18,8 +18,12 @@ admin.initializeApp({
 const db = admin.firestore();
 module.exports = db;
 
+// Mount routes
 const loginRouter = require("./Login");
 app.use("/login", loginRouter);
+
+const logoutRouter = require("./Logout");
++app.use("/logout", logoutRouter);
 
 const options = {
   key: fs.readFileSync("test-spotify-site.local-key.pem"),

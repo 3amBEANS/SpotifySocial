@@ -9,6 +9,7 @@ import TopArtists from "./routes/TopArtists.jsx";
 import TopSongs from "./routes/TopSongs.jsx";
 import Forum from "./routes/Forum";
 import Inbox from "./routes/Inbox";
+import ForumPost from "./routes/ForumPost";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -23,7 +24,9 @@ export const router = createBrowserRouter([
       { path: "library/top-artists", element: <TopArtists /> },
       { path: "library/top-songs", element: <TopSongs /> },
       { path: "forum", element: <Forum /> },
-      { path: "inbox", element: <Inbox /> },
+      { path: "forum/:id", element: <ForumPost/> },
+      { path: "inbox", element: <Inbox /> }
+
     ],
   },
 ]);

@@ -65,3 +65,7 @@
   border-radius: 0.375rem;
   color: white;
 }
+
+.logout-button {
+  margin-right: 1.5rem;
+}

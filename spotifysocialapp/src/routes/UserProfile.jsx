@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -20,17 +20,17 @@ import {
   Grid,
   GridItem,
   Icon,
-} from "@chakra-ui/react"
-import { EditIcon, CheckIcon, CloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
-import { FaMusic, FaUsers, FaHeart} from "react-icons/fa"
-import { FaArrowTrendUp } from 'react-icons/fa6'
+} from "@chakra-ui/react";
+import { EditIcon, CheckIcon, CloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { FaMusic, FaUsers, FaHeart } from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
 
 export default function UserProfile() {
-  const [isEditing, setIsEditing] = useState(false)
-  const [isPrivate, setIsPrivate] = useState(false)
-  const [showTopArtists, setShowTopArtists] = useState(true)
-  const [showTopSongs, setShowTopSongs] = useState(true)
-  const [showLikedSongs, setShowLikedSongs] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [showTopArtists, setShowTopArtists] = useState(true);
+  const [showTopSongs, setShowTopSongs] = useState(true);
+  const [showLikedSongs, setShowLikedSongs] = useState(false);
 
   const [profile, setProfile] = useState({
     name: "Alex Rivera",
@@ -38,29 +38,29 @@ export default function UserProfile() {
     bio: "Music enthusiast | Always discovering new sounds | Currently obsessed with indie rock and electronic beats 🎵",
     location: "San Francisco, CA",
     joinDate: "June 2023",
-  })
+  });
 
   const topArtists = [
     { name: "Tame Impala", image: "/placeholder.svg?height=80&width=80", followers: "2.1M" },
     { name: "Phoebe Bridgers", image: "/placeholder.svg?height=80&width=80", followers: "1.8M" },
     { name: "Mac Miller", image: "/placeholder.svg?height=80&width=80", followers: "3.2M" },
     { name: "FKA twigs", image: "/placeholder.svg?height=80&width=80", followers: "1.5M" },
-  ]
+  ];
 
   const topSongs = [
     { title: "The Less I Know The Better", artist: "Tame Impala", plays: "127" },
     { title: "Motion Sickness", artist: "Phoebe Bridgers", plays: "89" },
     { title: "Good News", artist: "Mac Miller", plays: "156" },
     { title: "Two Weeks", artist: "FKA twigs", plays: "73" },
-  ]
+  ];
 
   const handleSave = () => {
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   const handleCancel = () => {
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   return (
     <Box minH="100vh" p={4} bg="black">
@@ -140,6 +140,7 @@ export default function UserProfile() {
                         color="black"
                         _hover={{ opacity: 0.9 }}
                         leftIcon={<CheckIcon />}
+                        style={{color: "white"}}
                       >
                         Save
                       </Button>
@@ -284,8 +285,8 @@ export default function UserProfile() {
                       </HStack>
                       <Badge bg="spotify.primary" color="black">
                         <HStack spacing={1}>
-                          <Icon style={{color: "white"}} as={FaArrowTrendUp} boxSize={3} />
-                          <Text style={{color: "white"}}>This Month</Text>
+                          <Icon style={{ color: "white" }} as={FaArrowTrendUp} boxSize={3} />
+                          <Text style={{ color: "white" }}>This Month</Text>
                         </HStack>
                       </Badge>
                     </HStack>
@@ -304,7 +305,12 @@ export default function UserProfile() {
                           <Text color="whiteAlpha.600" fontFamily="mono" fontSize="sm" w={6}>
                             {index + 1}
                           </Text>
-                          <Avatar size="md" src={artist.image} bg="spotify.tertiary" color="white" />
+                          <Avatar
+                            size="md"
+                            src={artist.image}
+                            bg="spotify.tertiary"
+                            color="white"
+                          />
                           <Box flex={1}>
                             <Text fontWeight="medium" color="white">
                               {artist.name}
@@ -335,8 +341,8 @@ export default function UserProfile() {
                       </HStack>
                       <Badge bg="spotify.primary" color="black">
                         <HStack spacing={1}>
-                          <Icon style={{color: "white"}} as={FaArrowTrendUp} boxSize={3} />
-                          <Text style={{color: "white"}}>This Month</Text>
+                          <Icon style={{ color: "white" }} as={FaArrowTrendUp} boxSize={3} />
+                          <Text style={{ color: "white" }}>This Month</Text>
                         </HStack>
                       </Badge>
                     </HStack>
@@ -355,7 +361,14 @@ export default function UserProfile() {
                           <Text color="whiteAlpha.600" fontFamily="mono" fontSize="sm" w={6}>
                             {index + 1}
                           </Text>
-                          <Flex w={12} h={12} borderRadius="lg" bg="spotify.primary" align="center" justify="center">
+                          <Flex
+                            w={12}
+                            h={12}
+                            borderRadius="lg"
+                            bg="spotify.primary"
+                            align="center"
+                            justify="center"
+                          >
                             <Icon as={FaMusic} color="white" />
                           </Flex>
                           <Box flex={1}>
@@ -394,7 +407,7 @@ export default function UserProfile() {
                           Liked Songs
                         </Text>
                       </HStack>
-                      <Badge bg="spotify.primary" color="black">
+                      <Badge bg="spotify.primary" color="white">
                         247 songs
                       </Badge>
                     </HStack>
@@ -411,5 +424,5 @@ export default function UserProfile() {
         </VStack>
       </Box>
     </Box>
-  )
+  );
 }
