@@ -10,18 +10,13 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import "../styles/Navbar.css";
-import { useNavigate } from 'react-router-dom';
-
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
-
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleNavigation = (label) => {
-      navigate(`/${label.toLowerCase()}`);
+    navigate(`/${label.toLowerCase()}`);
   };
 
   return (
@@ -38,9 +33,7 @@ export default function Navbar() {
         <Box className="nav">
           <HStack spacing={6}>
             {["Profile", "Discover", "Library", "Forum", "Inbox"].map((label) => (
-              <Button key={label}
-               className="nav-button" 
-               onClick={() => handleNavigation(label)}>
+              <Button key={label} className="nav-button" onClick={() => handleNavigation(label)}>
                 {label}
               </Button>
             ))}
@@ -58,7 +51,7 @@ export default function Navbar() {
         </Box>
         <Button
           as="a"
-          href="https://test-spotify-site.local:5000/logout"
+          href="https://test-spotify-site.local:5050/logout"
           size="sm"
           className="logout-button"
         >
