@@ -30,7 +30,7 @@ const TopSongs = () => {
     }
 
     return (
-        <Flex className="liked-songs-page">
+        <Flex className="top-songs-page">
           <LibrarySidebar />
           <Box flex="1" p={8} className="content-area">
           <TopSongsHeader 

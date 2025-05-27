@@ -30,7 +30,7 @@ const TopArtists = () => {
     }
 
     return (
-        <Flex className="liked-songs-page">
+        <Flex className="top-artists-page">
           <LibrarySidebar />
           <Box flex="1" p={8} className="content-area">
             <TopArtistsHeader 
