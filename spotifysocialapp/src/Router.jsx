@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
       { path: "library", element: <Library /> },
       { path: "library/liked-songs", element: <LikedSongs /> },
       { path: "forum", element: <Forum /> },
-      { path: "inbox", element: <Inbox /> }
+      { path: "inbox", element: <Inbox /> },
     ],
   },
 ]);

@@ -34,7 +34,7 @@
 .login-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.5rem !important;
   padding: 2rem 1.5rem;
   color: black;
 }
@@ -47,7 +47,7 @@
   width: 100%;
 }
 .login-heading {
-  font-size: 1.2rem;
+  font-size: 1.2rem !important;
   text-align: center;
   margin: 0;
 }
@@ -59,8 +59,8 @@
 
 /* Buttons */
 .login-button {
-  background-color: black;
-  color: white;
+  background-color: black !important;
+  color: white !important;
   width: 100%;
   padding: 0.5rem 1rem;
   border: none;
