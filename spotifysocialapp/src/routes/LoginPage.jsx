@@ -9,56 +9,41 @@ import {
   Button,
   Divider,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
+import "../styles/loginPage.css";
 
 export default function LoginPage() {
   return (
-    <Flex minH="100vh" align="center" justify="center">
-      <Box
-        w="full"
-        maxW="400px"
-        bg="gray.50" // light container
-        borderRadius="md"
-        overflow="hidden"
-        boxShadow="lg"
-      >
+    <Flex className="login-page">
+      <Box className="login-container">
         {/* Header bar */}
-        <Box bg="#43b164" px={6} py={4}>
-          <HStack spacing={2}>
-            <Circle size="10px" bg="green.800" />
-            <Text fontSize="lg" fontWeight="bold" color="white">
-              Welcome to Spotify Connect
-            </Text>
+        <Box className="login-header">
+          <HStack>
+            <Circle className="login-header-circle" />
+            <Text className="login-header-text">Welcome to Spotify Connect</Text>
           </HStack>
         </Box>
 
         {/* Content */}
-        <VStack spacing={6} px={6} py={8} color="black">
+        <VStack className="login-content">
           {/* Sign-in section */}
-          <VStack spacing={4} w="full">
-            <Heading size="md" textAlign="center">
-              Sign In with Spotify
-            </Heading>
-            <Text textAlign="center" fontSize="sm">
+          <VStack className="login-section">
+            <Heading className="login-heading">Sign In with Spotify</Heading>
+            <Text className="login-text">
               Access your favorite music and playlists by signing in with your Spotify account.
             </Text>
-            <Button size="md" bg="black" color="white" w="full" _hover={{ bg: "gray.800" }}>
+            <Button as={RouterLink} to="/profile" className="login-button">
               Sign in with Spotify
             </Button>
           </VStack>
 
-          <Divider />
+          <Divider className="login-divider" />
 
           {/* Register section */}
-          <VStack spacing={4} w="full">
-            <Heading size="md" textAlign="center">
-              Don't have a Spotify Account?
-            </Heading>
-            <Text textAlign="center" fontSize="sm">
-              Creating a Spotify account is free!
-            </Text>
-            <Button size="md" bg="black" color="white" w="full" _hover={{ bg: "gray.800" }}>
-              Register
-            </Button>
+          <VStack className="login-section">
+            <Heading className="login-heading">Don't have a Spotify Account?</Heading>
+            <Text className="login-text">Creating a Spotify account is free!</Text>
+            <Button className="login-button">Register</Button>
           </VStack>
         </VStack>
       </Box>
