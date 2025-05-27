@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   HStack,
-  Circle,
   Text,
   Button,
   InputGroup,
