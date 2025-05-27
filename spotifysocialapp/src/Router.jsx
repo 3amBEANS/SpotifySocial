@@ -6,6 +6,7 @@ import Discover from "./routes/Discover";
 import Library from "./routes/Library";
 import Forum from "./routes/Forum";
 import Inbox from "./routes/Inbox";
+import ForumPost from "./routes/ForumPost";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -17,7 +18,9 @@ export const router = createBrowserRouter([
       { path: "discover", element: <Discover /> },
       { path: "library", element: <Library /> },
       { path: "forum", element: <Forum /> },
-      { path: "inbox", element: <Inbox /> },
+      { path: "forum/:id", element: <ForumPost/> },
+      { path: "inbox", element: <Inbox /> }
+
     ],
   },
 ]);
