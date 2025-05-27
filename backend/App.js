@@ -25,6 +25,10 @@ app.use("/login", loginRouter);
 const logoutRouter = require("./Logout");
 +app.use("/logout", logoutRouter);
 
+//for discover page
+const usersRouter = require("./routes/users");
+app.use("/api/users", usersRouter);
+
 const options = {
   key: fs.readFileSync("test-spotify-site.local-key.pem"),
   cert: fs.readFileSync("test-spotify-site.local.pem"),
