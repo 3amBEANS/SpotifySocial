@@ -1,8 +1,6 @@
 const express = require("express");
 const https = require("https");
 const fs = require("fs");
-const admin = require("firebase-admin");
-const serviceAccount = require("./permissions.json");
 const app = express();
 const cors = require("cors");
 const port = 5050;
@@ -12,10 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Setting up Firebase-admin privileges:
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-const db = admin.firestore();
+const db = require("./firebase");
 module.exports = db;
 
 // Mount routes
