@@ -24,6 +24,10 @@ const logoutRouter = require("./Logout");
 const usersRouter = require("./routes/users");
 app.use("/api/users", usersRouter);
 
+//for messages
+const messageRouter = require("./routes/messages");
+app.use("/api/messages", messageRouter);
+
 //for posts page
 const postsRouter = require("./routes/posts");
 app.use("/api/posts", postsRouter);
