@@ -36,6 +36,7 @@ router.get(`/`, (request, response) => {
     redirect_uri: redirectURI,
     state: state,
     scope: scope,
+    show_dialog: true, // Always ask to sign in
   });
   response.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
