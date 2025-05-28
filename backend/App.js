@@ -29,7 +29,7 @@ const logoutRouter = require("./Logout");
 const usersRouter = require("./routes/users");
 app.use("/api/users", usersRouter);
 
-//for post page
+//for posts page
 const postsRouter = require("./routes/posts");
 app.use("/api/posts", postsRouter);
 

@@ -21,12 +21,12 @@ router.get("/public", async (req, res) => {
   }
 });
 
-// ✅ POST /api/users/seed
+// ✅ POST /api/posts/seed
 router.post("/seed", async (req, res) => {
   try {
-
-    
-    res.status(200).send("Mock users added");
+    const docRef = await db.collection("posts").add(req.body);
+    const savedPost = { id: docRef.id, ...req.body };
+     res.status(200).json(savedPost);
   } catch (err) {
     console.error("Seeding error:", err);
     res.status(500).send("Seeding failed");
