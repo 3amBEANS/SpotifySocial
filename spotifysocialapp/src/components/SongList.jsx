@@ -7,7 +7,7 @@ const SongList = ({ displayedCards, type }) => {
   return (
     <Box>
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Your Liked Songs</Text>
-      <SimpleGrid columns={[1, 2, 3]} spacing={6}>
+      <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={6}>
 
 
         {displayedCards.map((card, index) => (
@@ -21,7 +21,7 @@ const SongList = ({ displayedCards, type }) => {
             <Image 
               src={
                 type === 'song'
-                  ? `https://via.placeholder.com/300?text=Album+art+of+${card.title}`
+                  ? card.image || `https://via.placeholder.com/300?text=Album+art+of+${card.title}`
                   : card.image || `https://via.placeholder.com/300?text=Artist+${card.artist}`
               } 
               alt={type === 'song' ? `${card.title} cover` : `${card.artist} photo`}
@@ -33,7 +33,9 @@ const SongList = ({ displayedCards, type }) => {
                   <Text color="black">{`${card.artist} - ${card.album}`}</Text>
                 </>
               ) : (
-                <Text fontWeight="semibold" color="black">{card.artist}</Text>
+                <>
+                  <Text fontWeight="semibold" color="black">{card.artist}</Text>
+                </>
               )}
             </Box>
           </Box>
