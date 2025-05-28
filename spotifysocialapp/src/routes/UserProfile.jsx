@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react"; // To get user data
 import { Box, Flex, Text, VStack, HStack, Grid, GridItem, Icon } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+// import { AuthContext } from "../AuthContext"; // To get user data
+// import axios from "axios"; // To get user data
 
 import ProfileCard from "../components/user_profile/ProfileCard";
 import TopArtistsCard from "../components/user_profile/TopArtistsCard";
@@ -14,6 +16,9 @@ export default function UserProfile() {
   const [showTopArtists, setShowTopArtists] = useState(true);
   const [showTopSongs, setShowTopSongs] = useState(true);
   const [showLikedSongs, setShowLikedSongs] = useState(true);
+
+  // const { user } = useContext(AuthContext); // To get user data
+  // const [profileData, setProfileData] = useState(null); // To get user data
 
   const [profile, setProfile] = useState({
     name: "Alex Rivera",
@@ -45,13 +50,35 @@ export default function UserProfile() {
     setIsEditing(false);
   };
 
+  // To get user data
+  // useEffect(() => {
+  //   if (!user) return; // not logged in yet
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const resp = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
+  //       setProfileData(resp.data);
+  //     } catch (err) {
+  //       console.error("Error loading profile:", err);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, [user]);
+
+  // Using profile data
+  // <h1>{profileData.display_name}</h1>
+  // <img src={profileData.avatar_url} alt="" />
+  // <p>Country: {profileData.country}</p>
+  // <p>Bio: {profileData.bio}</p>
+  // <p>Tags: {profileData.tags.join(", ")}</p>
+  // etc...
+
   return (
     <Box className="user-profile-page">
       <Box className="user-profile-container">
         <VStack className="user-profile-stack">
           {/* Header */}
           <Flex className="profile-header">
-            <Text className="profile-header-title">Profile</Text>
+            <Text className="profile-header-title">Profile </Text>
             <HStack className="profile-header-status">
               <Icon as={isPrivate ? ViewOffIcon : ViewIcon} color="white" />
               <Text className="profile-header-status-text">{isPrivate ? "Private" : "Public"}</Text>
