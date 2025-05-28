@@ -32,7 +32,7 @@ const TopArtists = () => {
         const results = await Promise.all(
           Object.entries(ranges).map(async ([key, range]) => {
             const response = await axios.get(
-              `https://api.spotify.com/v1/me/top/artists?limit=20&time_range=${range}`
+              `https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`
             );
             return [key, response.data.items.map(artist => ({
               name: artist.name,
