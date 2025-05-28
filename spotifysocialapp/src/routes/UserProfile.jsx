@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react"; // To get user data
 import { Box, Flex, Text, VStack, HStack, Grid, GridItem, Icon } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { AuthContext } from "../AuthContext"; // To get user data
-import axios from "axios"; // To get user data
+// import { AuthContext } from "../AuthContext"; // To get user data
+// import axios from "axios"; // To get user data
 
 import ProfileCard from "../components/user_profile/ProfileCard";
 import TopArtistsCard from "../components/user_profile/TopArtistsCard";
@@ -17,8 +17,8 @@ export default function UserProfile() {
   const [showTopSongs, setShowTopSongs] = useState(true);
   const [showLikedSongs, setShowLikedSongs] = useState(true);
 
-  const { user } = useContext(AuthContext); // To get user data
-  const [profileData, setProfileData] = useState(null); // To get user data
+  // const { user } = useContext(AuthContext); // To get user data
+  // const [profileData, setProfileData] = useState(null); // To get user data
 
   const [profile, setProfile] = useState({
     name: "Alex Rivera",
@@ -51,18 +51,18 @@ export default function UserProfile() {
   };
 
   // To get user data
-  useEffect(() => {
-    if (!user) return; // not logged in yet
-    const fetchProfile = async () => {
-      try {
-        const resp = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
-        setProfileData(resp.data);
-      } catch (err) {
-        console.error("Error loading profile:", err);
-      }
-    };
-    fetchProfile();
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user) return; // not logged in yet
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const resp = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
+  //       setProfileData(resp.data);
+  //     } catch (err) {
+  //       console.error("Error loading profile:", err);
+  //     }
+  //   };
+  //   fetchProfile();
+  // }, [user]);
 
   // Using profile data
   // <h1>{profileData.display_name}</h1>

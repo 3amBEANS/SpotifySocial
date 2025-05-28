@@ -47,38 +47,27 @@ export default function ProfileHeader({
                 className="profile-card-avatar"
                 name={profile.name.slice(0, 2)}
               />
-              <VStack align="flex-start" spacing={2}>
+              <VStack className="profile-card-text-stack">
                 {isEditing ? (
-                  <VStack spacing={2} align="stretch">
+                  <VStack className="profile-card-text-stack">
                     <Input
                       value={profile.name}
                       onChange={(e) => onProfileChange("name", e.target.value)}
-                      fontSize="xl"
-                      fontWeight="bold"
-                      bg="whiteAlpha.100"
-                      border="1px solid"
-                      borderColor="whiteAlpha.200"
-                      color="white"
+                      className="profile-card-input_name"
                     />
                     <Input
                       value={profile.username}
                       onChange={(e) => onProfileChange("username", e.target.value)}
-                      fontSize="sm"
-                      bg="whiteAlpha.100"
-                      border="1px solid"
-                      borderColor="whiteAlpha.200"
-                      color="whiteAlpha.800"
+                      className="profile-card-input_username"
                     />
                   </VStack>
                 ) : (
                   <>
-                    <Text fontSize="2xl" fontWeight="bold" color="white">
-                      {profile.name}
-                    </Text>
-                    <Text color="whiteAlpha.800">{profile.username}</Text>
+                    <Text className="profile-card-name">{profile.name}</Text>
+                    <Text className="profile-card-username">{profile.username}</Text>
                   </>
                 )}
-                <HStack spacing={4} fontSize="sm" color="whiteAlpha.600">
+                <HStack className="profile-card-meta">
                   <Text>📍 {profile.location}</Text>
                   <Text>📅 Joined {profile.joinDate}</Text>
                 </HStack>
@@ -89,36 +78,21 @@ export default function ProfileHeader({
                 <>
                   <Button
                     onClick={onSave}
-                    size="sm"
-                    bg="spotify.primary"
-                    _hover={{ opacity: 0.9 }}
+                    className="profile-card_btn-save"
                     leftIcon={<CheckIcon />}
-                    color="white"
                   >
                     Save
                   </Button>
                   <Button
                     onClick={onCancel}
-                    variant="outline"
-                    size="sm"
-                    borderColor="whiteAlpha.200"
-                    color="white"
-                    _hover={{ bg: "whiteAlpha.100" }}
+                    className="profile-card_btn-cancel"
                     leftIcon={<CloseIcon />}
                   >
                     Cancel
                   </Button>
                 </>
               ) : (
-                <Button
-                  onClick={onEdit}
-                  variant="outline"
-                  size="sm"
-                  borderColor="whiteAlpha.200"
-                  color="white"
-                  _hover={{ bg: "whiteAlpha.100" }}
-                  leftIcon={<EditIcon />}
-                >
+                <Button onClick={onEdit} className="profile-card_btn-edit" leftIcon={<EditIcon />}>
                   Edit Profile
                 </Button>
               )}
@@ -127,29 +101,23 @@ export default function ProfileHeader({
         </CardHeader>
 
         <CardBody>
-          <VStack spacing={6} align="stretch">
+          <VStack className="profile-card_body">
             {/* Bio */}
             <Box>
-              <Text color="whiteAlpha.800" fontSize="sm" fontWeight="medium" mb={2}>
-                Bio
-              </Text>
+              <Text className="profile-card_bio-label">Bio</Text>
               {isEditing ? (
                 <Textarea
                   value={profile.bio}
                   onChange={(e) => onProfileChange("bio", e.target.value)}
-                  bg="whiteAlpha.100"
-                  border="1px solid"
-                  borderColor="whiteAlpha.200"
-                  color="white"
-                  resize="none"
                   rows={3}
+                  className="profile-card_bio-textarea"
                 />
               ) : (
-                <Text color="whiteAlpha.900">{profile.bio}</Text>
+                <Text className="profile-card_bio-text">{profile.bio}</Text>
               )}
             </Box>
 
-            <Divider borderColor="whiteAlpha.100" />
+            <Divider className="profile-card_divider" />
 
             {/* Privacy & Display Settings */}
             <ProfileCardSettings

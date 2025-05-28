@@ -2,20 +2,6 @@ const express = require("express");
 const router = express.Router();
 const db = require("../firebase");
 
-// GET /api/users/:id
-router.get("/:id", async (req, res) => {
-  try {
-    const doc = await db.collection("users").doc(req.params.id).get();
-    if (!doc.exists) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json({ id: doc.id, ...doc.data() });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
 // GET /api/users/public
 router.get("/public", async (req, res) => {
   try {
@@ -30,6 +16,20 @@ router.get("/public", async (req, res) => {
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+// GET /api/users/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const doc = await db.collection("users").doc(req.params.id).get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ id: doc.id, ...doc.data() });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
