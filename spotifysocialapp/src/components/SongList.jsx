@@ -35,6 +35,7 @@ const SongList = ({ displayedCards, type, header }) => {
               ) : (
                 <>
                   <Text fontWeight="semibold" color="black">{card.name}</Text>
+                  <Text color="black">{card.genres}</Text>
                 </>
               )}
             </Box>
