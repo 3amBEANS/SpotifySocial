@@ -13,11 +13,11 @@ const LikedSongs = () => {
   const [likedSongs, setLikedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     const fetchLikedSongs = async () => {
       try {
-        const response = await axios.get("https://api.spotify.com/v1/me/tracks?limit=20");
+        const response = await axios.get("https://api.spotify.com/v1/me/tracks?limit=50");
         const songs = response.data.items.map(item => ({
           title: item.track.name,
           artist: item.track.artists.map(artist => artist.name).join(", "),
@@ -39,15 +39,12 @@ const LikedSongs = () => {
   if (loading) return <Spinner size="xl" color="green.400" />;
   if (error) return <Text color="white" fontWeight={700} >{error}</Text>;
 
-  //const recentSongs = allSongs.filter((song) => new Date(song.likedAt) > new Date("2024-01-01"));
-  //const displayedSongs = view === "all" ? allSongs : recentSongs;
-
   return (
     <Flex className="liked-songs-page">
       <LibrarySidebar />
       <Box flex="1" p={8} className="content-area">
         <LikedSongsHeader view={view} setView={setView} />
-        <SongList displayedCards={likedSongs} type="song" />
+        <SongList displayedCards={likedSongs} type="song" header="Your Recently Liked Songs" />
       </Box>
     </Flex>
   );

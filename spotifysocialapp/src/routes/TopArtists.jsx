@@ -10,7 +10,11 @@ import { AuthContext } from "../AuthContext";
 const TopArtists = () => {
   const [view, setView] = useState("all"); // 'all' or 'year' or 'month'
   const { user } = useContext(AuthContext);
-  const [topArtists, setTopArtists] = useState([]);
+  const [topArtists, setTopArtists] = useState({
+    all: [],
+    year: [],
+    month: [],
+  });
   const [loading, setLoadingArtists] = useState(true);
   const [error, setArtistError] = useState(null);
   
@@ -19,14 +23,26 @@ const TopArtists = () => {
   }
   useEffect(() => {
     const fetchTopArtists = async () => {
+      const ranges = {
+        all: "long_term",
+        year: "medium_term",
+        month: "short_term",
+      };
       try {
-        const response = await axios.get("https://api.spotify.com/v1/me/top/artists?limit=20");
-        const artists = response.data.items.map(artist => ({
-          name: artist.name,
-          image: artist.images[0]?.url,
-          genres: artist.genres.join(", "),
-        }));
-        setTopArtists(artists);
+        const results = await Promise.all(
+          Object.entries(ranges).map(async ([key, range]) => {
+            const response = await axios.get(
+              `https://api.spotify.com/v1/me/top/artists?limit=20&time_range=${range}`
+            );
+            return [key, response.data.items.map(artist => ({
+              name: artist.name,
+              image: artist.images[0]?.url,
+              genres: artist.genres.join(", "),
+              id: artist.id,
+            }))];
+          })
+        );
+        setTopArtists(Object.fromEntries(results));
       } catch (err) {
         console.error("Error fetching top artists:", err);
         setArtistError("Failed to load top artists.");
@@ -37,18 +53,6 @@ const TopArtists = () => {
   
     if (user) fetchTopArtists();
   }, [user]);
-  
-  const pastYearSongs = topArtists.filter((song) => new Date(song.likedAt) > new Date("2024-05-27"));
-  const pastMonthSongs = topArtists.filter((song) => new Date(song.likedAt) > new Date("2025-04-27"));
-
-  let displayedSongs;
-  if (view === "all") {
-    displayedSongs = topArtists;
-  } else if (view === "year") {
-    displayedSongs = pastYearSongs;
-  } else if (view === "month") {
-    displayedSongs = pastMonthSongs;
-  }
 
   if (loading) return <Spinner size="xl" color="green.400" />;
   if (error) return <Text color="white" fontWeight={700} >{error}</Text>;
@@ -63,7 +67,11 @@ const TopArtists = () => {
           heading="Top Artists"
           subheading="Your top-listened artists across time."
         />
-        <SongList displayedCards={displayedSongs} type="artist" />
+        <SongList 
+          displayedCards={topArtists[view]} 
+          type="artist" 
+          header={"Your Top Artists of " + (view === 'all' ? "All Time" : view === 'year' ? "the Past Year" : "the Past Month")}
+        />
       </Box>
     </Flex>
   );
