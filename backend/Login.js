@@ -22,6 +22,7 @@ const generateRandomString = (length) => {
 
 const stateKey = `spotify_auth_state`;
 
+// Redirect user to Spotify’s /authorize
 router.get(`/`, (request, response) => {
   const state = generateRandomString(16);
   response.cookie(stateKey, state);
@@ -36,11 +37,12 @@ router.get(`/`, (request, response) => {
     redirect_uri: redirectURI,
     state: state,
     scope: scope,
-    show_dialog: true, // Always ask to sign in
+    show_dialog: true, // Always ask for authorization
   });
   response.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
 
+// Handle the OAuth callback
 router.get(`/callback`, async (req, res) => {
   const code = req.query.code || null;
 
