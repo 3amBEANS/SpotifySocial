@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
-require(`dotenv`).config();
 const https = require("https");
 const querystring = require("querystring");
+const db = require("./firebase");
+const { FieldValue } = require("firebase-admin").firestore;
+
+require(`dotenv`).config();
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -19,6 +21,47 @@ const generateRandomString = (length) => {
 
   return text;
 };
+
+function getTokens(code) {
+  return new Promise((resolve, reject) => {
+    const postData = querystring.stringify({
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: redirectURI,
+    });
+
+    const options = {
+      hostname: "accounts.spotify.com",
+      path: "/api/token",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": Buffer.byteLength(postData),
+        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
+      },
+    };
+
+    const req = https.request(options, (res) => {
+      let body = "";
+      res.on("data", (chunk) => (body += chunk));
+      res.on("end", () => {
+        if (res.statusCode === 200) {
+          try {
+            return resolve(JSON.parse(body));
+          } catch (err) {
+            return reject(err);
+          }
+        } else {
+          return reject(new Error(`Spotify token exchange failed: ${body}`));
+        }
+      });
+    });
+
+    req.on("error", reject);
+    req.write(postData);
+    req.end();
+  });
+}
 
 const stateKey = `spotify_auth_state`;
 
@@ -44,61 +87,40 @@ router.get(`/`, (request, response) => {
 
 // Handle the OAuth callback
 router.get(`/callback`, async (req, res) => {
-  const code = req.query.code || null;
+  try {
+    // ← now getTokens is defined
+    const { access_token, refresh_token, expires_in } = await getTokens(req.query.code);
 
-  const postData = querystring.stringify({
-    grant_type: `authorization_code`,
-    code: code,
-    redirect_uri: redirectURI,
-  });
-
-  const options = {
-    hostname: "accounts.spotify.com",
-    path: "/api/token",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(postData),
-      Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
-    },
-  };
-
-  const request = https.request(options, (response) => {
-    let data = "";
-
-    response.on("data", (chunk) => {
-      data += chunk;
+    // Fetch user Spotify profile
+    const profileRes = await fetch("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${access_token}` },
     });
+    const profile = await profileRes.json();
 
-    response.on("end", () => {
-      try {
-        const parsedData = JSON.parse(data);
+    // Insert into Firestore
+    const userRef = db.collection("users").doc(profile.id);
+    const snap = await userRef.get();
+    if (!snap.exists) {
+      await userRef.set({
+        display_name: profile.display_name || null,
+        country: profile.country || null,
+        avatar_url: profile.images?.[0]?.url || null,
+        createdAt: FieldValue.serverTimestamp(),
+        isPublic: true, // default visibility
+        bio: "", // empty bio
+        tags: [], // empty tags array
+      });
+    }
 
-        if (response.statusCode === 200) {
-          const { access_token, refresh_token, expires_in } = parsedData;
-
-          const queryParams = querystring.stringify({
-            access_token,
-            refresh_token,
-            expires_in,
-          });
-
-          res.redirect(`http://localhost:5173/login/callback?${queryParams}`);
-        } else {
-          res.redirect(`/?${querystring.stringify({ error: `invalid_token` })}`);
-        }
-      } catch (error) {
-        res.redirect(`/?${querystring.stringify({ error: `parse_error` })}`);
-      }
-    });
-  });
-
-  request.on("error", (error) => {
-    res.redirect(`/?${querystring.stringify({ error: `request_error` })}`);
-  });
-
-  request.write(postData);
-  request.end();
+    // Redirect back to React /login/callback
+    const params = querystring.stringify({ access_token, refresh_token, expires_in });
+    res.redirect(`http://localhost:5173/login/callback?${params}`);
+  } catch (err) {
+    console.error("OAuth error:", err);
+    return res.redirect(
+      `http://localhost:5173/login/callback?error=${encodeURIComponent(err.message)}`
+    );
+  }
 });
 
 module.exports = router;
