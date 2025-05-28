@@ -80,7 +80,7 @@ router.get(`/callback`, async (req, res) => {
             expires_in,
           });
 
-          res.redirect(`http://localhost:5173/home/?${queryParams}`);
+          res.redirect(`http://localhost:5173/login/callback?${queryParams}`);
         } else {
           res.redirect(`/?${querystring.stringify({ error: `invalid_token` })}`);
         }

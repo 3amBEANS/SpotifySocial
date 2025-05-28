@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import Login from "./routes/LoginPage";
+
+import HomePage from "./routes/HomePage";
+import LoginCallback from "./routes/LoginCallback.jsx";
 import UserProfile from "./routes/UserProfile";
 import Discover from "./routes/Discover";
 import Library from "./routes/Library";
@@ -8,17 +10,17 @@ import LikedSongs from "./routes/LikedSongs";
 import TopArtists from "./routes/TopArtists.jsx";
 import TopSongs from "./routes/TopSongs.jsx";
 import Forum from "./routes/Forum";
-import Inbox from "./routes/Inbox";
 import ForumPost from "./routes/ForumPost";
-import HomePage from "./routes/HomePage";
+import Inbox from "./routes/Inbox";
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
-
   {
+    path: "/",
     element: <App />,
     children: [
-      {path: "home", element: <HomePage/>},
+      // index route: when someone visits "/"", load HomePage
+      { index: true, element: <HomePage /> },
+
       { path: "profile", element: <UserProfile /> },
       { path: "discover", element: <Discover /> },
       { path: "library", element: <Library /> },
@@ -26,8 +28,9 @@ export const router = createBrowserRouter([
       { path: "library/top-artists", element: <TopArtists /> },
       { path: "library/top-songs", element: <TopSongs /> },
       { path: "forum", element: <Forum /> },
-      { path: "forum/:id", element: <ForumPost/> },
-      { path: "inbox", element: <Inbox /> }
+      { path: "forum/:id", element: <ForumPost /> },
+      { path: "inbox", element: <Inbox /> },
     ],
   },
+  { path: "login/callback", element: <LoginCallback /> },
 ]);
