@@ -1,13 +1,25 @@
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
   background-color: #43b164;
-  width: 100%;
-  padding: 0.75rem 0;
+  transition: transform 0.2s ease-in;
+  will-change: transform;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.39);
+}
+/* when hidden, move it completely off top */
+.header.hidden {
+  transform: translateY(-100%);
 }
 
 .navbar-container {
   display: flex;
   align-items: center;
-  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 /* Logo flush left */
@@ -32,8 +44,8 @@
 .nav-links {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2.5rem !important;
-  /* background: #246e024f !important; */
   border-radius: 6px;
 }
 .nav-link {
@@ -86,14 +98,68 @@
   background: transparent;
 }
 
+/* Profile Avatar link */
+.avatar-link {
+  margin-right: 1rem;
+  display: inline-flex;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+.avatar-link:hover {
+  border: 2px solid rgba(30, 114, 41, 0.466);
+}
+.avatar-link.active {
+  border: 2px solid #ffffff;
+}
+.avatar-link .chakra-avatar {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 43px;
+  height: 43px;
+}
+.avatar-link .chakra-avatar__initials {
+  font-size: 20px !important;
+}
+.avatar-divider {
+  width: 2px;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  margin: 0rem 2rem 0rem 1rem;
+}
+
+/* sign in */
+.signin-button {
+  margin-right: 1.5rem;
+  color: white;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.signin-button:hover {
+  background: white;
+  color: #43b164;
+}
+.signin-button svg {
+  margin-left: 0.3rem;
+}
+
 /* logout */
 .logout-button {
   margin-right: 1.5rem;
   color: white;
   background: transparent;
   border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 .logout-button:hover {
   background: white;
   color: #43b164;
+}
+.logout-button svg {
+  margin-right: 0.3rem;
 }
