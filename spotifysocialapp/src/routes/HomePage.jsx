@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -15,10 +15,10 @@ import {
   Container,
   Heading,
   SimpleGrid,
-} from "@chakra-ui/react"
-import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa"
-import { FaArrowTrendUp } from 'react-icons/fa6'
-import { useNavigate} from "react-router-dom";
+} from "@chakra-ui/react";
+import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa";
+import { FaArrowTrendUp } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   // Mock data
@@ -41,7 +41,7 @@ export default function HomePage() {
       artist: "Mac Miller",
       image: "/placeholder.svg?height=120&width=120",
     },
-  ]
+  ];
 
   const topArtists = [
     {
@@ -62,7 +62,7 @@ export default function HomePage() {
       image: "/placeholder.svg?height=80&width=80",
       followers: "3.2M",
     },
-  ]
+  ];
 
   const forumPosts = [
     {
@@ -81,7 +81,7 @@ export default function HomePage() {
       replies: 18,
       likes: 89,
     },
-  ]
+  ];
 
   const publicProfiles = [
     {
@@ -102,7 +102,7 @@ export default function HomePage() {
       avatar: "/placeholder.svg?height=60&width=60",
       isOnline: true,
     },
-  ]
+  ];
   const navigate = useNavigate();
 
   return (
@@ -115,8 +115,8 @@ export default function HomePage() {
               Welcome to Spotify Connect
             </Heading>
             <Text fontSize="lg" color="blackAlpha.800" maxW="2xl">
-              Engage with your favorite tracks and connect with other music lovers. Discover new sounds, share your
-              taste, and join the conversation.
+              Engage with your favorite tracks and connect with other music lovers. Discover new
+              sounds, share your taste, and join the conversation.
             </Text>
             <Button
               size="lg"
@@ -153,7 +153,13 @@ export default function HomePage() {
             </VStack>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
               {likedSongs.map((song) => (
-                <Card key={song.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
+                <Card
+                  key={song.id}
+                  bg="#1a1a1a"
+                  border="none"
+                  _hover={{ bg: "#222" }}
+                  transition="background 0.2s"
+                >
                   <CardBody>
                     <VStack spacing={4}>
                       <Box
@@ -201,10 +207,22 @@ export default function HomePage() {
             </VStack>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
               {topArtists.map((artist) => (
-                <Card key={artist.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
+                <Card
+                  key={artist.id}
+                  bg="#1a1a1a"
+                  border="none"
+                  _hover={{ bg: "#222" }}
+                  transition="background 0.2s"
+                >
                   <CardBody>
                     <VStack spacing={4}>
-                      <Avatar size="xl" src={artist.image} bg="spotify.tertiary" color="white" name={artist.name} />
+                      <Avatar
+                        size="xl"
+                        src={artist.image}
+                        bg="spotify.tertiary"
+                        color="white"
+                        name={artist.name}
+                      />
                       <VStack spacing={1} textAlign="center">
                         <Text fontWeight="bold" color="white">
                           {artist.name}
@@ -365,14 +383,17 @@ export default function HomePage() {
               </Heading>
               <Text color="whiteAlpha.600">Jump to your favorite sections</Text>
             </VStack>
-            <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={6}>
+            <Grid
+              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
+              gap={6}
+            >
               <Card
                 bg="#1a1a1a"
                 border="none"
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate("/profile")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -403,7 +424,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate('/library/liked-songs')}
+                onClick={() => navigate("/library/liked-songs")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -434,7 +455,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (navigate('/library/top-artists'))}
+                onClick={() => navigate("/library/top-artists")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -465,7 +486,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => (navigate('/library/top-songs'))}
+                onClick={() => navigate("/library/top-songs")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -494,5 +515,5 @@ export default function HomePage() {
         </VStack>
       </Container>
     </Box>
-  )
+  );
 }
