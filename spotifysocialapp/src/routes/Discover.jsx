@@ -18,14 +18,14 @@ export default function Discover() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("https://test-spotify-site.local:5050/api/users/public", { withCredentials: false })
-      .then((res) => {
-        console.log("Public users response:", res.data);
-        setUsers(res.data);
-      })
-      .catch((err) => console.error("Error loading users", err))
-      .finally(() => setLoading(false));
+     axios
+  .get("https://test-spotify-site.local:5050/api/users/public", { withCredentials: false })
+  .then((res) => {
+    console.log("Public users response:", res.data);
+    setUsers(res.data);
+  })
+  .catch((err) => console.error("Error loading users", err))
+  .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -36,9 +36,7 @@ export default function Discover() {
       </VStack>
 
       {loading ? (
-        <Flex justify="center" mt={8}>
-          <Spinner size="xl" />
-        </Flex>
+        <Flex justify="center" mt={8}><Spinner size="xl" /></Flex>
       ) : (
         <VStack spacing={6} mt={8}>
           {users.map((user) => (
@@ -58,20 +56,14 @@ export default function Discover() {
                   <Text fontWeight="bold">{user.name}</Text>
                   <HStack spacing={2} mt={1}>
                     {user.tags?.map((tag) => (
-                      <Tag key={tag} colorScheme="green">
-                        {tag}
-                      </Tag>
+                      <Tag key={tag} colorScheme="green">{tag}</Tag>
                     ))}
                   </HStack>
                   <Text mt={2}>{user.bio || "Avid listener and promoter of great music."}</Text>
                 </Box>
                 <VStack ml={4}>
-                  <Button size="sm" colorScheme="gray">
-                    Message User
-                  </Button>
-                  <Button size="sm" colorScheme="blackAlpha">
-                    View Public Profile
-                  </Button>
+                  <Button size="sm" colorScheme="gray">Message User</Button>
+                  <Button size="sm" colorScheme="blackAlpha">View Public Profile</Button>
                 </VStack>
               </Flex>
             </Box>
@@ -81,3 +73,4 @@ export default function Discover() {
     </Box>
   );
 }
+

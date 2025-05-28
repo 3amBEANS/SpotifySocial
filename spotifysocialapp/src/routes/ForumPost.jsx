@@ -376,7 +376,7 @@ export default function ForumPost() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleLikePost(post.id)}
-                        color={post.isLiked ? "spotify.primary" : "whiteAlpha.600"}
+                        color="whiteAlpha.600"
                         _hover={{ color: "spotify.primary" }}
                         leftIcon={
                           <Icon as={FaHeart} fill={post.isLiked ? "currentColor" : "none"} />
