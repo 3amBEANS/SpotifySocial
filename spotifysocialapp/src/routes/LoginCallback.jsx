@@ -15,9 +15,9 @@ export default function LoginCallback() {
     if (accessToken) {
       login({ accessToken, refreshToken, expiresIn })
         .then(() => navigate("/profile"))
-        .catch(() => navigate("/login"));
+        .catch(() => navigate("/"));
     } else {
-      navigate("/login");
+      navigate("/");
     }
   }, [login, navigate]);
 
