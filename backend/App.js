@@ -24,6 +24,10 @@ const logoutRouter = require("./Logout");
 const usersRouter = require("./routes/users");
 app.use("/api/users", usersRouter);
 
+//for posts page
+const postsRouter = require("./routes/posts");
+app.use("/api/posts", postsRouter);
+
 const options = {
   key: fs.readFileSync("test-spotify-site.local-key.pem"),
   cert: fs.readFileSync("test-spotify-site.local.pem"),
