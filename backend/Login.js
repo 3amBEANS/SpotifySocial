@@ -36,6 +36,7 @@ router.get(`/`, (request, response) => {
     redirect_uri: redirectURI,
     state: state,
     scope: scope,
+    show_dialog: true, // Always ask to sign in
   });
   response.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
@@ -80,7 +81,7 @@ router.get(`/callback`, async (req, res) => {
             expires_in,
           });
 
-          res.redirect(`http://localhost:5173/home/?${queryParams}`);
+          res.redirect(`http://localhost:5173/login/callback?${queryParams}`);
         } else {
           res.redirect(`/?${querystring.stringify({ error: `invalid_token` })}`);
         }

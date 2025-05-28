@@ -1,10 +1,3 @@
-/* Outer full-screen wrapper */
-.login-page {
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-}
-
 /* The white modal container */
 .login-container {
   width: 100%;

@@ -1,9 +1,8 @@
 .liked-songs-page {
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .content-area {
-    overflow-y: auto;
-  }
-  
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content-area {
+  overflow-y: auto;
+}

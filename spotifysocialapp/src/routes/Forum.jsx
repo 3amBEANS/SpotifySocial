@@ -227,7 +227,8 @@ export default function ForumPage() {
                 Community Forums
               </Text>
               <Badge bg="spotify.primary" color="FFFFFFDE" px={3} py={1}>
-                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "} members
+                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "}
+                members
               </Badge>
             </Flex>
             <Text color="whiteAlpha.600">

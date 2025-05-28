@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -9,105 +9,160 @@ import {
   InputGroup,
   InputLeftElement,
   Input,
+  Avatar,
 } from "@chakra-ui/react";
+import LoginModal from "./LoginModal";
 import { SearchIcon } from "@chakra-ui/icons";
+import { MdOutlineLogout, MdOutlineLogin } from "react-icons/md";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
 import "../styles/Navbar.css";
-
-
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  // track whether the header should be visible
+  const [showHeader, setShowHeader] = useState(true);
+  // remember last scroll position
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < lastScrollY.current) {
+        // scrolling up
+        setShowHeader(true);
+      } else if (currentY > lastScrollY.current) {
+        // scrolling down
+        setShowHeader(false);
+      }
+      lastScrollY.current = currentY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // nav labels in order
-  const navItems = ["Profile", "Discover", "Library", "Forum", "Inbox"];
+  const navItems = ["Discover", "Library", "Forum", "Inbox"];
 
   // Decide if a given label is "active"
-  const isActive = (label) => {
-    if (label === "Library") {
-      return pathname.startsWith("/library");
-    }
-    return pathname === `/${label.toLowerCase()}`;
-  };
+  const isActive = (label) =>
+    label === "Library" ? pathname.startsWith("/library") : pathname === `/${label.toLowerCase()}`;
 
+  // All links go to login modal if not logged in
   const handleNavigation = (label) => {
+    if (!user) {
+      setLoginOpen(true);
+      return;
+    }
     if (label === "Library") {
-      navigate(`/library/liked-songs`);
+      navigate("/library/liked-songs");
     } else {
       navigate(`/${label.toLowerCase()}`);
     }
   };
 
   return (
-    <Box as="header" className="header">
-      <Flex className="navbar-container">
-        {/* Logo flush left */}
-        <Box className="logo">
-          <HStack spacing={2}>
-            <Link to="/home"><Text className="logo-text">Spotify Connect</Text></Link>
+    <>
+      <Box as="header" className={`header ${showHeader ? "" : "hidden"}`}>
+        <Flex className="navbar-container">
+          {/* Logo flush left */}
+          <Box className="logo">
+            <Link to="/">
+              <Text className="logo-text">Spotify Connect</Text>
+            </Link>
+          </Box>
+
+          {/* vertical divider */}
+          <Box className="logo-divider" />
+
+          {/* Nav Links */}
+          <HStack className="nav-links">
+            {navItems.map((label) => {
+              return (
+                <Button
+                  key={label}
+                  className={`nav-link ${isActive(label) ? "active" : ""}`}
+                  onClick={() => handleNavigation(label)}
+                >
+                  {label}
+                </Button>
+              );
+            })}
           </HStack>
-        </Box>
 
-        {/* vertical divider */}
-        <Box className="logo-divider" />
+          {/* spacer */}
+          <Box className="spacer" />
 
-        {/* Nav absolutely centered */}
-        <HStack spacing={4} className="nav-links">
-          {navItems.map((label) => {
-            return (
-              <Button
-                key={label}
-                className={`nav-link ${isActive(label) ? "active" : ""}`}
-                onClick={() => handleNavigation(label)}
-              >
-                {label}
-              </Button>
-            );
-          })}
-        </HStack>
+          {/* Search flush right */}
+          <Box className="search-container">
+            {searchOpen ? (
+              /* full search bar */
+              <InputGroup className="search-expanded">
+                <InputLeftElement className="search-icon">
+                  <SearchIcon />
+                </InputLeftElement>
 
-        {/* spacer */}
-        <Box className="spacer" />
-
-        {/* Search flush right */}
-        <Box className="search-container">
-          {searchOpen ? (
-            /* full search bar */
-            <InputGroup className="search-expanded">
-              <InputLeftElement className="search-icon">
-                <SearchIcon />
-              </InputLeftElement>
-
-              <Input
-                placeholder="Search in site"
-                className="search-input"
-                onBlur={() => setSearchOpen(false)}
-                autoFocus
+                <Input
+                  placeholder="Search in site"
+                  className="search-input"
+                  onBlur={() => setSearchOpen(false)}
+                  autoFocus
+                />
+              </InputGroup>
+            ) : (
+              /* just the icon button */
+              <IconButton
+                aria-label="Search"
+                icon={<SearchIcon />}
+                className="search-button"
+                onClick={() => setSearchOpen(true)}
               />
-            </InputGroup>
-          ) : (
-            /* just the icon button */
-            <IconButton
-              aria-label="Search"
-              icon={<SearchIcon />}
-              className="search-button"
-              onClick={() => setSearchOpen(true)}
-            />
-          )}
-        </Box>
+            )}
+          </Box>
 
-        {/* Logout */}
-        <Button
-          as="a"
-          href="https://test-spotify-site.local:5050/logout"
-          size="sm"
-          className="logout-button"
-        >
-          Log out
-        </Button>
-      </Flex>
-    </Box>
+          {/* Profile / Sign In toggle */}
+          {user ? (
+            <>
+              <Link
+                to="/profile"
+                className={`avatar-link ${pathname === "/profile" ? "active" : ""}`}
+              >
+                <Avatar name="A" size="sm" />
+              </Link>
+
+              {/* vertical line between avatar & logout */}
+              <Box className="avatar-divider" />
+
+              <Button
+                size="sm"
+                className="logout-button"
+                onClick={() => {
+                  logout();
+                  navigate("/");
+                }}
+              >
+                <MdOutlineLogout />
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Box className="avatar-divider" />
+
+              <Button size="sm" className="signin-button" onClick={() => setLoginOpen(true)}>
+                Sign In <MdOutlineLogin />
+              </Button>
+            </>
+          )}
+        </Flex>
+      </Box>
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+    </>
   );
 }
