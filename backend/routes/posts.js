@@ -3,18 +3,24 @@ const router = express.Router();
 const db = require("../firebase");
 
 // GET /api/posts/public
+//ONLY GET the forum posts from a  PARTICULAR FORUM ID
 router.get("/public", async (req, res) => {
   try {
-    const snapshot = await db
-      .collection("posts")
-      .get();
+        const forumID = req.query.forumID;
+        if (!forumID) {
+        return res.status(400).json({ error: "forumID is required" });
+        }
+        const snapshot = await db
+        .collection("posts")
+        .where("forumID", "==", forumID)
+        .get();
 
-    const posts = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+        const posts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        }));
 
-    res.status(200).json(posts);
+        res.status(200).json(posts);
   } catch (err) {
     console.error("Error fetching posts:", err);
     res.status(500).json({ error: "Something went wrong" });
