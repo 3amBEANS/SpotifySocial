@@ -64,7 +64,7 @@ export default function ForumPost() {
   const getPosts = async (forumID) => {
     try {
         const response = await axios.get(`https://test-spotify-site.local:5050/api/posts/public?forumID=${forumID}`);
-        console.log(response.data);
+        //console.log(response.data);
         setPosts(response.data);
         //return response.data;
     } catch(e){
@@ -92,18 +92,34 @@ export default function ForumPost() {
     }
   });
 
-  const handleLikePost = (postId) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      )
-    );
+  const handleLikePost = async (postId) => {
+    try{
+        console.log(postId);
+        const increment = posts.find((p) => p.id === postId).isLiked ? -1 : 1;
+        setPosts(
+        posts.map((post) =>
+            post.id === postId
+            ? {
+                ...post,
+                isLiked: !post.isLiked,
+                likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+                }
+            : post
+        )
+        );
+
+        await axios.patch(
+        `https://test-spotify-site.local:5050/api/posts/${postId}/like`,
+        { increment },
+        { withCredentials: false }
+        );
+    }catch(e){
+        console.error("Failed to update like:", e);
+        // Rollback on error (can change later if too laggy)
+        setPosts(posts);
+    }
+    
+
   };
 
   const handleCreatePost = () => {
