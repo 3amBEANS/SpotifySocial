@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -47,6 +47,7 @@ import {
 } from "react-icons/fa"
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { SearchIcon } from "@chakra-ui/icons"
+import axios from "axios";
 
 export default function ForumPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -60,146 +61,9 @@ export default function ForumPage() {
     isPrivate: false,
   })
 
-  const forums = [
-    {
-      id: "1",
-      name: "New Music Discoveries",
-      description: "Share and discover the latest tracks, albums, and artists",
-      category: "Discovery",
-      memberCount: 15420,
-      postCount: 3240,
-      lastActivity: "2 minutes ago",
-      isPopular: true,
-      isPinned: true,
-      moderators: ["@musicmod", "@beatfinder"],
-      recentPosts: [
-        {
-          id: "1",
-          title: "Just discovered this amazing indie band from Iceland!",
-          author: "Maya Chen",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "5 minutes ago",
-          likes: 23,
-          replies: 8,
-        }
-      ],
-    },
-    {
-      id: "2",
-      name: "Genre Deep Dives",
-      description: "Explore specific genres, their history, and hidden gems",
-      category: "Discussion",
-      memberCount: 8930,
-      postCount: 1850,
-      lastActivity: "15 minutes ago",
-      isPopular: true,
-      isPinned: false,
-      moderators: ["@genreexpert"],
-      recentPosts: [
-        {
-          id: "3",
-          title: "The Evolution of Shoegaze: From My Bloody Valentine to Today",
-          author: "Sofia Rodriguez",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "3 hours ago",
-          likes: 89,
-          replies: 24,
-        },
-      ],
-    },
-    {
-      id: "3",
-      name: "Concert & Festival Reviews",
-      description: "Share your live music experiences and upcoming events",
-      category: "Events",
-      memberCount: 12100,
-      postCount: 2670,
-      lastActivity: "30 minutes ago",
-      isPopular: false,
-      isPinned: false,
-      moderators: ["@concertgoer"],
-      recentPosts: [
-        {
-          id: "4",
-          title: "Coachella 2024 Day 1 - My thoughts and highlights",
-          author: "Marcus Johnson",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "2 hours ago",
-          likes: 67,
-          replies: 19,
-        },
-      ],
-    },
-    {
-      id: "4",
-      name: "Music Production & Tech",
-      description: "Discuss gear, software, production techniques, and studio setups",
-      category: "Production",
-      memberCount: 6750,
-      postCount: 1420,
-      lastActivity: "1 hour ago",
-      isPopular: false,
-      isPinned: false,
-      moderators: ["@producer", "@techhead"],
-      recentPosts: [
-        {
-          id: "5",
-          title: "Best budget audio interface for home recording?",
-          author: "Emma Thompson",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "4 hours ago",
-          likes: 34,
-          replies: 15,
-        },
-      ],
-    },
-    {
-      id: "5",
-      name: "Vinyl & Physical Media",
-      description: "Collectors unite! Discuss records, CDs, and physical music media",
-      category: "Collecting",
-      memberCount: 9200,
-      postCount: 1980,
-      lastActivity: "45 minutes ago",
-      isPopular: true,
-      isPinned: false,
-      moderators: ["@vinylhead"],
-      recentPosts: [
-        {
-          id: "6",
-          title: "Found this rare pressing at a garage sale for $5!",
-          author: "David Kim",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "6 hours ago",
-          likes: 145,
-          replies: 32,
-        },
-      ],
-    },
-    {
-      id: "6",
-      name: "Music Theory & Analysis",
-      description: "Dive deep into the technical aspects of music composition and theory",
-      category: "Education",
-      memberCount: 4320,
-      postCount: 890,
-      lastActivity: "2 hours ago",
-      isPopular: false,
-      isPinned: false,
-      moderators: ["@theorist"],
-      recentPosts: [
-        {
-          id: "7",
-          title: "Understanding modal interchange in jazz harmony",
-          author: "Alex Rivera",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "8 hours ago",
-          likes: 78,
-          replies: 21,
-        },
-      ],
-    },
-  ]
+  
+
+  const [forums, setForums] = useState([]);
 
   const categories = ["all", "Discovery", "Discussion", "Events", "Production", "Collecting", "Education"]
 
@@ -210,6 +74,17 @@ export default function ForumPage() {
     const matchesCategory = selectedCategory === "all" || forum.category === selectedCategory
     return matchesSearch && matchesCategory
   })
+
+  const getForums = async () => {
+    try {
+        const response = await axios.get(`https://test-spotify-site.local:5050/api/forums/public/`);
+        //console.log(response.data);
+        setForums(response.data);
+        //return response.data;
+    } catch(e){
+        console.error("Error fetching posts:", e);
+    }    
+  }
 
   const handleForumClick = (forumId) => {
     window.location.href = `/forum/${forumId}`
@@ -240,6 +115,10 @@ export default function ForumPage() {
       onClose()
     }
   }
+  
+  useEffect(() => {
+      getForums(); 
+  }, []);
 
   return (
     <Box minH="100vh" p={4} bg="black">

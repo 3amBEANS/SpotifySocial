@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect, useContext} from "react";
 import {
   Box,
   Flex,
@@ -34,8 +34,10 @@ import {
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../AuthContext";
 
 export default function ForumPost() {
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [showNewPostForm, setShowNewPostForm] = useState(false);
@@ -59,12 +61,12 @@ export default function ForumPost() {
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
       post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ); 
 
   const getPosts = async (forumID) => {
     try {
         const response = await axios.get(`https://test-spotify-site.local:5050/api/posts/public?forumID=${forumID}`);
-        //console.log(response.data);
+        console.log(response.data);
         setPosts(response.data);
         //return response.data;
     } catch(e){
@@ -107,7 +109,7 @@ export default function ForumPost() {
             : post
         )
         );
-
+        console.log(postId);
         await axios.patch(
         `https://test-spotify-site.local:5050/api/posts/${postId}/like`,
         { increment },
@@ -128,8 +130,8 @@ export default function ForumPost() {
         forumID: forumData.id,
         title: newPost.title,
         content: newPost.content,
-        author: "You",
-        authorAvatar: "/placeholder.svg?height=40&width=40",
+        author: user.name,
+        authorAvatar: user.images?.[0]?.url,
         timestamp: Date.now().toString(),
         likes: 0,
         isLiked: false,
@@ -140,7 +142,6 @@ export default function ForumPost() {
       };
 
       //sending to ui right now:
-      setPosts([post, ...posts]);
       setNewPost({ title: "", content: "" });
       setShowNewPostForm(false);
       console.log(params);
@@ -151,6 +152,7 @@ export default function ForumPost() {
             console.log("Public users response:", res.data);
         })
         .catch((err) => console.error("Seeding error", err));
+      getPosts(forumData.id);
     }
   };
 
