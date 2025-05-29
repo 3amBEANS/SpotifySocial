@@ -1,6 +1,7 @@
+const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
-const db = require("../firebase");
+const db = admin.firestore();
 
 // GET /api/users/public
 router.get("/public", async (req, res) => {
@@ -146,8 +147,8 @@ router.post("/seed", async (req, res) => {
     await batch.commit();
     res.status(200).send("Mock users added");
   } catch (err) {
-    console.error("Seeding error:", err);
-    res.status(500).send("Seeding failed");
+    console.error("Error fetching users:", err);
+    res.status(500).json({ error: "Failed to fetch users" });
   }
 });
 

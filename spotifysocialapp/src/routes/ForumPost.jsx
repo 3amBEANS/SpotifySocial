@@ -94,7 +94,7 @@ export default function ForumPost() {
 
   const handleLikePost = async (postId) => {
     try{
-        console.log(postId);
+        // console.log(postId);
         const increment = posts.find((p) => p.id === postId).isLiked ? -1 : 1;
         setPosts(
         posts.map((post) =>
