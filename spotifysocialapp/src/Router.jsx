@@ -12,6 +12,7 @@ import TopSongs from "./routes/TopSongs.jsx";
 import Forum from "./routes/Forum";
 import ForumPost from "./routes/ForumPost";
 import Inbox from "./routes/Inbox";
+import MessagePage from "./routes/MessagePage";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       { path: "forum", element: <Forum /> },
       { path: "forum/:id", element: <ForumPost /> },
       { path: "inbox", element: <Inbox /> },
+      { path: "message", element: <MessagePage /> },
+     
+     
+      
     ],
   },
   { path: "login/callback", element: <LoginCallback /> },

@@ -1,74 +1,64 @@
+const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
-const db = require("../firebase");
+const db = admin.firestore();
 
-// GET /api/users/public
+router.post("/register", async (req, res) => {
+  const { id, display_name, avatar_url, country } = req.body;
+
+  try {
+    const userRef = db.collection("users").doc(id);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+      await userRef.set({
+        name: display_name || "New User", // sets name on first create
+        display_name: display_name || "New User",
+        avatar_url: avatar_url || "",
+        country: country || "US",
+        isPublic: true,
+        bio: "",
+        tags: [],
+        role: "Listener",
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } else {
+      // Make sure to update name if missing
+      const existingData = doc.data();
+      await userRef.update({
+        name: existingData.name || display_name || "New User",
+        display_name: existingData.display_name || display_name,
+        avatar_url: existingData.avatar_url || avatar_url,
+        country: existingData.country || country,
+        isPublic: typeof existingData.isPublic === "boolean" ? existingData.isPublic : true,
+        bio: existingData.bio || "",
+        tags: Array.isArray(existingData.tags) ? existingData.tags : [],
+        role: existingData.role || "Listener",
+      });
+    }
+
+    res.status(200).json({ message: "User synced to Firestore" });
+  } catch (err) {
+    console.error("Error registering user:", err);
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
 router.get("/public", async (req, res) => {
   try {
-    const snapshot = await db.collection("users").where("isPublic", "==", true).get();
+    const usersRef = db.collection("users");
+    const snapshot = await usersRef.where("isPublic", "==", true).get();
 
-    const users = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const users = [];
+    snapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
 
     res.status(200).json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: "Failed to fetch users" });
   }
 });
-
-// GET /api/users/:id
-router.get("/:id", async (req, res) => {
-  try {
-    const doc = await db.collection("users").doc(req.params.id).get();
-    if (!doc.exists) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json({ id: doc.id, ...doc.data() });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-// ✅ POST /api/users/seed
-router.post("/seed", async (req, res) => {
-  try {
-    const mockUsers = [
-      {
-        name: "Jane Doe",
-        bio: "Loves discovering chill beats",
-        avatar: "https://i.pravatar.cc/150?img=5",
-        role: "Listener",
-        isPublic: true,
-        tags: ["Music Lover", "Top Listener"],
-      },
-      {
-        name: "Sam Smith",
-        bio: "Into indie and lo-fi",
-        avatar: "https://i.pravatar.cc/150?img=15",
-        role: "Listener",
-        isPublic: true,
-        tags: ["Indie Head"],
-      },
-    ];
-
-    const batch = db.batch();
-    mockUsers.forEach((user) => {
-      const docRef = db.collection("users").doc(); // auto-ID
-      batch.set(docRef, user);
-    });
-
-    await batch.commit();
-    res.status(200).send("Mock users added");
-  } catch (err) {
-    console.error("Seeding error:", err);
-    res.status(500).send("Seeding failed");
-  }
-});
-
-
 
 module.exports = router;
