@@ -1,1 +1,1 @@
-# SpotifySocial
+# SpotifyConnect
