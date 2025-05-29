@@ -4,11 +4,11 @@
 The purpose of the app is to keep users engaged with Spotify by allowing them to view their top artists and songs, create a profile that other users can view, post in message boards, and message other users. 
 
 # Table of Contents
-Installation
-Login
-Major Components and Features
-Tech Stack
-Credits
+1. [Installation](#Installation)
+2. [Login]
+3. [Major Components and Features]
+4. [Tech Stack]
+5. [Credits]
 
 # Installation 
 Cd into the backend folder and type the command `npm install`, 
