@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../firebase");
 const admin = require('firebase-admin');
 
-// GET /api/forums/public
+// GET https://test-spotify-site.local:5050/api/forums/public
 //get all the forums:
 router.get("/public", async (req, res) => {
   try {
