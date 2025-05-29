@@ -2,11 +2,11 @@
 import React from 'react';
 import { SimpleGrid, Box, Text, Image } from '@chakra-ui/react';
 
-const SongList = ({ displayedCards, type }) => {
+const SongList = ({ displayedCards, type, header }) => {
   
   return (
     <Box>
-      <Text fontSize="2xl" fontWeight="bold" mb={4}>Your Liked Songs</Text>
+      <Text fontSize="2xl" fontWeight="bold" mb={4}>{header}</Text>
       <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={6}>
 
 
@@ -34,7 +34,8 @@ const SongList = ({ displayedCards, type }) => {
                 </>
               ) : (
                 <>
-                  <Text fontWeight="semibold" color="black">{card.artist}</Text>
+                  <Text fontWeight="semibold" color="black">{card.name}</Text>
+                  <Text color="black">{card.genres}</Text>
                 </>
               )}
             </Box>
