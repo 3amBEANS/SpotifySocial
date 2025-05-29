@@ -10,7 +10,11 @@ import { AuthContext } from "../AuthContext";
 const TopSongs = () => {
   const [view, setView] = useState("all"); // 'all' or 'year' or 'month'
   const { user } = useContext(AuthContext);
-  const [topTracks, setTopTracks] = useState([]);
+  const [topTracks, setTopTracks] = useState({
+    all: [],
+    year: [],
+    month: [],
+  });
   const [loading, setLoadingTracks] = useState(true);
   const [error, setTrackError] = useState(null);
 
@@ -19,15 +23,26 @@ const TopSongs = () => {
   }
   useEffect(() => {
     const fetchTopTracks = async () => {
+      const ranges = {
+        all: "long_term",
+        year: "medium_term",
+        month: "short_term",
+      };
       try {
-        const response = await axios.get("https://api.spotify.com/v1/me/top/tracks?limit=20");
-        const tracks = response.data.items.map(track => ({
-          title: track.name,
-          artist: track.artists.map(artist => artist.name).join(", "),
-          album: track.album.name,
-          image: track.album.images[0]?.url,
-        }));
-        setTopTracks(tracks);
+        const results = await Promise.all(
+          Object.entries(ranges).map(async ([key, range]) => {
+            const response = await axios.get(
+              `https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=${range}`
+            );
+            return [key, response.data.items.map(track => ({
+              title: track.name,
+              artist: track.artists.map(artist => artist.name).join(", "),
+              album: track.album.name,
+              image: track.album.images[0]?.url,
+            }))];
+          })
+        );
+        setTopTracks(Object.fromEntries(results));
       } catch (err) {
         console.error("Error fetching top tracks:", err);
         setTrackError("Failed to load top songs.");
@@ -38,18 +53,6 @@ const TopSongs = () => {
   
     if (user) fetchTopTracks();
   }, [user]);
-
-  const pastYearSongs = topTracks.filter((song) => new Date(song.likedAt) > new Date("2024-05-27"));
-  const pastMonthSongs = topTracks.filter((song) => new Date(song.likedAt) > new Date("2025-04-27"));
-
-  let displayedSongs;
-  if (view === "all") {
-    displayedSongs = topTracks;
-  } else if (view === "year") {
-    displayedSongs = pastYearSongs;
-  } else if (view === "month") {
-    displayedSongs = pastMonthSongs;
-  }
 
   if (loading) return <Spinner size="xl" color="green.400" />;
   if (error) return <Text color="white" fontWeight={700} >{error}</Text>;
@@ -64,7 +67,11 @@ const TopSongs = () => {
           heading="Top Songs"
           subheading="Your top-listened songs across time."
         />
-        <SongList displayedCards={displayedSongs} type="song" />
+        <SongList 
+          displayedCards={topTracks[view]} 
+          type="song" 
+          header={"Your Top Songs of " + (view === 'all' ? "All Time" : view === 'year' ? "the Past Year" : "the Past Month")}
+        />
       </Box>
     </Flex>
   );

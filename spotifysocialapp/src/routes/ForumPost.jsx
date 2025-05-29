@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import {
   Box,
   Flex,
@@ -51,15 +51,32 @@ export default function ForumPost() {
     postCount: 3240,
   };
 
-  // Mock posts data
+  // pulled from Firebase posts data
   const [posts, setPosts] = useState([]);
 
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
       post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  const getPosts = async (forumID) => {
+    try {
+        const response = await axios.get(`https://test-spotify-site.local:5050/api/posts/public?forumID=${forumID}`);
+        //console.log(response.data);
+        setPosts(response.data);
+        //return response.data;
+    } catch(e){
+        console.error("Error fetching posts:", e);
+    }    
+  }
+
+  useEffect(() => {
+    if(forumData.id){
+        getPosts(forumData.id);
+    }    
+  }, [forumData.id]);
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
@@ -75,29 +92,45 @@ export default function ForumPost() {
     }
   });
 
-  const handleLikePost = (postId) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1,
-            }
-          : post
-      )
-    );
+  const handleLikePost = async (postId) => {
+    try{
+        console.log(postId);
+        const increment = posts.find((p) => p.id === postId).isLiked ? -1 : 1;
+        setPosts(
+        posts.map((post) =>
+            post.id === postId
+            ? {
+                ...post,
+                isLiked: !post.isLiked,
+                likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+                }
+            : post
+        )
+        );
+
+        await axios.patch(
+        `https://test-spotify-site.local:5050/api/posts/${postId}/like`,
+        { increment },
+        { withCredentials: false }
+        );
+    }catch(e){
+        console.error("Failed to update like:", e);
+        // Rollback on error (can change later if too laggy)
+        setPosts(posts);
+    }
+    
+
   };
 
   const handleCreatePost = () => {
     if (newPost.title.trim() && newPost.content.trim()) {
       const post = {
-        id: Date.now().toString(),
+        forumID: forumData.id,
         title: newPost.title,
         content: newPost.content,
         author: "You",
         authorAvatar: "/placeholder.svg?height=40&width=40",
-        timestamp: "Just now",
+        timestamp: Date.now().toString(),
         likes: 0,
         isLiked: false,
         replies: 0,
@@ -116,7 +149,6 @@ export default function ForumPost() {
       axios.post("https://test-spotify-site.local:5050/api/posts/seed", post, { withCredentials: false })
         .then((res) => {
             console.log("Public users response:", res.data);
-            setPosts([post, ...posts]);
         })
         .catch((err) => console.error("Seeding error", err));
     }
