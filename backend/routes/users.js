@@ -97,7 +97,7 @@ router.post("/:id/setup", async (req, res) => {
       {
         username,
         createdAt: formatted,
-        avatar_url,
+        avatar_url: req.body.avatar_url,
         display_name,
         location,
         isPublic: true,
