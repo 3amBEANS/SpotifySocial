@@ -48,7 +48,7 @@ function Step1Avatar({ spotifyAvatar, avatarPreview, onUpload, onSkip, onNext })
       <HStack spacing={4}>
         <Button
           onClick={() => {
-            onSkip(); // sets avatarUrl to null
+            onSkip(); // sets avatar_url to null
             onNext(); // immediately jump to Step 2
           }}
         >
@@ -62,7 +62,7 @@ function Step1Avatar({ spotifyAvatar, avatarPreview, onUpload, onSkip, onNext })
   );
 }
 
-function Step2Info({ displayName, location, onChangeName, onChangeLocation, onConfirm }) {
+function Step2Info({ display_name, location, onChangeName, onChangeLocation, onConfirm }) {
   return (
     <>
       <Heading size="md" mb={4}>
@@ -70,7 +70,7 @@ function Step2Info({ displayName, location, onChangeName, onChangeLocation, onCo
       </Heading>
       <FormControl mb={4}>
         <FormLabel>Display Name</FormLabel>
-        <Input value={displayName} onChange={(e) => onChangeName(e.target.value)} />
+        <Input value={display_name} onChange={(e) => onChangeName(e.target.value)} />
       </FormControl>
       <FormControl mb={6}>
         <FormLabel>Location (City, State/Country)</FormLabel>
@@ -105,8 +105,8 @@ export default function UserProfile() {
 
   // Setup profile
   const [step, setStep] = useState(1);
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [displayName, setDisplayName] = useState("");
+  const [avatar_url, setAvatarUrl] = useState(null);
+  const [display_name, setDisplayName] = useState("");
   const [location, setLocation] = useState("");
 
   useEffect(() => {
@@ -209,7 +209,7 @@ export default function UserProfile() {
           {step === 1 ? (
             <Step1Avatar
               spotifyAvatar={user.images?.[0]?.url}
-              avatarPreview={avatarUrl}
+              avatarPreview={avatar_url}
               onUpload={(file) =>
                 uploadToStorage(file).then((u) => {
                   setAvatarUrl(u);
@@ -223,20 +223,20 @@ export default function UserProfile() {
             />
           ) : (
             <Step2Info
-              displayName={displayName}
+              display_name={display_name}
               location={location}
               onChangeName={setDisplayName}
               onChangeLocation={setLocation}
               onConfirm={async () => {
                 try {
                   const id = user.id;
-                  const finalAvatar = avatarUrl ?? user.images?.[0]?.url ?? "";
+                  const finalAvatar = avatar_url ?? user.images?.[0]?.url ?? "";
 
                   await axios.post(`/api/users/${id}/setup`, {
                     username: user.display_name.toLowerCase().replace(/\s+/g, "_"),
                     createdAt: new Date().toISOString(),
-                    avatarUrl: finalAvatar,
-                    displayName,
+                    avatar_url: finalAvatar,
+                    display_name,
                     location,
                   });
                   // re-fetch new profile + top
@@ -263,7 +263,7 @@ export default function UserProfile() {
   // Existing user: show normal profile
   // Prepare the prop shape for ProfileCard
   const cardProfile = {
-    name: profileData.displayName ?? profileData.display_name ?? "",
+    name: profileData.display_name ?? profileData.display_name ?? "",
     username: profileData.username,
     bio: profileData.bio,
     location: profileData.location,
@@ -286,7 +286,7 @@ export default function UserProfile() {
           {/* profile card */}
           <ProfileCard
             profile={cardProfile}
-            avatarUrl={avatarUrl ?? profileData.avatarUrl}
+            avatar_url={avatar_url ?? profileData.avatar_url}
             isEditing={isEditing}
             isPrivate={isPrivate}
             showTopArtists={showTopArtists}

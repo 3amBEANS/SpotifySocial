@@ -20,7 +20,7 @@ import "../../styles/userProfile.css";
 
 export default function ProfileHeader({
   profile,
-  avatarUrl,
+  avatar_url,
   isEditing,
   isPrivate,
   showTopArtists,
@@ -44,7 +44,7 @@ export default function ProfileHeader({
             <HStack className="profile-card-avatar-stack">
               <Avatar
                 size="xl"
-                src={avatarUrl || profile.avatarUrl || "/placeholder.svg?height=96&width=96"}
+                src={avatar_url || profile.avatar_url || "/placeholder.svg?height=96&width=96"}
                 name={profile.name.slice(0, 2)}
                 className="profile-card-avatar"
               />

@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
 // POST /api/users/:id/setup
 router.post("/:id/setup", async (req, res) => {
   try {
-    const { username, createdAt, avatarUrl, displayName, location } = req.body;
+    const { username, createdAt, avatar_url, display_name, location } = req.body;
     const formatted = new Date().toLocaleString("default", {
       month: "long",
       year: "numeric",
@@ -97,8 +97,8 @@ router.post("/:id/setup", async (req, res) => {
       {
         username,
         createdAt: formatted,
-        avatarUrl,
-        displayName,
+        avatar_url,
+        display_name,
         location,
         isPublic: true,
         bio: "",
