@@ -1,14 +1,12 @@
 import { React, useState, useEffect, useContext } from "react";
 import { AuthContext } from '../AuthContext';
-import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text, Heading } from "@chakra-ui/react";
 import LibrarySidebar from "../components/LibrarySidebar";
-import LikedSongsHeader from "../components/LikedSongsHeader";
 import SongList from "../components/SongList";
 import "../styles/library.css";
 import axios from 'axios';
 
 const LikedSongs = () => {
-  const [view, setView] = useState("all"); // 'all' or 'recent'
   const { user } = useContext(AuthContext);
   const [likedSongs, setLikedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +41,12 @@ const LikedSongs = () => {
     <Flex className="liked-songs-page">
       <LibrarySidebar />
       <Box flex="1" p={8} className="content-area">
-        <LikedSongsHeader view={view} setView={setView} />
+        {/* Liked Songs Header */}
+        <Box textAlign="center" mb={10}>
+        <Heading mb={2}>Liked Songs</Heading>
+        <Text mb={4}>A collection of your favorite tracks.</Text>
+        </Box>
+        {/* Song List */}
         <SongList displayedCards={likedSongs} type="song" header="Your Recently Liked Songs" />
       </Box>
     </Flex>
