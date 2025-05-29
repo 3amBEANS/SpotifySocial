@@ -16,20 +16,41 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { MdOutlineLogout, MdOutlineLogin } from "react-icons/md";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import axios from "axios";
 import "../styles/Navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [searchOpen, setSearchOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
-  const [loginOpen, setLoginOpen] = useState(false);
 
-  // track whether the header should be visible
+  const [profileSetup, setProfileSetup] = useState(false);
+  const [navAvatarUrl, setNavAvatarUrl] = useState(null);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
-  // remember last scroll position
   const lastScrollY = useRef(0);
 
+  // Fetch isProfileSetup so we know if user signed
+  useEffect(() => {
+    if (!user) {
+      setProfileSetup(false);
+      setNavAvatarUrl(null);
+      return;
+    }
+    axios
+      .get(`/api/users/${user.id}`)
+      .then((res) => {
+        setProfileSetup(!!res.data.isProfileSetup);
+        setNavAvatarUrl(res.data.avatar_url || null);
+      })
+      .catch(() => {
+        setProfileSetup(false);
+        setNavAvatarUrl(null);
+      });
+  }, [user, pathname]);
+
+  // Hide header on scroll down
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
@@ -56,7 +77,7 @@ export default function Navbar() {
 
   // All links go to login modal if not logged in
   const handleNavigation = (label) => {
-    if (!user) {
+    if (!profileSetup) {
       setLoginOpen(true);
       return;
     }
@@ -127,13 +148,10 @@ export default function Navbar() {
           </Box>
 
           {/* Profile / Sign In toggle */}
-          {user ? (
+          {profileSetup ? (
             <>
-              <Link
-                to="/profile"
-                className={`avatar-link ${pathname === "/profile" ? "active" : ""}`}
-              >
-                <Avatar name="A" size="sm" />
+              <Link to="/profile" className="avatar-link">
+                <Avatar src={navAvatarUrl || undefined} name={user.display_name} size="sm" />
               </Link>
 
               {/* vertical line between avatar & logout */}
