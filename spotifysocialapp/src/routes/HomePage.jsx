@@ -1,5 +1,7 @@
-"use client";
-
+import { useState, useContext, useEffect } from "react";
+import axios from "axios";
+import { keyframes } from "@emotion/react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -15,10 +17,13 @@ import {
   Container,
   Heading,
   SimpleGrid,
+  Image,
 } from "@chakra-ui/react";
 import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa";
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+
+import { AuthContext } from "../AuthContext";
+import LoginModal from "../components/LoginModal";
 
 export default function HomePage() {
   // Mock data
@@ -104,33 +109,105 @@ export default function HomePage() {
     },
   ];
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const [profileSetup, setProfileSetup] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const filmArtists = [...localFilmArtists, ...localFilmArtists];
+
+  useEffect(() => {
+    if (!user) {
+      setProfileSetup(false);
+      return;
+    }
+    axios
+      .get(`/api/users/${user.id}`)
+      .then((res) => setProfileSetup(res.data.isProfileSetup))
+      .catch(() => setProfileSetup(false));
+  }, [user]);
+
+  // If profile is setup, go to path, otherwise show login modal
+  const handleProtectedNav = (path) => {
+    if (profileSetup) {
+      navigate(path);
+    } else {
+      setLoginOpen(true);
+    }
+  };
+
+  const localFilmArtists = Array.from({ length: 20 }, (_, i) => ({
+    id: i + 1,
+    imageUrl: `/assets/artists/${i + 1}.jpg`,
+  }));
+
+  const scroll = keyframes`
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  `;
 
   return (
-    <Box minH="100vh" bg="black">
+    <Box minH="100vh">
       {/* Hero Section */}
-      <Box bg="linear-gradient(135deg, #71B340 0%, #669D31 100%)" py={20}>
-        <Container maxW="6xl">
-          <VStack spacing={6} textAlign="center">
-            <Heading size="2xl" color="black" fontWeight="bold">
-              Welcome to Spotify Connect
-            </Heading>
-            <Text fontSize="lg" color="blackAlpha.800" maxW="2xl">
-              Engage with your favorite tracks and connect with other music lovers. Discover new
-              sounds, share your taste, and join the conversation.
-            </Text>
-            <Button
-              size="lg"
-              bg="black"
-              color="white"
-              _hover={{ bg: "blackAlpha.800" }}
-              rightIcon={<Icon as={FaArrowRight} />}
-              onClick={() => (window.location.href = "/profile")}
+      {/* <Box h="200px" bg="gray.900" overflow="hidden" position="relative" mb={8}> */}
+      <Box position="relative" minH="240px" overflow="hidden" mb={8}>
+        {/* <Flex
+          as="div"
+          animation={`${scroll} 60s linear infinite`}
+          width="200%" // we duplicate the list
+        > */}
+        <Flex
+          as="div"
+          position="absolute"
+          top={0}
+          left={0}
+          w="200%" // duplicate list
+          h="100%"
+          animation={`${scroll} 60s linear infinite`}
+          zIndex={0}
+        >
+          {[...filmArtists, ...filmArtists].map((artist, i) => (
+            <Box
+              key={`${artist.id}-${i}`}
+              flex="0 0 auto"
+              w="120px"
+              h="240px"
+              mx="2"
+              overflow="hidden"
+              bg="gray.800"
             >
-              Explore Your Profile
-            </Button>
-          </VStack>
+              <Image src={artist.imageUrl} alt={artist.name} objectFit="cover" w="100%" h="100%" />
+            </Box>
+          ))}
+        </Flex>
+        <Container maxW="6xl" position="relative" zIndex={1} pt={16} pb={8} textAlign="center">
+          {/* <VStack spacing={6} textAlign="center"> */}
+          <Heading size="2xl" color="white" fontWeight="bold" mb={4}>
+            Welcome to Spotify Connect
+          </Heading>
+          <Text fontSize="lg" color="whiteAlpha.800" maxW="2xl" mx="auto" my={6}>
+            Engage with your favorite tracks and connect with other music lovers. Discover new
+            sounds, share your taste, and join the conversation.
+          </Text>
+          <Button
+            size="lg"
+            bg="#93C259"
+            color="white"
+            _hover={{ bg: "blackAlpha.800" }}
+            rightIcon={<Icon as={FaArrowRight} />}
+            onClick={() => handleProtectedNav("/profile")}
+          >
+            Explore Your Profile
+          </Button>
+          {/* </VStack> */}
         </Container>
       </Box>
+
+      {/* Login Modal */}
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+
+      {/* <Box bg="linear-gradient(135deg, #71B340 0%, #669D31 100%)" py={20}> */}
+
+      {/* <Container maxW="6xl" py={16}> */}
+      {/* </Box> */}
 
       <Container maxW="6xl" py={16}>
         <VStack spacing={16} align="stretch">
@@ -142,11 +219,11 @@ export default function HomePage() {
               </Heading>
               <Text color="whiteAlpha.600">Here are the songs you love the most</Text>
               <Button
-                bg="spotify.primary"
-                color="black"
+                bg="#93C259"
+                color="white"
                 _hover={{ opacity: 0.9 }}
-                leftIcon={<Icon as={FaPlay} />}
-                onClick={() => (window.location.href = "/")}
+                leftIcon={<Icon as={FaPlay} color="white" boxSize="4" m="4" />}
+                onClick={() => handleProtectedNav("/library/liked-songs")}
               >
                 Listen Again
               </Button>
@@ -196,11 +273,11 @@ export default function HomePage() {
               </Heading>
               <Text color="whiteAlpha.600">Artists you can't get enough of</Text>
               <Button
-                bg="spotify.primary"
-                color="black"
+                bg="#93C259"
+                color="white"
                 _hover={{ opacity: 0.9 }}
                 leftIcon={<Icon as={FaUsers} />}
-                onClick={() => (window.location.href = "/")}
+                onClick={() => handleProtectedNav("/library/top-artists")}
               >
                 View All Artists
               </Button>
@@ -238,143 +315,6 @@ export default function HomePage() {
             </SimpleGrid>
           </Box>
 
-          {/* Latest Forum Discussions
-          <Box>
-            <VStack spacing={6} textAlign="center" mb={8}>
-              <Heading size="xl" color="white">
-                Latest Forum Discussions
-              </Heading>
-              <Text color="whiteAlpha.600">Join the conversation with other music lovers</Text>
-              <Button
-                bg="spotify.primary"
-                color="black"
-                _hover={{ opacity: 0.9 }}
-                leftIcon={<Icon as={FaCommentDots} />}
-                onClick={() => (window.location.href = "/forum")}
-              >
-                Create New Post
-              </Button>
-            </VStack>
-            <VStack spacing={4} align="stretch">
-              {forumPosts.map((post) => (
-                <Card
-                  key={post.id}
-                  bg="#1a1a1a"
-                  border="none"
-                  _hover={{ bg: "#222" }}
-                  transition="background 0.2s"
-                  cursor="pointer"
-                  onClick={() => (window.location.href = "/forum")}
-                >
-                  <CardBody>
-                    <VStack spacing={4} align="stretch">
-                      <Box
-                        w="100%"
-                        h="200px"
-                        bg="whiteAlpha.100"
-                        borderRadius="lg"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Text color="whiteAlpha.400" fontSize="sm">
-                          Post Image
-                        </Text>
-                      </Box>
-                      <VStack spacing={2} align="flex-start">
-                        <Text fontWeight="bold" color="white" fontSize="lg">
-                          {post.title}
-                        </Text>
-                        <HStack spacing={4} fontSize="sm" color="whiteAlpha.600">
-                          <Text>{post.author}</Text>
-                          <Text>{post.timestamp}</Text>
-                        </HStack>
-                        <HStack spacing={4}>
-                          <HStack spacing={1}>
-                            <Icon as={FaHeart} color="whiteAlpha.600" boxSize={4} />
-                            <Text color="whiteAlpha.600" fontSize="sm">
-                              {post.likes}
-                            </Text>
-                          </HStack>
-                          <HStack spacing={1}>
-                            <Icon as={FaCommentDots} color="whiteAlpha.600" boxSize={4} />
-                            <Text color="whiteAlpha.600" fontSize="sm">
-                              {post.replies}
-                            </Text>
-                          </HStack>
-                        </HStack>
-                      </VStack>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </VStack>
-          </Box> */}
-
-          {/* Discover Public Profiles
-          <Box>
-            <VStack spacing={6} textAlign="center" mb={8}>
-              <Heading size="xl" color="white">
-                Discover Public Profiles
-              </Heading>
-              <Text color="whiteAlpha.600">Explore what other users are listening to</Text>
-            </VStack>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
-              {publicProfiles.map((profile) => (
-                <Card
-                  key={profile.id}
-                  bg="#1a1a1a"
-                  border="none"
-                  _hover={{ bg: "#222" }}
-                  transition="background 0.2s"
-                  cursor="pointer"
-                  onClick={() => (window.location.href = "/discover")}
-                >
-                  <CardBody>
-                    <VStack spacing={4}>
-                      <Box position="relative">
-                        <Avatar
-                          size="xl"
-                          src={profile.avatar}
-                          bg="spotify.tertiary"
-                          color="white"
-                          name={profile.name}
-                        />
-                        {profile.isOnline && (
-                          <Box
-                            position="absolute"
-                            bottom="0"
-                            right="0"
-                            w={6}
-                            h={6}
-                            borderRadius="full"
-                            border="3px solid"
-                            borderColor="#1a1a1a"
-                            bg="spotify.primary"
-                          />
-                        )}
-                      </Box>
-                      <Text fontWeight="bold" color="white">
-                        {profile.name}
-                      </Text>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </SimpleGrid>
-            <Flex justify="center">
-              <Button
-                bg="spotify.primary"
-                color="black"
-                _hover={{ opacity: 0.9 }}
-                rightIcon={<Icon as={FaArrowRight} />}
-                onClick={() => (window.location.href = "/discover")}
-              >
-                View More
-              </Button>
-            </Flex>
-          </Box> */}
-
           {/* Quick Navigation Cards */}
           <Box>
             <VStack spacing={6} textAlign="center" mb={8}>
@@ -393,7 +333,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate("/profile")}
+                onClick={() => handleProtectedNav("/profile")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -424,7 +364,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate("/library/liked-songs")}
+                onClick={() => handleProtectedNav("/library/liked-songs")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -455,7 +395,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate("/library/top-artists")}
+                onClick={() => handleProtectedNav("/library/top-artists")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
@@ -486,7 +426,7 @@ export default function HomePage() {
                 _hover={{ bg: "#222", transform: "translateY(-4px)" }}
                 transition="all 0.2s"
                 cursor="pointer"
-                onClick={() => navigate("/library/top-songs")}
+                onClick={() => handleProtectedNav("/library/top-songs")}
               >
                 <CardBody textAlign="center">
                   <VStack spacing={4}>
