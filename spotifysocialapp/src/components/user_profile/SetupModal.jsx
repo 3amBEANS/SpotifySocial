@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,9 +17,9 @@ import {
   FormLabel,
   FormErrorMessage,
   Image as ChakraImage,
+  Text,
 } from "@chakra-ui/react";
 import { CloseIcon, EditIcon } from "@chakra-ui/icons";
-import { useRef, useState } from "react";
 
 export default function SetupModal({
   isOpen,
@@ -33,6 +34,11 @@ export default function SetupModal({
   onConfirm,
 }) {
   const fileInput = useRef();
+
+  //   const [nameError, setNameError] = useState("");
+
+  const [avatarError, setAvatarError] = useState("");
+  const [locationError, setLocationError] = useState("");
   const [createError, setCreateError] = useState("");
 
   const handleCreateDefault = () => {
@@ -41,6 +47,7 @@ export default function SetupModal({
       return;
     }
     setCreateError("");
+
     const letter = display_name.trim()[0].toUpperCase();
     const size = 150;
     const canvas = document.createElement("canvas");
@@ -59,6 +66,36 @@ export default function SetupModal({
     // get data-URL and set it
     const dataUrl = canvas.toDataURL("image/png");
     setAvatarUrl(dataUrl);
+    setAvatarError("");
+  };
+
+  const handleConfirm = () => {
+    let valid = true;
+
+    if (!avatar_url) {
+      setAvatarError("Please choose/upload an avatar.");
+      valid = false;
+    } else {
+      setAvatarError("");
+    }
+
+    if (!display_name.trim()) {
+      setCreateError("Please fill out this field.");
+      valid = false;
+    } else {
+      setCreateError("");
+    }
+
+    if (!location.trim()) {
+      setLocationError("Please fill out this field.");
+      valid = false;
+    } else {
+      setLocationError("");
+    }
+
+    if (valid) {
+      onConfirm();
+    }
   };
 
   return (
@@ -124,6 +161,12 @@ export default function SetupModal({
                 </Box>
               </Box>
 
+              {avatarError && (
+                <Text color="red.500" fontSize="sm" textAlign="center">
+                  {avatarError}
+                </Text>
+              )}
+
               <HStack spacing={2}>
                 <Button
                   w="100%"
@@ -131,7 +174,12 @@ export default function SetupModal({
                   bg="black"
                   color="white"
                   _hover={{ bg: "#2d3748" }}
-                  onClick={() => setAvatarUrl(user.images?.[0]?.url || "")}
+                  onClick={() => {
+                    const url = user.images?.[0]?.url || null;
+                    setAvatarUrl(url);
+                    // clear only if there really *was* a Spotify avatar
+                    if (url) setAvatarError("");
+                  }}
                 >
                   Use Spotify Avatar
                 </Button>
@@ -142,7 +190,10 @@ export default function SetupModal({
                   color="black"
                   border="1px solid black"
                   _hover={{ bg: "red", color: "white" }}
-                  onClick={() => setAvatarUrl(null)}
+                  onClick={() => {
+                    setAvatarUrl(null);
+                    setAvatarError("");
+                  }}
                 >
                   Clear
                 </Button>
@@ -188,9 +239,9 @@ export default function SetupModal({
                       // quality between 0.5–0.8 gives good results without huge size
                       const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
                       setAvatarUrl(compressedDataUrl);
+                      setAvatarError("");
                     };
                   };
-
                   // clear input so same file retriggers onChange
                   e.target.value = "";
                 }}
@@ -213,14 +264,18 @@ export default function SetupModal({
                   <FormErrorMessage>{createError}</FormErrorMessage>
                 </FormControl>
 
-                <FormControl>
+                <FormControl isInvalid={!!locationError}>
                   <FormLabel color="white">Location</FormLabel>
                   <Input
                     bg="white"
                     placeholder="City, State or Country"
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      if (locationError) setLocationError("");
+                    }}
                   />
+                  <FormErrorMessage>{locationError}</FormErrorMessage>
                 </FormControl>
               </VStack>
             </Box>
@@ -228,7 +283,7 @@ export default function SetupModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="green" onClick={onConfirm}>
+          <Button colorScheme="green" onClick={handleConfirm}>
             Confirm
           </Button>
         </ModalFooter>
