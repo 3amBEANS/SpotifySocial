@@ -44,72 +44,111 @@ export default function UserProfile() {
   const [showTopSongs, setShowTopSongs] = useState(true);
   const [showLikedSongs, setShowLikedSongs] = useState(true);
 
+  const [topArtists, setTopArtists] = useState([]);
+  const [topSongs, setTopSongs] = useState([]);
+  const [likedSongs, setLikedSongs] = useState([]);
+
+
   useEffect(() => {
     if (!user) return;
     const id = user.id;
     setLoading(true);
-
+  
     axios
       .get(`/api/users/${id}`)
       .then((res) => {
         const data = res.data;
-
+  
         if (!data.isProfileSetup) {
           setIsNew(true);
           setDisplayName(data.spotifyDisplayName || "");
-          // stop further loading
           setLoading(false);
           return;
         }
-
-        // existing user, continue with normal flow
+  
         setProfileData(data);
         setIsPrivate(!data.isPublic);
-        return axios.get(`/api/users/${id}/top`);
-      })
-      .then((res) => {
-        if (!res) return;
-
-        const { topArtists = [], topSongs = [], likedSongs = [] } = res.data;
-        setProfileData((pd) => ({
-          ...pd,
-          topArtists: topArtists.slice(0, 4),
-          topSongs: topSongs.slice(0, 4),
-          likedSongs: likedSongs.slice(0, 4),
-        }));
       })
       .catch((err) => {
         console.error(err);
         toast({ description: "Failed to load profile", status: "error" });
       })
       .finally(() => {
-        // make sure we only hide the spinner once
         if (!isNew) setLoading(false);
       });
-  }, [user, toast, isNew]);
+  }, [user, toast, isNew]);  
 
-  // const [profile, setProfile] = useState({
-  //   name: "Alex Rivera",
-  //   username: "@alexmusic",
-  //   bio: "Music enthusiast | Always discovering new sounds | Currently obsessed with indie rock and electronic beats 🎵",
-  //   location: "San Francisco, CA",
-  //   joinDate: "June 2023",
-  // });
+  {
+    /* fetch user's liked songs */
+  }
+  useEffect(() => {
+    const fetchLikedSongs = async () => {
+      try {
+        const response = await axios.get("https://api.spotify.com/v1/me/tracks?limit=5");
+        const songs = response.data.items.map(item => ({
+          title: item.track.name,
+          artist: item.track.artists.map(artist => artist.name).join(", "),
+          album: item.track.album.name,
+          image: item.track.album.images[0]?.url,
+        }));
+        setLikedSongs(songs);
+      } catch (err) {
+        console.error("Error fetching liked songs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // const topArtists = [
-  //   { name: "Tame Impala", image: "/placeholder.svg?height=80&width=80", followers: "2.1M" },
-  //   { name: "Phoebe Bridgers", image: "/placeholder.svg?height=80&width=80", followers: "1.8M" },
-  //   { name: "Mac Miller", image: "/placeholder.svg?height=80&width=80", followers: "3.2M" },
-  //   { name: "FKA twigs", image: "/placeholder.svg?height=80&width=80", followers: "1.5M" },
-  // ];
+    if (user) fetchLikedSongs();
+  }, [user]);
 
-  // const topSongs = [
-  //   { title: "The Less I Know The Better", artist: "Tame Impala", plays: "127" },
-  //   { title: "Motion Sickness", artist: "Phoebe Bridgers", plays: "89" },
-  //   { title: "Good News", artist: "Mac Miller", plays: "156" },
-  //   { title: "Two Weeks", artist: "FKA twigs", plays: "73" },
-  // ];
-  // On mount: check if user exists, fetch profile + top-4
+  {
+    /* fetch user's top songs */
+  }
+  useEffect(() => {
+    const fetchTopSongs = async () => {
+      try {
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=short_term`);   
+          const songs = response.data.items.map(track => ({
+            title: track.name,
+            artist: track.artists.map(artist => artist.name).join(", "),
+            album: track.album.name,
+            image: track.album.images[0]?.url,
+          }));
+        setTopSongs(songs);
+      } catch (err) {
+        console.error("Error fetching top songs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (user) fetchTopSongs();
+  }, [user]);
+
+  {
+    /* fetch top artists */
+  }
+  useEffect(() => {
+    const fetchTopArtists = async () => {
+      try {
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short_term`);   
+          const artists = response.data.items.map(item => ({
+            name: item.name,
+            image: item.images[0]?.url,
+            genres: item.genres.join(", "),
+            id: item.id,
+          }));
+        setTopArtists(artists);
+      } catch (err) {
+        console.error("Error fetching top artists:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (user) fetchTopArtists();
+  }, [user]);
 
   if (authLoading) {
     return (
@@ -163,14 +202,6 @@ export default function UserProfile() {
             });
 
             // re-fetch profile & hide modal
-            const pd = (await axios.get(`/api/users/${id}`)).data;
-            const tops = (await axios.get(`/api/users/${id}/top`)).data;
-            setProfileData({
-              ...pd,
-              topArtists: tops.topArtists.slice(0, 4),
-              topSongs: tops.topSongs.slice(0, 4),
-              likedSongs: tops.likedSongs.slice(0, 4),
-            });
             setIsNew(false);
             window.location.reload();
           } catch {
@@ -184,11 +215,11 @@ export default function UserProfile() {
   // Existing user: show normal profile
   // Prepare the prop shape for ProfileCard
   const cardProfile = {
-    name: profileData.display_name ?? profileData.display_name ?? "",
-    username: profileData.username,
-    bio: profileData.bio,
-    location: profileData.location,
-    joinDate: profileData.createdAt || "Unknown",
+    name: profileData?.display_name ?? profileData?.name ?? "",
+    username: profileData?.username,
+    bio: profileData?.bio,
+    location: profileData?.location,
+    joinDate: profileData?.createdAt || "Unknown",
   };
 
   return (
@@ -207,7 +238,7 @@ export default function UserProfile() {
           {/* profile card */}
           <ProfileCard
             profile={cardProfile}
-            avatar_url={avatar_url ?? profileData.avatar_url}
+            avatar_url={avatar_url ?? profileData?.avatar_url}
             isEditing={isEditing}
             isPrivate={isPrivate}
             showTopArtists={showTopArtists}
@@ -227,17 +258,17 @@ export default function UserProfile() {
           <Grid className="user-profile-grid">
             {showTopArtists && (
               <GridItem>
-                <TopArtistsCard data={profileData.topArtists} />
+                <TopArtistsCard data={topArtists} />
               </GridItem>
             )}
             {showTopSongs && (
               <GridItem>
-                <TopSongsCard data={profileData.topSongs} />
+                <TopSongsCard data={topSongs} />
               </GridItem>
             )}
             {showLikedSongs && (
               <GridItem className="liked-songs-item">
-                <LikedSongsCard count={profileData.likedSongs.length} />
+                <LikedSongsCard data={likedSongs} />
               </GridItem>
             )}
           </Grid>

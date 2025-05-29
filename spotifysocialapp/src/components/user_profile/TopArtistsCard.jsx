@@ -19,7 +19,7 @@ export default function TopArtistsCard({ data }) {
       <CardHeader>
         <HStack justify="space-between">
           <HStack>
-            <Icon as={FaUsers} color="spotify.primary" />
+            <Icon as={FaUsers} color="white" />
             <Text color="white" fontWeight="semibold">
               Top Artists
             </Text>
@@ -32,6 +32,7 @@ export default function TopArtistsCard({ data }) {
           </Badge>
         </HStack>
       </CardHeader>
+      
       <CardBody>
         <VStack spacing={3} align="stretch">
           {data.map((artist, i) => (
@@ -46,7 +47,7 @@ export default function TopArtistsCard({ data }) {
               <Text color="whiteAlpha.600" fontFamily="mono" fontSize="sm" w={6}>
                 {i + 1}
               </Text>
-              <Avatar size="md" src={artist.image} bg="spotify.tertiary" color="white" />
+              <Avatar size="md" src={artist.image || `https://via.placeholder.com/300?text=Artist+${artist.name}`} bg="spotify.tertiary" color="white" />
               <Box flex={1}>
                 <Text fontWeight="medium" color="white">
                   {artist.name}
