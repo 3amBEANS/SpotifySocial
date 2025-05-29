@@ -32,6 +32,9 @@ app.use("/api/messages", messageRouter);
 const postsRouter = require("./routes/posts");
 app.use("/api/posts", postsRouter);
 
+const forumsRouter = require("./routes/forums");
+app.use("/api/forums", forumsRouter);
+
 const options = {
   key: fs.readFileSync("test-spotify-site.local-key.pem"),
   cert: fs.readFileSync("test-spotify-site.local.pem"),

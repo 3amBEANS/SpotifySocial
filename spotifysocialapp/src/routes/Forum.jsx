@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState } from "react"
 import {
   Box,
   Flex,
@@ -9,6 +9,8 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Textarea,
+  Select,
   Badge,
   Avatar,
   Card,
@@ -21,8 +23,18 @@ import {
   WrapItem,
   Grid,
   GridItem,
-} from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+} from "@chakra-ui/react"
 import {
   FaCommentDots,
   FaUsers,
@@ -31,14 +43,22 @@ import {
   FaHeart,
   FaComment,
   FaShare,
-} from "react-icons/fa";
+  FaPlus,
+} from "react-icons/fa"
 import { FaArrowTrendUp } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { SearchIcon } from "@chakra-ui/icons"
 
 export default function ForumPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [newForum, setNewForum] = useState({
+    title: "",
+    description: "",
+    category: "Discussion",
+    isPrivate: false,
+  })
 
   const forums = [
     {
@@ -61,16 +81,7 @@ export default function ForumPage() {
           timestamp: "5 minutes ago",
           likes: 23,
           replies: 8,
-        },
-        {
-          id: "2",
-          title: "Weekly New Release Thread - What's everyone listening to?",
-          author: "Jordan Smith",
-          authorAvatar: "/placeholder.svg?height=40&width=40",
-          timestamp: "1 hour ago",
-          likes: 156,
-          replies: 47,
-        },
+        }
       ],
     },
     {
@@ -188,33 +199,47 @@ export default function ForumPage() {
         },
       ],
     },
-  ];
+  ]
 
-  const categories = [
-    "all",
-    "Discovery",
-    "Discussion",
-    "Events",
-    "Production",
-    "Collecting",
-    "Education",
-  ];
+  const categories = ["all", "Discovery", "Discussion", "Events", "Production", "Collecting", "Education"]
 
   const filteredForums = forums.filter((forum) => {
     const matchesSearch =
       forum.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      forum.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || forum.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+      forum.description.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCategory = selectedCategory === "all" || forum.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
   const handleForumClick = (forumId) => {
-    navigate(`/forum/${forumId}`);
-  };
+    window.location.href = `/forum/${forumId}`
+  }
 
   const handleLikePost = (postId) => {
-    console.log("Liked post:", postId);
-  };
+    console.log("Liked post:", postId)
+  }
+
+  const handleCreateForum = () => {
+    if (newForum.title.trim() && newForum.description.trim()) {
+      const forum = {
+        id: Date.now().toString(),
+        name: newForum.title,
+        description: newForum.description,
+        category: newForum.category,
+        memberCount: 1,
+        postCount: 0,
+        lastActivity: "Just now",
+        isPopular: false,
+        isPinned: false,
+        moderators: ["@you"],
+        recentPosts: [],
+      }
+      // In a real app, this would make an API call
+      console.log("Creating forum:", forum)
+      setNewForum({ title: "", description: "", category: "Discussion", isPrivate: false })
+      onClose()
+    }
+  }
 
   return (
     <Box minH="100vh" p={4} bg="black">
@@ -226,14 +251,20 @@ export default function ForumPage() {
               <Text fontSize="3xl" fontWeight="bold" color="white">
                 Community Forums
               </Text>
-              <Badge bg="spotify.primary" color="FFFFFFDE" px={3} py={1}>
-                {forums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}{" "}
-                members
-              </Badge>
+              <Button
+                onClick={onOpen}
+                bg="spotify.primary"
+                color="white"
+                border="1px solid"
+                borderColor="white"
+                _hover={{ opacity: 0.9 }}
+                leftIcon={<Icon as={FaPlus} />}
+              >
+                Create Forum
+              </Button>
             </Flex>
             <Text color="whiteAlpha.600">
-              Join discussions about music, discover new artists, and connect with fellow music
-              lovers
+              Join discussions about music, discover new artists, and connect with fellow music lovers
             </Text>
           </VStack>
 
@@ -261,12 +292,12 @@ export default function ForumPage() {
                     variant={selectedCategory === category ? "solid" : "outline"}
                     size="sm"
                     onClick={() => setSelectedCategory(category)}
-                    bg={selectedCategory === category ? "spotify.primary" : "transparent"}
+                    bg={selectedCategory === category ? "green" : "transparent"}
                     borderColor="spotify.primary"
-                    color={selectedCategory === category ? "FFFFFFDE" : "spotify.primary"}
+                    color={selectedCategory === category ? "white" : "spotify.primary"}
                     _hover={{
                       bg: selectedCategory === category ? "spotify.primary" : "spotify.primary",
-                      color: selectedCategory === category ? "FFFFFFDE" : "FFFFFFFF",
+                      color: selectedCategory === category ? "gray" : "gray",
                     }}
                     textTransform="capitalize"
                     whiteSpace="nowrap"
@@ -281,24 +312,11 @@ export default function ForumPage() {
           {/* Forums Grid */}
           <VStack spacing={6} align="stretch">
             {filteredForums.map((forum) => (
-              <Card
-                key={forum.id}
-                bg="#1a1a1a"
-                border="none"
-                _hover={{ bg: "#222" }}
-                transition="background 0.2s"
-              >
+              <Card key={forum.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
                 <CardHeader pb={4}>
                   <Flex justify="space-between" align="flex-start">
                     <HStack spacing={3} align="flex-start">
-                      <Flex
-                        w={12}
-                        h={12}
-                        borderRadius="lg"
-                        bg="spotify.primary"
-                        align="center"
-                        justify="center"
-                      >
+                      <Flex w={12} h={12} borderRadius="lg" bg="spotify.primary" align="center" justify="center">
                         <Icon as={FaCommentDots} color="white" boxSize={6} />
                       </Flex>
                       <Box flex={1}>
@@ -310,12 +328,10 @@ export default function ForumPage() {
                             cursor="pointer"
                             transition="color 0.2s"
                             onClick={() => handleForumClick(forum.id)}
-                          >
+                          > 
                             {forum.name}
                           </Text>
-                          {forum.isPinned && (
-                            <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />
-                          )}
+                          {forum.isPinned && <Icon as={FaThumbtack} color="spotify.primary" boxSize={4} />}
                           {forum.isPopular && (
                             <Badge bg="spotify.secondary" color="white">
                               <HStack spacing={1}>
@@ -367,12 +383,7 @@ export default function ForumPage() {
                         onClick={() => handleForumClick(forum.id)}
                       >
                         <HStack spacing={3} align="flex-start">
-                          <Avatar
-                            size="sm"
-                            src={post.authorAvatar}
-                            bg="spotify.tertiary"
-                            color="white"
-                          />
+                          <Avatar size="sm" src={post.authorAvatar} bg="spotify.tertiary" color="white" />
                           <Box flex={1} minW={0}>
                             <Text
                               color="white"
@@ -396,8 +407,8 @@ export default function ForumPage() {
                                 _hover={{ color: "spotify.primary" }}
                                 leftIcon={<Icon as={FaHeart} />}
                                 onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleLikePost(post.id);
+                                  e.stopPropagation()
+                                  handleLikePost(post.id)
                                 }}
                               >
                                 {post.likes}
@@ -426,7 +437,7 @@ export default function ForumPage() {
                   <Box mt={4} pt={3} borderTop="1px solid" borderColor="whiteAlpha.100">
                     <Flex justify="space-between" align="center" fontSize="xs">
                       <HStack spacing={2} color="whiteAlpha.500">
-                        <Text>Moderated by:</Text>
+                        <Text>Created by:</Text>
                         <HStack spacing={1}>
                           {forum.moderators.map((mod, index) => (
                             <Text key={index} color="spotify.primary">
@@ -440,7 +451,7 @@ export default function ForumPage() {
                         variant="outline"
                         borderColor="spotify.primary"
                         color="spotify.primary"
-                        _hover={{ bg: "spotify.primary", color: "black" }}
+                        _hover={{ bg: "spotify.primary", color: "gray" }}
                         onClick={() => handleForumClick(forum.id)}
                       >
                         View Forum
@@ -476,9 +487,7 @@ export default function ForumPage() {
               </GridItem>
               <GridItem>
                 <Text fontSize="2xl" fontWeight="bold" color="white">
-                  {filteredForums
-                    .reduce((total, forum) => total + forum.postCount, 0)
-                    .toLocaleString()}
+                  {filteredForums.reduce((total, forum) => total + forum.postCount, 0).toLocaleString()}
                 </Text>
                 <Text fontSize="sm" color="whiteAlpha.600">
                   Total Posts
@@ -486,9 +495,7 @@ export default function ForumPage() {
               </GridItem>
               <GridItem>
                 <Text fontSize="2xl" fontWeight="bold" color="white">
-                  {filteredForums
-                    .reduce((total, forum) => total + forum.memberCount, 0)
-                    .toLocaleString()}
+                  {filteredForums.reduce((total, forum) => total + forum.memberCount, 0).toLocaleString()}
                 </Text>
                 <Text fontSize="sm" color="whiteAlpha.600">
                   Community Members
@@ -496,8 +503,146 @@ export default function ForumPage() {
               </GridItem>
             </Grid>
           </Box>
+
+          {/* Create Forum Modal */}
+          <Modal isOpen={isOpen} onClose={onClose} size="xl">
+            <ModalOverlay bg="blackAlpha.800" />
+            <ModalContent bg="#1a1a1a" border="1px solid" borderColor="whiteAlpha.200">
+              <ModalHeader color="white">Create New Forum</ModalHeader>
+              <ModalCloseButton color="white" />
+              <ModalBody>
+                <VStack spacing={6} align="stretch">
+                  <FormControl isRequired>
+                    <FormLabel color="white">Forum Title</FormLabel>
+                    <Input
+                      placeholder="Enter forum title..."
+                      value={newForum.title}
+                      onChange={(e) => setNewForum({ ...newForum, title: e.target.value })}
+                      bg="whiteAlpha.100"
+                      border="1px solid"
+                      borderColor="whiteAlpha.200"
+                      color="white"
+                      _placeholder={{ color: "whiteAlpha.400" }}
+                    />
+                    <FormHelperText color="whiteAlpha.600">
+                      Choose a clear, descriptive title for your forum
+                    </FormHelperText>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel color="white">Description</FormLabel>
+                    <Textarea
+                      placeholder="Describe what this forum is about..."
+                      value={newForum.description}
+                      onChange={(e) => setNewForum({ ...newForum, description: e.target.value })}
+                      bg="whiteAlpha.100"
+                      border="1px solid"
+                      borderColor="whiteAlpha.200"
+                      color="white"
+                      _placeholder={{ color: "whiteAlpha.400" }}
+                      resize="none"
+                      rows={4}
+                    />
+                    <FormHelperText color="whiteAlpha.600">
+                      Explain the purpose and topics covered in this forum
+                    </FormHelperText>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel color="white">Category</FormLabel>
+                    <Select
+                      value={newForum.category}
+                      onChange={(e) => setNewForum({ ...newForum, category: e.target.value })}
+                      bg="whiteAlpha.100"
+                      border="1px solid"
+                      borderColor="whiteAlpha.200"
+                      color="white"
+                    >
+                      <option value="Discovery" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Discovery
+                      </option>
+                      <option value="Discussion" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Discussion
+                      </option>
+                      <option value="Events" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Events
+                      </option>
+                      <option value="Production" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Production
+                      </option>
+                      <option value="Collecting" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Collecting
+                      </option>
+                      <option value="Education" style={{ backgroundColor: "#1a1a1a", color: "white" }}>
+                        Education
+                      </option>
+                    </Select>
+                    <FormHelperText color="whiteAlpha.600">
+                      Select the most appropriate category for your forum
+                    </FormHelperText>
+                  </FormControl>
+
+                  <Box p={4} bg="whiteAlpha.50" borderRadius="lg">
+                    <VStack spacing={3} align="stretch">
+                      <Text color="white" fontWeight="medium" fontSize="sm">
+                        Forum Settings
+                      </Text>
+                      <HStack justify="space-between">
+                        <VStack align="flex-start" spacing={1}>
+                          <Text color="white" fontSize="sm">
+                            Initial Moderator
+                          </Text>
+                          <Text color="whiteAlpha.600" fontSize="xs">
+                            You will be the initial moderator
+                          </Text>
+                        </VStack>
+                        <Badge bg="spotify.primary" color="white">
+                          @you
+                        </Badge>
+                      </HStack>
+                      <HStack justify="space-between">
+                        <VStack align="flex-start" spacing={1}>
+                          <Text color="white" fontSize="sm">
+                            Visibility
+                          </Text>
+                          <Text color="whiteAlpha.600" fontSize="xs">
+                            Forum will be public by default
+                          </Text>
+                        </VStack>
+                        <Badge variant="outline" borderColor="whiteAlpha.200" color="whiteAlpha.600">
+                          Public
+                        </Badge>
+                      </HStack>
+                    </VStack>
+                  </Box>
+                </VStack>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  variant="outline"
+                  mr={3}
+                  onClick={onClose}
+                  borderColor="whiteAlpha.200"
+                  color="white"
+                  _hover={{ bg: "whiteAlpha.100" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateForum}
+                  bg="spotify.primary"
+                  color="white"
+                  _hover={{ opacity: 0.9 }}
+                  isDisabled={!newForum.title.trim() || !newForum.description.trim()}
+                >
+                  Create Forum
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </VStack>
       </Box>
     </Box>
-  );
+  )
 }
