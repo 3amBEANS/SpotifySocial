@@ -2,9 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import {
   Box,
   Button,
-  Flex,
   Heading,
-  Input,
   Select,
   Text,
   Textarea,
@@ -13,7 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { AuthContext } from "../AuthContext";
 import { db } from "../firebase";
-import { collection, getDocs, query, where, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 export default function MessageForm() {
   const [recipient, setRecipient] = useState("");
@@ -59,7 +64,6 @@ export default function MessageForm() {
 
   return (
     <Box flex="1" bg="gray.900" color="white">
-
       <Box p={10} maxW="800px">
         <Heading size="md" mb={4}>
           Send a Message
@@ -72,10 +76,12 @@ export default function MessageForm() {
               placeholder="Select a recipient"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
+              bg="white"
+              color="black"
             >
               {users.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.name || u.display_name}
+                  {u.name || u.display_name || "Unnamed User"}
                 </option>
               ))}
             </Select>
@@ -90,6 +96,8 @@ export default function MessageForm() {
               placeholder="Type your message here..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              bg="white"
+              color="black"
             />
             <Text fontSize="sm" color="gray.400">
               No spam or inappropriate content!
@@ -97,10 +105,22 @@ export default function MessageForm() {
           </Box>
 
           <HStack pt={4}>
-            <Button variant="outline" onClick={handleSend}>
+            <Button
+              variant="outline"
+              borderColor="white"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              onClick={handleSend}
+            >
               Send
             </Button>
-            <Button variant="outline" onClick={handleCancel}>
+            <Button
+              variant="outline"
+              borderColor="white"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
           </HStack>
@@ -109,5 +129,3 @@ export default function MessageForm() {
     </Box>
   );
 }
-
-

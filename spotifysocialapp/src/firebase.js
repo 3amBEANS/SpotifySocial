@@ -21,8 +21,8 @@ const app = initializeApp(firebaseConfig);
 // Only keep one import + usage of getAnalytics
 const analytics = getAnalytics(app);
 
-// ✅ Setup Firestore
+// Setup Firestore
 const db = getFirestore(app);
 
-// ✅ Export the Firestore db
+// Export the Firestore db
 export { db };
