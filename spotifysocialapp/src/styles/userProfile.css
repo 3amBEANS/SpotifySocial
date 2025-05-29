@@ -60,8 +60,10 @@
    Styles for ProfileCard.jsx
    ======================================== */
 .profile-card {
-  background-color: #1a1a1a !important;
+  background-color: #3a42366b !important;
+  /* old color: 1a1a1a */
   margin-top: 0;
+  border-radius: 10px !important;
 }
 .profile-card-header {
   padding-bottom: 1rem !important;
