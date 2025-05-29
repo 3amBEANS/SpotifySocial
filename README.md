@@ -5,9 +5,9 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 
 # Table of Contents
 1. [Installation](#Installation)
-2. [Login](#Login)
-3. [Major Components and Features](#MajorComponentsandFeatures)
-4. [Tech Stack](#TechStack)
+2. [Login](#How Login Works)
+3. [Major Components and Features](#Major Components and Features)
+4. [Tech Stack](#Tech Stack)
 5. [Credits](#Credits)
 
 # Installation 
