@@ -44,6 +44,10 @@ export default function ForumPost() {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
 
+  //Get User's Data:
+  const [avatar_url, setAvatarUrl] = useState(null);
+  const [display_name, setDisplayName] = useState("");
+
   // Mock forum data
   const forumData = {
     id: params.id,
