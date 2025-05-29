@@ -9,6 +9,7 @@ import {
   VStack,
   Box,
   Flex,
+  Avatar
 } from "@chakra-ui/react";
 import { FaMusic } from "react-icons/fa";
 import { FaArrowTrendUp } from "react-icons/fa6";
@@ -19,7 +20,7 @@ export default function TopSongsCard({ data }) {
       <CardHeader>
         <HStack justify="space-between">
           <HStack>
-            <Icon as={FaMusic} color="spotify.primary" />
+            <Icon as={FaMusic} color="white" />
             <Text color="white" fontWeight="semibold">
               Top Songs
             </Text>
@@ -32,6 +33,7 @@ export default function TopSongsCard({ data }) {
           </Badge>
         </HStack>
       </CardHeader>
+      
       <CardBody>
         <VStack spacing={3} align="stretch">
           {data.map((song, i) => (
@@ -54,24 +56,20 @@ export default function TopSongsCard({ data }) {
                 align="center"
                 justify="center"
               >
-                <Icon as={FaMusic} color="white" />
+                <Avatar size="md" src={song.image || `https://via.placeholder.com/300?text=Album+art+of+${song.title}`} bg="spotify.tertiary" color="white" />
               </Flex>
               <Box flex={1}>
                 <Text fontWeight="medium" color="white">
                   {song.title}
                 </Text>
-                <Text fontSize="sm" color="whiteAlpha.600">
+                <Text fontSize="sm" color="whiteAlpha.800">
                   {song.artist}
                 </Text>
-              </Box>
-              <Box textAlign="right">
-                <Text fontSize="sm" fontWeight="medium" color="white">
-                  {song.plays}
-                </Text>
-                <Text fontSize="xs" color="whiteAlpha.600">
-                  plays
+                <Text fontSize="sm" fontWeight="sm" color="whiteAlpha.600">
+                  {song.album}
                 </Text>
               </Box>
+             
             </HStack>
           ))}
         </VStack>

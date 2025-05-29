@@ -43,88 +43,87 @@ export default function UserProfile() {
   const [showTopArtists, setShowTopArtists] = useState(true);
   const [showTopSongs, setShowTopSongs] = useState(true);
   const [showLikedSongs, setShowLikedSongs] = useState(true);
-  const [topX, setTopX] = useState({
-    likedSongs: [],
-    topArtists: [],
-    topSongs: [],
-  });
+
+  const [topArtists, setTopArtists] = useState([]);
+  const [topSongs, setTopSongs] = useState([]);
+  const [likedSongs, setLikedSongs] = useState([]);
+
 
   useEffect(() => {
     if (!user) return;
     const id = user.id;
     setLoading(true);
-
+  
     axios
       .get(`/api/users/${id}`)
       .then((res) => {
         const data = res.data;
-
+  
         if (!data.isProfileSetup) {
           setIsNew(true);
           setDisplayName(data.spotifyDisplayName || "");
-          // stop further loading
           setLoading(false);
           return;
         }
-
-        // existing user, continue with normal flow
+  
         setProfileData(data);
         setIsPrivate(!data.isPublic);
-        return axios.get(`/api/users/${id}/top`);
-      })
-      .then((res) => {
-        if (!res) return;
-
-        const { topArtists = [], topSongs = [], likedSongs = [] } = res.data;
-        setProfileData((pd) => ({
-          ...pd,
-          topArtists: topArtists.slice(0, 4),
-          topSongs: topSongs.slice(0, 4),
-          likedSongs: likedSongs.slice(0, 4),
-        }));
       })
       .catch((err) => {
         console.error(err);
         toast({ description: "Failed to load profile", status: "error" });
       })
       .finally(() => {
-        // make sure we only hide the spinner once
         if (!isNew) setLoading(false);
       });
-  }, [user, toast, isNew]);
+  }, [user, toast, isNew]);  
 
   {
-    /* fetch user's liked songs and top songs */
+    /* fetch user's liked songs */
   }
   useEffect(() => {
-    const fetchTopX = async () => {
-      const ranges = {
-        likedSongs: "top/tracks?limit=5&time_range=short_term",
-        topSongs: "tracks?limit=50",
-      };
+    const fetchLikedSongs = async () => {
       try {
-        const results = await Promise.all(
-          Object.entries(ranges).map(async ([key, range]) => {
-            const response = await axios.get(
-              `https://api.spotify.com/v1/me/${range}`
-            );
-            return [key, response.data.items.map(track => ({
-              title: track.name,
-              artist: track.artists.map(artist => artist.name).join(", "),
-              album: track.album.name,
-              image: track.album.images[0]?.url,
-            }))];
-          })
-        );
-        setTopX(Object.fromEntries(results));
+        const response = await axios.get("https://api.spotify.com/v1/me/tracks?limit=5");
+        const songs = response.data.items.map(item => ({
+          title: item.track.name,
+          artist: item.track.artists.map(artist => artist.name).join(", "),
+          album: item.track.album.name,
+          image: item.track.album.images[0]?.url,
+        }));
+        setLikedSongs(songs);
       } catch (err) {
-        console.error("Error fetching top tracks:", err);
+        console.error("Error fetching liked songs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) fetchLikedSongs();
+  }, [user]);
+
+  {
+    /* fetch user's top songs */
+  }
+  useEffect(() => {
+    const fetchTopSongs = async () => {
+      try {
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=short_term`);   
+          const songs = response.data.items.map(track => ({
+            title: track.name,
+            artist: track.artists.map(artist => artist.name).join(", "),
+            album: track.album.name,
+            image: track.album.images[0]?.url,
+          }));
+        setTopSongs(songs);
+      } catch (err) {
+        console.error("Error fetching top songs:", err);
       } finally {
         setLoading(false);
       }
     };
   
-    if (user) fetchTopX();
+    if (user) fetchTopSongs();
   }, [user]);
 
   {
@@ -133,14 +132,14 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchTopArtists = async () => {
       try {
-          const response = await axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short-term`);          
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short_term`);   
           const artists = response.data.items.map(item => ({
             name: item.name,
             image: item.images[0]?.url,
             genres: item.genres.join(", "),
             id: item.id,
           }));
-        setTopX.topArtists(Object.fromEntries(artists));
+        setTopArtists(artists);
       } catch (err) {
         console.error("Error fetching top artists:", err);
       } finally {
@@ -203,14 +202,6 @@ export default function UserProfile() {
             });
 
             // re-fetch profile & hide modal
-            const pd = (await axios.get(`/api/users/${id}`)).data;
-            const tops = (await axios.get(`/api/users/${id}/top`)).data;
-            setProfileData({
-              ...pd,
-              topArtists: tops.topArtists.slice(0, 4),
-              topSongs: tops.topSongs.slice(0, 4),
-              likedSongs: tops.likedSongs.slice(0, 4),
-            });
             setIsNew(false);
             window.location.reload();
           } catch {
@@ -224,11 +215,11 @@ export default function UserProfile() {
   // Existing user: show normal profile
   // Prepare the prop shape for ProfileCard
   const cardProfile = {
-    name: profileData.display_name ?? profileData.display_name ?? "",
-    username: profileData.username,
-    bio: profileData.bio,
-    location: profileData.location,
-    joinDate: profileData.createdAt || "Unknown",
+    name: profileData?.display_name ?? profileData?.name ?? "",
+    username: profileData?.username,
+    bio: profileData?.bio,
+    location: profileData?.location,
+    joinDate: profileData?.createdAt || "Unknown",
   };
 
   return (
@@ -247,7 +238,7 @@ export default function UserProfile() {
           {/* profile card */}
           <ProfileCard
             profile={cardProfile}
-            avatar_url={avatar_url ?? profileData.avatar_url}
+            avatar_url={avatar_url ?? profileData?.avatar_url}
             isEditing={isEditing}
             isPrivate={isPrivate}
             showTopArtists={showTopArtists}
@@ -267,17 +258,17 @@ export default function UserProfile() {
           <Grid className="user-profile-grid">
             {showTopArtists && (
               <GridItem>
-                <TopArtistsCard data={topX.topArtists} />
+                <TopArtistsCard data={topArtists} />
               </GridItem>
             )}
             {showTopSongs && (
               <GridItem>
-                <TopSongsCard data={topX.topSongs} />
+                <TopSongsCard data={topSongs} />
               </GridItem>
             )}
             {showLikedSongs && (
               <GridItem className="liked-songs-item">
-                <LikedSongsCard count={topX.likedSongs.length} />
+                <LikedSongsCard data={likedSongs} />
               </GridItem>
             )}
           </Grid>
