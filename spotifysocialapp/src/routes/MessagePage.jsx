@@ -9,15 +9,28 @@ import {
   VStack,
   HStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../AuthContext";
+import axios from "axios";
 
 export default function MessagePage() {
   const [recipient, setRecipient] = useState("");
   const [message, setMessage] = useState("");
+  const { user } = useContext(AuthContext);
 
-  const handleSend = () => {
-    console.log("Send to:", recipient);
-    console.log("Message:", message);
+  const handleSend = async () => {
+    if (!recipient || !message) return;
+    try {
+      await axios.post("/api/messages/send", {
+        from: user.id,
+        to: recipient,
+        message,
+      });
+      setMessage("");
+      setRecipient("");
+    } catch (err) {
+      console.error("Error sending message:", err);
+    }
   };
 
   const handleCancel = () => {
@@ -53,12 +66,12 @@ export default function MessagePage() {
             <Box w="100%">
               <Text mb={1}>To</Text>
               <Input
-                placeholder="Enter username"
+                placeholder="Enter user ID"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
               />
               <Text fontSize="sm" color="gray.400">
-                Type the username of the person you wish to message.
+                Paste the user ID you wish to message.
               </Text>
             </Box>
 
