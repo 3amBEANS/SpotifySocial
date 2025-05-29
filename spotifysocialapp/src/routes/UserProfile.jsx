@@ -172,6 +172,7 @@ export default function UserProfile() {
               likedSongs: tops.likedSongs.slice(0, 4),
             });
             setIsNew(false);
+            window.location.reload();
           } catch {
             toast({ description: "Setup failed", status: "error" });
           }

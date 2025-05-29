@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect, useContext} from "react";
 import {
   Box,
   Flex,
@@ -34,13 +34,19 @@ import {
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../AuthContext";
+import TimeAgo from 'react-timeago';
 
 export default function ForumPost() {
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
+
+  // pulled from Firebase posts data
+  const [posts, setPosts] = useState([]);
 
   // Mock forum data
   const forumData = {
@@ -51,15 +57,14 @@ export default function ForumPost() {
     postCount: 3240,
   };
 
-  // pulled from Firebase posts data
-  const [posts, setPosts] = useState([]);
+  
 
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
       post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  ); 
 
   const getPosts = async (forumID) => {
     try {
@@ -107,7 +112,7 @@ export default function ForumPost() {
             : post
         )
         );
-
+        console.log(postId);
         await axios.patch(
         `https://test-spotify-site.local:5050/api/posts/${postId}/like`,
         { increment },
@@ -122,14 +127,18 @@ export default function ForumPost() {
 
   };
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
+
+    const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
+    //console.log(response); <-- used for debugging purposes
+
     if (newPost.title.trim() && newPost.content.trim()) {
       const post = {
         forumID: forumData.id,
         title: newPost.title,
         content: newPost.content,
-        author: "You",
-        authorAvatar: "/placeholder.svg?height=40&width=40",
+        author: response.data.display_name,
+        authorAvatar: response.data.avatar_url,
         timestamp: Date.now().toString(),
         likes: 0,
         isLiked: false,
@@ -140,10 +149,9 @@ export default function ForumPost() {
       };
 
       //sending to ui right now:
-      setPosts([post, ...posts]);
       setNewPost({ title: "", content: "" });
       setShowNewPostForm(false);
-      console.log(params);
+      //console.log(params);
 
       //later, updating the backend stuff:
       axios.post("https://test-spotify-site.local:5050/api/posts/seed", post, { withCredentials: false })
@@ -151,6 +159,7 @@ export default function ForumPost() {
             console.log("Public users response:", res.data);
         })
         .catch((err) => console.error("Seeding error", err));
+      getPosts(forumData.id);
     }
   };
 
@@ -325,7 +334,7 @@ export default function ForumPost() {
                         <Text>•</Text>
                         <HStack spacing={1}>
                           <Icon as={FaClock} boxSize={3} />
-                          <Text>{post.timestamp}</Text>
+                          <TimeAgo date={parseInt(post.timestamp)} />
                         </HStack>
                       </HStack>
                     </Box>
