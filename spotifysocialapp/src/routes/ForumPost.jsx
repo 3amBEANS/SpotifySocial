@@ -35,6 +35,7 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
+import TimeAgo from 'react-timeago';
 
 export default function ForumPost() {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -44,9 +45,8 @@ export default function ForumPost() {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
 
-  //Get User's Data:
-  const [avatar_url, setAvatarUrl] = useState(null);
-  const [display_name, setDisplayName] = useState("");
+  // pulled from Firebase posts data
+  const [posts, setPosts] = useState([]);
 
   // Mock forum data
   const forumData = {
@@ -57,8 +57,7 @@ export default function ForumPost() {
     postCount: 3240,
   };
 
-  // pulled from Firebase posts data
-  const [posts, setPosts] = useState([]);
+  
 
   const filteredPosts = posts.filter(
     (post) =>
@@ -70,7 +69,7 @@ export default function ForumPost() {
   const getPosts = async (forumID) => {
     try {
         const response = await axios.get(`https://test-spotify-site.local:5050/api/posts/public?forumID=${forumID}`);
-        console.log(response.data);
+        //console.log(response.data);
         setPosts(response.data);
         //return response.data;
     } catch(e){
@@ -128,14 +127,18 @@ export default function ForumPost() {
 
   };
 
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
+
+    const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
+    //console.log(response); <-- used for debugging purposes
+
     if (newPost.title.trim() && newPost.content.trim()) {
       const post = {
         forumID: forumData.id,
         title: newPost.title,
         content: newPost.content,
-        author: user.name,
-        authorAvatar: user.images?.[0]?.url,
+        author: response.data.display_name,
+        authorAvatar: response.data.avatar_url,
         timestamp: Date.now().toString(),
         likes: 0,
         isLiked: false,
@@ -148,7 +151,7 @@ export default function ForumPost() {
       //sending to ui right now:
       setNewPost({ title: "", content: "" });
       setShowNewPostForm(false);
-      console.log(params);
+      //console.log(params);
 
       //later, updating the backend stuff:
       axios.post("https://test-spotify-site.local:5050/api/posts/seed", post, { withCredentials: false })
@@ -331,7 +334,7 @@ export default function ForumPost() {
                         <Text>•</Text>
                         <HStack spacing={1}>
                           <Icon as={FaClock} boxSize={3} />
-                          <Text>{post.timestamp}</Text>
+                          <TimeAgo date={parseInt(post.timestamp)} />
                         </HStack>
                       </HStack>
                     </Box>

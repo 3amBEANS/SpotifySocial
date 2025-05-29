@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -48,8 +48,11 @@ import {
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { SearchIcon } from "@chakra-ui/icons"
 import axios from "axios";
+import { AuthContext } from "../AuthContext";
+import TimeAgo from 'react-timeago';
 
 export default function ForumPage() {
+  const { user, loading: authLoading } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
 
@@ -94,25 +97,29 @@ export default function ForumPage() {
     console.log("Liked post:", postId)
   }
 
-  const handleCreateForum = () => {
+  const handleCreateForum = async () => {
+    const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`); 
     if (newForum.title.trim() && newForum.description.trim()) {
       const forum = {
-        id: Date.now().toString(),
         name: newForum.title,
         description: newForum.description,
         category: newForum.category,
         memberCount: 1,
         postCount: 0,
-        lastActivity: "Just now",
+        lastActivity: Date.now().toString(),
         isPopular: false,
         isPinned: false,
-        moderators: ["@you"],
+        moderators: [response.data.username],
         recentPosts: [],
       }
-      // In a real app, this would make an API call
       console.log("Creating forum:", forum)
-      setNewForum({ title: "", description: "", category: "Discussion", isPrivate: false })
-      onClose()
+      axios.post("https://test-spotify-site.local:5050/api/forums/seed", forum, { withCredentials: false })
+        .then((res) => {
+            console.log("Public users response:", res.data);
+        })
+        .catch((err) => console.error("Seeding error", err));
+      getForums();
+      onClose();
     }
   }
   
@@ -234,7 +241,8 @@ export default function ForumPage() {
                           </HStack>
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
-                            <Text>Last activity {forum.lastActivity}</Text>
+                            <Text>Last Activity:</Text>
+                            <TimeAgo date={parseInt(forum.lastActivity)} />
                           </HStack>
                         </HStack>
                       </Box>
@@ -320,7 +328,7 @@ export default function ForumPage() {
                         <HStack spacing={1}>
                           {forum.moderators.map((mod, index) => (
                             <Text key={index} color="spotify.primary">
-                              {mod}
+                              @{mod}
                             </Text>
                           ))}
                         </HStack>
