@@ -35,8 +35,6 @@ export default function SetupModal({
 }) {
   const fileInput = useRef();
 
-  //   const [nameError, setNameError] = useState("");
-
   const [avatarError, setAvatarError] = useState("");
   const [locationError, setLocationError] = useState("");
   const [createError, setCreateError] = useState("");
