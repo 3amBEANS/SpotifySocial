@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../firebase");
+const fetch = require("node-fetch");
 
 // ✅ GET /api/users/public – returns only public users with id + display_name
 router.get("/public", async (req, res) => {
   try {
     const snapshot = await db.collection("users").where("isPublic", "==", true).get();
+<<<<<<< HEAD
 
     const users = snapshot.docs.map((doc) => {
       const data = doc.data();
@@ -16,6 +18,12 @@ router.get("/public", async (req, res) => {
       };
     });
 
+=======
+    const users = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+>>>>>>> main
     res.status(200).json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -147,8 +155,13 @@ router.post("/seed", async (req, res) => {
     await batch.commit();
     res.status(200).send("Mock users added");
   } catch (err) {
+<<<<<<< HEAD
     console.error("Error seeding users:", err);
     res.status(500).json({ error: "Failed to seed users" });
+=======
+    console.error("Seeding error:", err);
+    res.status(500).send("Seeding failed");
+>>>>>>> main
   }
 });
 
