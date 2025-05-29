@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import React from 'react';
 import { Box, VStack, Icon, Text } from '@chakra-ui/react';
-import { FaMusic, FaUser, FaList, FaHeart } from 'react-icons/fa';
+import { FaMusic, FaUser, FaHeart } from 'react-icons/fa';
 
 const LibrarySidebar = () => {
   return (
@@ -55,22 +55,6 @@ const LibrarySidebar = () => {
         >
           <Icon as={FaMusic} mr={2} />
           <Text>Top Songs</Text>
-        </Box>
-        
-        {/* Playlists Tab (STRETCH) */} 
-        <Box 
-          display="flex" 
-          alignItems="center"
-          p={2}
-          borderRadius="md"
-          _hover={{
-            bg: "gray.100",
-            color: "#43b164",
-            cursor: "pointer"
-          }}
-        >
-          <Icon as={FaList} mr={2} />
-          <Text>Playlists</Text>
         </Box>
       </VStack>
     </Box>
