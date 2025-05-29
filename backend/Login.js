@@ -100,15 +100,23 @@ router.get(`/callback`, async (req, res) => {
     // Insert into Firestore
     const userRef = db.collection("users").doc(profile.id);
     const snap = await userRef.get();
+
     if (!snap.exists) {
-      await userRef.set({
-        display_name: profile.display_name || null,
-        country: profile.country || null,
-        avatar_url: profile.images?.[0]?.url || null,
-        createdAt: FieldValue.serverTimestamp(),
-        isPublic: true, // default visibility
-        bio: "", // empty bio
-        tags: [], // empty tags array
+      // first login: insert *only* Spotify-related fields
+      await userRef.set(
+        {
+          accessToken: access_token,
+          refreshToken: refresh_token,
+          isProfileSetup: false,
+        },
+        { merge: true }
+      );
+    } else {
+      // subsequent logins: just refresh tokens
+      await userRef.update({
+        accessToken: access_token,
+        refreshToken: refresh_token,
+        lastLoginAt: FieldValue.serverTimestamp(),
       });
     }
 
