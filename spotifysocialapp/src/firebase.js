@@ -1,5 +1,3 @@
-// src/firebase.js
-
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -12,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "spotifysocial-92ec4.firebasestorage.app",
   messagingSenderId: "628170083975",
   appId: "1:628170083975:web:a01a246c93adb631753222",
-  measurementId: "G-X0PCZ9CNYL"
+  measurementId: "G-X0PCZ9CNYL",
 };
 
 // Initialize Firebase

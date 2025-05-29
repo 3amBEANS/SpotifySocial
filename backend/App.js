@@ -8,6 +8,17 @@ const port = 5050;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.json({
+    limit: "10mb",
+  })
+);
+app.use(
+  express.urlencoded({
+    limit: "10mb",
+    extended: true,
+  })
+);
 
 //Setting up Firebase-admin privileges:
 const db = require("./firebase");
