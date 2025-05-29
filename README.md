@@ -5,10 +5,10 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 
 # Table of Contents
 1. [Installation](#Installation)
-2. [Login]
-3. [Major Components and Features]
-4. [Tech Stack]
-5. [Credits]
+2. [Login](#Login)
+3. [Major Components and Features](#MajorComponentsandFeatures)
+4. [Tech Stack](#TechStack)
+5. [Credits](#Credits)
 
 # Installation 
 Cd into the backend folder and type the command `npm install`, 
