@@ -1,7 +1,6 @@
-const admin = require("firebase-admin");
 const express = require("express");
 const router = express.Router();
-const db = admin.firestore();
+const db = require("../firebase");
 
 // GET /api/users/public
 router.get("/public", async (req, res) => {
