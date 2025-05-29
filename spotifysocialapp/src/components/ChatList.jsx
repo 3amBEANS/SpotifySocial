@@ -2,12 +2,21 @@ import React, { useEffect, useState, useContext } from "react";
 import { Box, VStack, Text, Spinner, Heading, Divider } from "@chakra-ui/react";
 import { AuthContext } from "../AuthContext";
 import { db } from "../firebase";
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 
 export default function ChatList() {
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userCache, setUserCache] = useState({});
 
   useEffect(() => {
     if (!user) return;
@@ -18,9 +27,34 @@ export default function ChatList() {
       orderBy("timestamp", "desc")
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const chats = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setMessages(chats);
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const enriched = await Promise.all(
+        snapshot.docs.map(async (docSnap) => {
+          const msg = docSnap.data();
+
+          // Helper to get display_name by ID
+          const getDisplayName = async (uid) => {
+            if (userCache[uid]) return userCache[uid];
+            const ref = doc(db, "users", uid);
+            const snap = await getDoc(ref);
+            const name = snap.exists() ? snap.data().display_name : "Unknown";
+            setUserCache((prev) => ({ ...prev, [uid]: name }));
+            return name;
+          };
+
+          const fromName = await getDisplayName(msg.from);
+          const toName = await getDisplayName(msg.to);
+
+          return {
+            id: docSnap.id,
+            ...msg,
+            fromName,
+            toName,
+          };
+        })
+      );
+
+      setMessages(enriched);
       setLoading(false);
     });
 
@@ -48,9 +82,9 @@ export default function ChatList() {
           messages.map((msg) => (
             <Box key={msg.id} p={4} bg="gray.700" borderRadius="md">
               <Text fontWeight="bold">
-                {msg.fromName === user.display_name ? `To ${msg.toName}` : `From ${msg.fromName}`}
+                {msg.from === user.id ? `To ${msg.toName}` : `From ${msg.fromName}`}
               </Text>
-              <Text mt={1}>{msg.text}</Text>
+              <Text mt={1}>{msg.message}</Text>
               <Text fontSize="xs" color="gray.400" mt={2}>
                 {new Date(msg.timestamp?.toDate()).toLocaleString()}
               </Text>
@@ -61,3 +95,4 @@ export default function ChatList() {
     </Box>
   );
 }
+
