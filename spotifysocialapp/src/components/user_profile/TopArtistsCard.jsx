@@ -51,9 +51,7 @@ export default function TopArtistsCard({ data }) {
                 <Text fontWeight="medium" color="white">
                   {artist.name}
                 </Text>
-                <Text fontSize="sm" color="whiteAlpha.600">
-                  {artist.followers} followers
-                </Text>
+                <Text fontSize="sm" color="whiteAlpha.600"></Text>
               </Box>
             </HStack>
           ))}

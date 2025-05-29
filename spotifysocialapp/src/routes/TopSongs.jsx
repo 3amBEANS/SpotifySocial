@@ -39,6 +39,7 @@ const TopSongs = () => {
               artist: track.artists.map(artist => artist.name).join(", "),
               album: track.album.name,
               image: track.album.images[0]?.url,
+              id: track.id
             }))];
           })
         );

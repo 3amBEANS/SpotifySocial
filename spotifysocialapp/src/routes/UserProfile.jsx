@@ -9,94 +9,24 @@ import {
   GridItem,
   Icon,
   Spinner,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  Heading,
-  Avatar,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
   useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { AuthContext } from "../AuthContext"; // To get user data
+import { useNavigate } from "react-router-dom";
 import axios from "axios"; // To get user data
 
 import ProfileCard from "../components/user_profile/ProfileCard";
 import TopArtistsCard from "../components/user_profile/TopArtistsCard";
 import TopSongsCard from "../components/user_profile/TopSongsCard";
 import LikedSongsCard from "../components/user_profile/LikedSongsCard";
+import SetupModal from "../components/user_profile/SetupModal";
 import "../styles/userProfile.css";
-
-function Step1Avatar({ spotifyAvatar, avatarPreview, onUpload, onSkip, onNext }) {
-  const previewSrc = avatarPreview || spotifyAvatar;
-
-  return (
-    <>
-      <Heading size="md" mb={4}>
-        Pick a profile picture
-      </Heading>
-      <HStack spacing={6} mb={6}>
-        <Avatar size="2xl" src={previewSrc} />
-        <FormControl>
-          <FormLabel>Upload your own</FormLabel>
-          <Input type="file" onChange={(e) => onUpload(e.target.files[0])} />
-        </FormControl>
-      </HStack>
-      <HStack spacing={4}>
-        <Button
-          onClick={() => {
-            onSkip(); // sets avatar_url to null
-            onNext(); // immediately jump to Step 2
-          }}
-        >
-          Use Default
-        </Button>
-        <Button colorScheme="green" onClick={onNext}>
-          Next
-        </Button>
-      </HStack>
-    </>
-  );
-}
-
-function Step2Info({ display_name, location, onChangeName, onChangeLocation, onConfirm }) {
-  return (
-    <>
-      <Heading size="md" mb={4}>
-        Almost there!
-      </Heading>
-      <FormControl mb={4}>
-        <FormLabel>Display Name</FormLabel>
-        <Input value={display_name} onChange={(e) => onChangeName(e.target.value)} />
-      </FormControl>
-      <FormControl mb={6}>
-        <FormLabel>Location (City, State/Country)</FormLabel>
-        <Input value={location} onChange={(e) => onChangeLocation(e.target.value)} />
-      </FormControl>
-      <Button colorScheme="green" onClick={onConfirm}>
-        Confirm
-      </Button>
-    </>
-  );
-}
-
-async function uploadToStorage(file) {
-  // e.g. upload to Firebase Storage and return its URL
-  return URL.createObjectURL(file);
-}
 
 export default function UserProfile() {
   const { user, loading: authLoading } = useContext(AuthContext);
   const toast = useToast();
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [showTopArtists, setShowTopArtists] = useState(true);
-  const [showTopSongs, setShowTopSongs] = useState(true);
-  const [showLikedSongs, setShowLikedSongs] = useState(true);
+  const navigate = useNavigate();
 
   // New vs old user state
   const [loading, setLoading] = useState(true);
@@ -104,10 +34,15 @@ export default function UserProfile() {
   const [profileData, setProfileData] = useState(null);
 
   // Setup profile
-  const [step, setStep] = useState(1);
   const [avatar_url, setAvatarUrl] = useState(null);
   const [display_name, setDisplayName] = useState("");
   const [location, setLocation] = useState("");
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [showTopArtists, setShowTopArtists] = useState(true);
+  const [showTopSongs, setShowTopSongs] = useState(true);
+  const [showLikedSongs, setShowLikedSongs] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -203,60 +138,46 @@ export default function UserProfile() {
 
   if (isNew) {
     return (
-      <Modal isOpen onClose={() => {}}>
-        <ModalOverlay />
-        <ModalContent p={6}>
-          {step === 1 ? (
-            <Step1Avatar
-              spotifyAvatar={user.images?.[0]?.url}
-              avatarPreview={avatar_url}
-              onUpload={(file) =>
-                uploadToStorage(file).then((u) => {
-                  setAvatarUrl(u);
-                })
-              }
-              onSkip={() => {
-                setAvatarUrl(user.images?.[0]?.url || "");
-                setStep(2);
-              }}
-              onNext={() => setStep(2)}
-            />
-          ) : (
-            <Step2Info
-              display_name={display_name}
-              location={location}
-              onChangeName={setDisplayName}
-              onChangeLocation={setLocation}
-              onConfirm={async () => {
-                try {
-                  const id = user.id;
-                  const finalAvatar = avatar_url ?? user.images?.[0]?.url ?? "";
+      <SetupModal
+        isOpen={true}
+        onClose={() => navigate("/")}
+        user={user}
+        avatar_url={avatar_url}
+        setAvatarUrl={setAvatarUrl}
+        display_name={display_name}
+        setDisplayName={setDisplayName}
+        location={location}
+        setLocation={setLocation}
+        onConfirm={async () => {
+          // your existing POST /setup logic here…
+          try {
+            const id = user.id;
+            const finalAvatar = avatar_url || user.images?.[0]?.url || "";
 
-                  await axios.post(`/api/users/${id}/setup`, {
-                    username: user.display_name.toLowerCase().replace(/\s+/g, "_"),
-                    createdAt: new Date().toISOString(),
-                    avatar_url: finalAvatar,
-                    display_name,
-                    location,
-                  });
-                  // re-fetch new profile + top
-                  const pd = (await axios.get(`/api/users/${id}`)).data;
-                  const tops = (await axios.get(`/api/users/${id}/top`)).data;
-                  setProfileData({
-                    ...pd,
-                    topArtists: tops.topArtists.slice(0, 4),
-                    topSongs: tops.topSongs.slice(0, 4),
-                    likedSongs: tops.likedSongs.slice(0, 4),
-                  });
-                  setIsNew(false);
-                } catch {
-                  toast({ description: "Setup failed", status: "error" });
-                }
-              }}
-            />
-          )}
-        </ModalContent>
-      </Modal>
+            await axios.post(`/api/users/${id}/setup`, {
+              username: user.display_name.toLowerCase().replace(/\s+/g, "_"),
+              createdAt: new Date().toISOString(),
+              avatar_url: finalAvatar,
+              display_name,
+              location,
+            });
+
+            // re-fetch profile & hide modal
+            const pd = (await axios.get(`/api/users/${id}`)).data;
+            const tops = (await axios.get(`/api/users/${id}/top`)).data;
+            setProfileData({
+              ...pd,
+              topArtists: tops.topArtists.slice(0, 4),
+              topSongs: tops.topSongs.slice(0, 4),
+              likedSongs: tops.likedSongs.slice(0, 4),
+            });
+            setIsNew(false);
+            window.location.reload();
+          } catch {
+            toast({ description: "Setup failed", status: "error" });
+          }
+        }}
+      />
     );
   }
 

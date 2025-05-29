@@ -1,28 +1,19 @@
-// src/firebase.js
-
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAhU2h9kWQnjhxFYJgHusWwNRAms_S03DM",
-  authDomain: "spotifysocial-92ec4.firebaseapp.com",
-  projectId: "spotifysocial-92ec4",
-  storageBucket: "spotifysocial-92ec4.firebasestorage.app",
-  messagingSenderId: "628170083975",
-  appId: "1:628170083975:web:a01a246c93adb631753222",
-  measurementId: "G-X0PCZ9CNYL"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Only keep one import + usage of getAnalytics
 const analytics = getAnalytics(app);
-
-// Setup Firestore
 const db = getFirestore(app);
 
-// Export the Firestore db
 export { db };
