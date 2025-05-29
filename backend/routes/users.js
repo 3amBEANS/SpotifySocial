@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     } else {
-      // ✅ Make sure to update name if missing
+      // Make sure to update name if missing
       const existingData = doc.data();
       await userRef.update({
         name: existingData.name || display_name || "New User",
