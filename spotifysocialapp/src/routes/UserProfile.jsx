@@ -43,6 +43,11 @@ export default function UserProfile() {
   const [showTopArtists, setShowTopArtists] = useState(true);
   const [showTopSongs, setShowTopSongs] = useState(true);
   const [showLikedSongs, setShowLikedSongs] = useState(true);
+  const [topX, setTopX] = useState({
+    likedSongs: [],
+    topArtists: [],
+    topSongs: [],
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -88,28 +93,63 @@ export default function UserProfile() {
       });
   }, [user, toast, isNew]);
 
-  // const [profile, setProfile] = useState({
-  //   name: "Alex Rivera",
-  //   username: "@alexmusic",
-  //   bio: "Music enthusiast | Always discovering new sounds | Currently obsessed with indie rock and electronic beats 🎵",
-  //   location: "San Francisco, CA",
-  //   joinDate: "June 2023",
-  // });
+  {
+    /* fetch user's liked songs and top songs */
+  }
+  useEffect(() => {
+    const fetchTopX = async () => {
+      const ranges = {
+        likedSongs: "top/tracks?limit=5&time_range=short_term",
+        topSongs: "tracks?limit=50",
+      };
+      try {
+        const results = await Promise.all(
+          Object.entries(ranges).map(async ([key, range]) => {
+            const response = await axios.get(
+              `https://api.spotify.com/v1/me/${range}`
+            );
+            return [key, response.data.items.map(track => ({
+              title: track.name,
+              artist: track.artists.map(artist => artist.name).join(", "),
+              album: track.album.name,
+              image: track.album.images[0]?.url,
+            }))];
+          })
+        );
+        setTopX(Object.fromEntries(results));
+      } catch (err) {
+        console.error("Error fetching top tracks:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (user) fetchTopX();
+  }, [user]);
 
-  // const topArtists = [
-  //   { name: "Tame Impala", image: "/placeholder.svg?height=80&width=80", followers: "2.1M" },
-  //   { name: "Phoebe Bridgers", image: "/placeholder.svg?height=80&width=80", followers: "1.8M" },
-  //   { name: "Mac Miller", image: "/placeholder.svg?height=80&width=80", followers: "3.2M" },
-  //   { name: "FKA twigs", image: "/placeholder.svg?height=80&width=80", followers: "1.5M" },
-  // ];
-
-  // const topSongs = [
-  //   { title: "The Less I Know The Better", artist: "Tame Impala", plays: "127" },
-  //   { title: "Motion Sickness", artist: "Phoebe Bridgers", plays: "89" },
-  //   { title: "Good News", artist: "Mac Miller", plays: "156" },
-  //   { title: "Two Weeks", artist: "FKA twigs", plays: "73" },
-  // ];
-  // On mount: check if user exists, fetch profile + top-4
+  {
+    /* fetch top artists */
+  }
+  useEffect(() => {
+    const fetchTopArtists = async () => {
+      try {
+          const response = await axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short-term`);          
+          const artists = response.data.items.map(item => ({
+            name: item.name,
+            image: item.images[0]?.url,
+            genres: item.genres.join(", "),
+            id: item.id,
+          }));
+        setTopX.topArtists(Object.fromEntries(artists));
+      } catch (err) {
+        console.error("Error fetching top artists:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (user) fetchTopArtists();
+  }, [user]);
 
   if (authLoading) {
     return (
@@ -226,17 +266,17 @@ export default function UserProfile() {
           <Grid className="user-profile-grid">
             {showTopArtists && (
               <GridItem>
-                <TopArtistsCard data={profileData.topArtists} />
+                <TopArtistsCard data={topX.topArtists} />
               </GridItem>
             )}
             {showTopSongs && (
               <GridItem>
-                <TopSongsCard data={profileData.topSongs} />
+                <TopSongsCard data={topX.topSongs} />
               </GridItem>
             )}
             {showLikedSongs && (
               <GridItem className="liked-songs-item">
-                <LikedSongsCard count={profileData.likedSongs.length} />
+                <LikedSongsCard count={topX.likedSongs.length} />
               </GridItem>
             )}
           </Grid>
