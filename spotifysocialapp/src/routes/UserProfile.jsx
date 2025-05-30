@@ -30,6 +30,8 @@ export default function UserProfile() {
 
   // New vs old user state
   const [loading, setLoading] = useState(true);
+  const [isOpeningProfile, setIsOpeningProfile] = useState(true);
+
   const [isNew, setIsNew] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
@@ -48,6 +50,13 @@ export default function UserProfile() {
   const [topArtists, setTopArtists] = useState([]);
   const [topSongs, setTopSongs] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsOpeningProfile(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -157,27 +166,20 @@ export default function UserProfile() {
     if (user) fetchTopArtists();
   }, [user]);
 
-  if (authLoading) {
+  if (isOpeningProfile) {
     return (
-      <Flex h="100vh" align="center" justify="center">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
-  if (!user) {
-    // not signed in — either redirect to /login or show nothing
-    return (
-      <Flex h="100vh" align="center" justify="center">
-        <Text color="white">Please sign in first.</Text>
-      </Flex>
-    );
-  }
-
-  // Show spinner while loading
-  if (loading) {
-    return (
-      <Flex h="100vh" align="center" justify="center">
-        <Spinner size="xl" />
+      <Flex
+        position="fixed"
+        top="0"
+        left="0"
+        w="100vw"
+        h="100vh"
+        bg="#0f0e17"
+        align="center"
+        justify="center"
+        zIndex="9999"
+      >
+        <Spinner size="xl" color="white" />
       </Flex>
     );
   }
