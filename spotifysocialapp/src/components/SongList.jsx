@@ -29,12 +29,12 @@ const SongList = ({ displayedCards, type, header }) => {
             <Box p={4}>
             {type === 'song' ? (
                 <>
-                  <Text fontWeight="semibold" color="black">{card.title}</Text>
+                  <Text fontWeight="semibold" fontSize={18} color="black">{card.title}</Text>
                   <Text color="black">{`${card.artist} - ${card.album}`}</Text>
                 </>
               ) : (
                 <>
-                  <Text fontWeight="semibold" color="black">{card.name}</Text>
+                  <Text fontWeight="semibold" fontSize={18} color="black">{card.name}</Text>
                   <Text color="black">{card.genres}</Text>
                 </>
               )}

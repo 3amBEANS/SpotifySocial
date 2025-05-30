@@ -5,14 +5,17 @@ import {
   HStack,
   Text,
   Button,
-  IconButton,
-  InputGroup,
-  InputLeftElement,
-  Input,
   Avatar,
+  Spinner,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
 import LoginModal from "./LoginModal";
-import { SearchIcon } from "@chakra-ui/icons";
+import { FaSpotify } from "react-icons/fa";
 import { MdOutlineLogout, MdOutlineLogin } from "react-icons/md";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
@@ -27,7 +30,11 @@ export default function Navbar() {
   const [profileSetup, setProfileSetup] = useState(false);
   const [navAvatarUrl, setNavAvatarUrl] = useState(null);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false);
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  // const [isOpeningProfile, setIsOpeningProfile] = useState(false);
+
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -68,6 +75,25 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isLoggingOut) return;
+    const timer = setTimeout(() => {
+      logout();
+      navigate("/"); // send them home
+      setIsLoggingOut(false); // hide the spinner
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [isLoggingOut, logout, navigate]);
+
+  // useEffect(() => {
+  //   if (!isOpeningProfile) return;
+  //   const timer = setTimeout(() => {
+  //     navigate("/profile");
+  //     setIsOpeningProfile(false);
+  //   }, 600);
+  //   return () => clearTimeout(timer);
+  // }, [isOpeningProfile, navigate]);
+
   // nav labels in order
   const navItems = ["Discover", "Library", "Forum", "Inbox"];
 
@@ -94,7 +120,8 @@ export default function Navbar() {
         <Flex className="navbar-container">
           {/* Logo flush left */}
           <Box className="logo">
-            <Link to="/">
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+              <FaSpotify className="logo-icon" />
               <Text className="logo-text">Spotify Connect</Text>
             </Link>
           </Box>
@@ -120,33 +147,6 @@ export default function Navbar() {
           {/* spacer */}
           <Box className="spacer" />
 
-          {/* Search flush right */}
-          <Box className="search-container">
-            {searchOpen ? (
-              /* full search bar */
-              <InputGroup className="search-expanded">
-                <InputLeftElement className="search-icon">
-                  <SearchIcon />
-                </InputLeftElement>
-
-                <Input
-                  placeholder="Search in site"
-                  className="search-input"
-                  onBlur={() => setSearchOpen(false)}
-                  autoFocus
-                />
-              </InputGroup>
-            ) : (
-              /* just the icon button */
-              <IconButton
-                aria-label="Search"
-                icon={<SearchIcon />}
-                className="search-button"
-                onClick={() => setSearchOpen(true)}
-              />
-            )}
-          </Box>
-
           {/* Profile / Sign In toggle */}
           {profileSetup ? (
             <>
@@ -160,10 +160,7 @@ export default function Navbar() {
               <Button
                 size="sm"
                 className="logout-button"
-                onClick={() => {
-                  logout();
-                  navigate("/");
-                }}
+                onClick={() => setConfirmLogoutOpen(true)}
               >
                 <MdOutlineLogout />
                 Logout
@@ -181,6 +178,46 @@ export default function Navbar() {
         </Flex>
       </Box>
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+
+      <Modal isOpen={confirmLogoutOpen} onClose={() => setConfirmLogoutOpen(false)} isCentered>
+        <ModalOverlay />
+        <ModalContent maxW="sm">
+          <ModalHeader>Confirm Logout</ModalHeader>
+          <ModalBody>
+            <Text>Are you sure you want to log out?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={() => setConfirmLogoutOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                setConfirmLogoutOpen(false);
+                setIsLoggingOut(true);
+              }}
+            >
+              Yes, log me out
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {isLoggingOut && (
+        <Flex
+          position="fixed"
+          top="0"
+          left="0"
+          w="100vw"
+          h="100vh"
+          bg="#0f0e17"
+          align="center"
+          justify="center"
+          zIndex="9999"
+        >
+          <Spinner size="xl" color="white" />
+        </Flex>
+      )}
     </>
   );
 }

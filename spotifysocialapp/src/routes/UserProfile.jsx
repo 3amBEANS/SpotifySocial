@@ -24,12 +24,14 @@ import SetupModal from "../components/user_profile/SetupModal";
 import "../styles/userProfile.css";
 
 export default function UserProfile() {
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const toast = useToast();
   const navigate = useNavigate();
 
-  // New vs old user state
   const [loading, setLoading] = useState(true);
+  const [isOpeningProfile, setIsOpeningProfile] = useState(true);
+
+  // New vs old user state
   const [isNew, setIsNew] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
@@ -50,6 +52,13 @@ export default function UserProfile() {
   const [likedSongs, setLikedSongs] = useState([]);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsOpeningProfile(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (!user) return;
     const id = user.id;
     setLoading(true);
@@ -68,6 +77,9 @@ export default function UserProfile() {
 
         setProfileData(data);
         setIsPrivate(!data.isPublic);
+        setShowTopArtists(data.showTopArtists ?? true);
+        setShowTopSongs(data.showTopSongs ?? true);
+        setShowLikedSongs(data.showLikedSongs ?? true);
       })
       .catch((err) => {
         console.error(err);
@@ -154,27 +166,20 @@ export default function UserProfile() {
     if (user) fetchTopArtists();
   }, [user]);
 
-  if (authLoading) {
+  if (isOpeningProfile) {
     return (
-      <Flex h="100vh" align="center" justify="center">
-        <Spinner size="xl" />
-      </Flex>
-    );
-  }
-  if (!user) {
-    // not signed in — either redirect to /login or show nothing
-    return (
-      <Flex h="100vh" align="center" justify="center">
-        <Text color="white">Please sign in first.</Text>
-      </Flex>
-    );
-  }
-
-  // Show spinner while loading
-  if (loading) {
-    return (
-      <Flex h="100vh" align="center" justify="center">
-        <Spinner size="xl" />
+      <Flex
+        position="fixed"
+        top="0"
+        left="0"
+        w="100vw"
+        h="100vh"
+        bg="#0f0e17"
+        align="center"
+        justify="center"
+        zIndex="9999"
+      >
+        <Spinner size="xl" color="white" />
       </Flex>
     );
   }
@@ -247,6 +252,61 @@ export default function UserProfile() {
     }
   };
 
+  const handleToggleShowTopArtists = async (checked) => {
+    setShowTopArtists(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showTopArtists: checked,
+      });
+      setProfileData((p) => ({ ...p, showTopArtists: res.data.showTopArtists }));
+      toast({ description: "Top Artists visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showTopArtists:", err);
+      toast({
+        description: "Could not update Top Artists display",
+        status: "error",
+      });
+      // rollback
+      setShowTopArtists((prev) => !prev);
+    }
+  };
+
+  const handleToggleShowTopSongs = async (checked) => {
+    setShowTopSongs(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showTopSongs: checked,
+      });
+      setProfileData((p) => ({ ...p, showTopSongs: res.data.showTopSongs }));
+      toast({ description: "Top Songs visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showTopSongs:", err);
+      toast({
+        description: "Could not update Top Songs display",
+        status: "error",
+      });
+      setShowTopSongs((prev) => !prev);
+    }
+  };
+
+  const handleToggleShowLikedSongs = async (checked) => {
+    setShowLikedSongs(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showLikedSongs: checked,
+      });
+      setProfileData((p) => ({ ...p, showLikedSongs: res.data.showLikedSongs }));
+      toast({ description: "Liked Songs visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showLikedSongs:", err);
+      toast({
+        description: "Could not update Liked Songs display",
+        status: "error",
+      });
+      setShowLikedSongs((prev) => !prev);
+    }
+  };
+
   const handleEdit = () => {
     // keep a copy of the current profileData so we can restore it
     setOriginalProfile({ ...profileData });
@@ -309,9 +369,9 @@ export default function UserProfile() {
             onCancel={handleCancelEdit}
             onProfileChange={(field, val) => setProfileData((pd) => ({ ...pd, [field]: val }))}
             onTogglePrivate={handleTogglePrivate}
-            onToggleShowTopArtists={setShowTopArtists}
-            onToggleShowTopSongs={setShowTopSongs}
-            onToggleShowLikedSongs={setShowLikedSongs}
+            onToggleShowTopArtists={handleToggleShowTopArtists}
+            onToggleShowTopSongs={handleToggleShowTopSongs}
+            onToggleShowLikedSongs={handleToggleShowLikedSongs}
           />
 
           {/* music cards */}

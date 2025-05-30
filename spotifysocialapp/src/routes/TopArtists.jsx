@@ -1,10 +1,10 @@
 import LibrarySidebar from "../components/LibrarySidebar";
 import TopArtistsHeader from "../components/TopXHeader";
 import SongList from "../components/SongList";
-import { React, useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 import "../styles/library.css";
-import axios from 'axios';
+import axios from "axios";
 import { AuthContext } from "../AuthContext";
 
 const TopArtists = () => {
@@ -17,7 +17,7 @@ const TopArtists = () => {
   });
   const [loading, setLoadingArtists] = useState(true);
   const [error, setArtistError] = useState(null);
-  
+
   {
     /* fetch top artists */
   }
@@ -34,12 +34,15 @@ const TopArtists = () => {
             const response = await axios.get(
               `https://api.spotify.com/v1/me/top/artists?limit=50&time_range=${range}`
             );
-            return [key, response.data.items.map(artist => ({
-              name: artist.name,
-              image: artist.images[0]?.url,
-              genres: artist.genres.join(", "),
-              id: artist.id,
-            }))];
+            return [
+              key,
+              response.data.items.map((artist) => ({
+                name: artist.name,
+                image: artist.images[0]?.url,
+                genres: artist.genres.join(", "),
+                id: artist.id,
+              })),
+            ];
           })
         );
         setTopArtists(Object.fromEntries(results));
@@ -50,12 +53,17 @@ const TopArtists = () => {
         setLoadingArtists(false);
       }
     };
-  
+
     if (user) fetchTopArtists();
   }, [user]);
 
   if (loading) return <Spinner size="xl" color="green.400" />;
-  if (error) return <Text color="white" fontWeight={700} >{error}</Text>;
+  if (error)
+    return (
+      <Text color="white" fontWeight={700}>
+        {error}
+      </Text>
+    );
 
   return (
     <Flex className="top-artists-page">
@@ -67,10 +75,13 @@ const TopArtists = () => {
           heading="Top Artists"
           subheading="Your top-listened artists across time."
         />
-        <SongList 
-          displayedCards={topArtists[view]} 
-          type="artist" 
-          header={"Your Top Artists of " + (view === 'all' ? "All Time" : view === 'year' ? "the Past Year" : "the Past Month")}
+        <SongList
+          displayedCards={topArtists[view]}
+          type="artist"
+          header={
+            "Your Top Artists of " +
+            (view === "all" ? "All Time" : view === "year" ? "the Past Year" : "the Past Month")
+          }
         />
       </Box>
     </Flex>

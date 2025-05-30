@@ -45,45 +45,8 @@ export default function AllChats() {
   }, [user]);
 
   return (
-    <Box p={10} bg="gray.900" color="white" minHeight="100vh">
-      <Box bg="green.700" py={6} px={10} mb={6}>
-        <Heading size="lg" textAlign="center">All Messages</Heading>
-        <Text textAlign="center">See your conversation history.</Text>
-      </Box>
-
-      {loading ? (
-        <Flex justify="center" mt={10}>
-          <Spinner size="xl" />
-        </Flex>
-      ) : (
-        <VStack spacing={6} align="stretch">
-          {chats.map((chat) => {
-            const otherUserId = chat.from === user.id ? chat.to : chat.from;
-            const label =
-              chat.from === user.id
-                ? `To ${usersMap[chat.to] || "Unknown"}`
-                : `From ${usersMap[chat.from] || "Unknown"}`;
-            return (
-              <Box
-                key={chat.id}
-                p={4}
-                bg="gray.700"
-                borderRadius="md"
-                cursor="pointer"
-                _hover={{ bg: "gray.600" }}
-                onClick={() => navigate(`/inbox?to=${otherUserId}`)}
-              >
-                <Text fontWeight="bold">{label}</Text>
-                <Text mt={2}>{chat.message}</Text>
-                <Text fontSize="xs" color="gray.400">
-                  {new Date(chat.timestamp).toLocaleString()}
-                </Text>
-              </Box>
-            );
-          })}
-        </VStack>
-      )}
-    </Box>
+    <>
+    </>
   );
 }
 

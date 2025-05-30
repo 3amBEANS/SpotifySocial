@@ -2,23 +2,65 @@ const express = require("express");
 const router = express.Router();
 const db = require("../firebase");
 const fetch = require("node-fetch");
+const axios = require("axios");
 
-// ✅ GET /api/users/public – returns only public users with id + display_name
+// ✅ GET /api/users/public – returns only public users with all their data
 router.get("/public", async (req, res) => {
   try {
     const snapshot = await db.collection("users").where("isPublic", "==", true).get();
     const users = snapshot.docs.map((doc) => {
-      const data = doc.data();
       return {
         id: doc.id,
-        display_name: data.display_name || data.username || data.name || "Unnamed User",
-        avatar_url: data.avatar_url || data.profile_picture || null, // added
+        ...doc.data(),
       };
     });
     res.status(200).json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+router.post("/spotify/refresh-token", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json({ error: "Missing refresh token" });
+  }
+
+  const authHeader = Buffer.from(
+    `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+  ).toString("base64");
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+      }),
+      {
+        headers: {
+          Authorization: `Basic ${authHeader}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const newAccessToken = response.data.access_token;
+
+    // Optional: Store the new access token in Firestore if you want
+    // Example: req.body.userId must be passed to this endpoint if storing
+    if (req.body.userId) {
+      await db.collection("users").doc(req.body.userId).update({
+        accessToken: newAccessToken,
+      });
+    }
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error("Error refreshing Spotify token:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to refresh token" });
   }
 });
 
@@ -104,6 +146,9 @@ router.post("/:id/setup", async (req, res) => {
         bio: "",
         tags: [],
         isProfileSetup: true,
+        showLikedSongs: true,
+        showTopArtists: true,
+        showTopSongs: true,
       },
       { merge: true }
     );
@@ -154,21 +199,26 @@ router.post("/seed", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
-  const { isPublic, display_name, bio } = req.body;
+  const { isPublic, display_name, bio, avatar_url, showTopArtists, showTopSongs, showLikedSongs } =
+    req.body;
   const userRef = db.collection("users").doc(req.params.id);
 
   // Only include fields your client actually sent
-  const updateData = {};
-  if (typeof isPublic !== "undefined") updateData.isPublic = isPublic;
-  if (typeof display_name !== "undefined") updateData.display_name = display_name;
-  if (typeof bio !== "undefined") updateData.bio = bio;
+  const updateFields = {};
+  if (isPublic !== undefined) updateFields.isPublic = isPublic;
+  if (display_name !== undefined) updateFields.display_name = display_name;
+  if (bio !== undefined) updateFields.bio = bio;
+  if (avatar_url !== undefined) updateFields.avatar_url = avatar_url;
+  if (showTopArtists !== undefined) updateFields.showTopArtists = showTopArtists;
+  if (showTopSongs !== undefined) updateFields.showTopSongs = showTopSongs;
+  if (showLikedSongs !== undefined) updateFields.showLikedSongs = showLikedSongs;
 
-  if (Object.keys(updateData).length === 0) {
+  if (Object.keys(updateFields).length === 0) {
     return res.status(400).json({ error: "Nothing to update" });
   }
 
   try {
-    await userRef.update(updateData);
+    await userRef.update(updateFields);
     const updated = await userRef.get();
     return res.json(updated.data());
   } catch (err) {

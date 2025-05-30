@@ -64,7 +64,7 @@ export default function MessageForm() {
   };
 
   return (
-    <Box flex="1" bg="gray.900" color="white">
+    <Box flex="1" color="white">
       <Box p={10} maxW="800px">
         <Heading size="md" mb={4}>
           Send a Message
