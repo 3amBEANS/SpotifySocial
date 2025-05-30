@@ -5,7 +5,8 @@ import {
   VStack,
   Icon,
   Text,
-  Heading
+  Heading,
+  Divider
 } from "@chakra-ui/react";
 import { MdSend, MdChatBubble } from "react-icons/md";
 import MessageForm from "../components/MessageForm";
@@ -20,7 +21,7 @@ export default function Inbox() {
       <Box bg="#1b1b1b" p={4} minW="200px" height="100vh">
         <VStack align="start" spacing={6}>
           <Text fontWeight="bold" fontSize="lg">Messages</Text>
-
+          <Divider />
           {/* Send Message Button */}
           <Box
             display="flex"
@@ -37,7 +38,7 @@ export default function Inbox() {
             color={view === "send" ? "black" : "white"}
             w="100%"
             fontWeight={"bold"}
-            fontSize={20}
+            fontSize={17}
           >
             <Icon as={MdSend} mr={2} />
             <Text>Send Message</Text>
@@ -58,7 +59,7 @@ export default function Inbox() {
             color={view === "chats" ? "black" : "white"}
             w="100%"
             fontWeight={"bold"}
-            fontSize={20}
+            fontSize={17}
           >
             <Icon as={MdChatBubble} mr={2} />
             <Text>All Chats</Text>
