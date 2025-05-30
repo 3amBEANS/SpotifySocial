@@ -13,6 +13,7 @@ router.get("/public", async (req, res) => {
         }
         const snapshot = await db
         .collection("posts")
+        .orderBy("timestamp", "desc")
         .where("forumID", "==", forumID)
         .get();
 
