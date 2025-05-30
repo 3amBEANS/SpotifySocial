@@ -10,7 +10,7 @@ router.get("/public", async (req, res) => {
     const users = snapshot.docs.map((doc) => {
       return {
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       };
     });
     res.status(200).json(users);
@@ -152,21 +152,26 @@ router.post("/seed", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
-  const { isPublic, display_name, bio } = req.body;
+  const { isPublic, display_name, bio, avatar_url, showTopArtists, showTopSongs, showLikedSongs } =
+    req.body;
   const userRef = db.collection("users").doc(req.params.id);
 
   // Only include fields your client actually sent
-  const updateData = {};
-  if (typeof isPublic !== "undefined") updateData.isPublic = isPublic;
-  if (typeof display_name !== "undefined") updateData.display_name = display_name;
-  if (typeof bio !== "undefined") updateData.bio = bio;
+  const updateFields = {};
+  if (isPublic !== undefined) updateFields.isPublic = isPublic;
+  if (display_name !== undefined) updateFields.display_name = display_name;
+  if (bio !== undefined) updateFields.bio = bio;
+  if (avatar_url !== undefined) updateFields.avatar_url = avatar_url;
+  if (showTopArtists !== undefined) updateFields.showTopArtists = showTopArtists;
+  if (showTopSongs !== undefined) updateFields.showTopSongs = showTopSongs;
+  if (showLikedSongs !== undefined) updateFields.showLikedSongs = showLikedSongs;
 
-  if (Object.keys(updateData).length === 0) {
+  if (Object.keys(updateFields).length === 0) {
     return res.status(400).json({ error: "Nothing to update" });
   }
 
   try {
-    await userRef.update(updateData);
+    await userRef.update(updateFields);
     const updated = await userRef.get();
     return res.json(updated.data());
   } catch (err) {

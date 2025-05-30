@@ -68,6 +68,9 @@ export default function UserProfile() {
 
         setProfileData(data);
         setIsPrivate(!data.isPublic);
+        setShowTopArtists(data.showTopArtists ?? true);
+        setShowTopSongs(data.showTopSongs ?? true);
+        setShowLikedSongs(data.showLikedSongs ?? true);
       })
       .catch((err) => {
         console.error(err);
@@ -247,6 +250,61 @@ export default function UserProfile() {
     }
   };
 
+  const handleToggleShowTopArtists = async (checked) => {
+    setShowTopArtists(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showTopArtists: checked,
+      });
+      setProfileData((p) => ({ ...p, showTopArtists: res.data.showTopArtists }));
+      toast({ description: "Top Artists visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showTopArtists:", err);
+      toast({
+        description: "Could not update Top Artists display",
+        status: "error",
+      });
+      // rollback
+      setShowTopArtists((prev) => !prev);
+    }
+  };
+
+  const handleToggleShowTopSongs = async (checked) => {
+    setShowTopSongs(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showTopSongs: checked,
+      });
+      setProfileData((p) => ({ ...p, showTopSongs: res.data.showTopSongs }));
+      toast({ description: "Top Songs visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showTopSongs:", err);
+      toast({
+        description: "Could not update Top Songs display",
+        status: "error",
+      });
+      setShowTopSongs((prev) => !prev);
+    }
+  };
+
+  const handleToggleShowLikedSongs = async (checked) => {
+    setShowLikedSongs(checked);
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        showLikedSongs: checked,
+      });
+      setProfileData((p) => ({ ...p, showLikedSongs: res.data.showLikedSongs }));
+      toast({ description: "Liked Songs visibility updated!", status: "success" });
+    } catch (err) {
+      console.error("Failed to update showLikedSongs:", err);
+      toast({
+        description: "Could not update Liked Songs display",
+        status: "error",
+      });
+      setShowLikedSongs((prev) => !prev);
+    }
+  };
+
   const handleEdit = () => {
     // keep a copy of the current profileData so we can restore it
     setOriginalProfile({ ...profileData });
@@ -309,9 +367,9 @@ export default function UserProfile() {
             onCancel={handleCancelEdit}
             onProfileChange={(field, val) => setProfileData((pd) => ({ ...pd, [field]: val }))}
             onTogglePrivate={handleTogglePrivate}
-            onToggleShowTopArtists={setShowTopArtists}
-            onToggleShowTopSongs={setShowTopSongs}
-            onToggleShowLikedSongs={setShowLikedSongs}
+            onToggleShowTopArtists={handleToggleShowTopArtists}
+            onToggleShowTopSongs={handleToggleShowTopSongs}
+            onToggleShowLikedSongs={handleToggleShowLikedSongs}
           />
 
           {/* music cards */}

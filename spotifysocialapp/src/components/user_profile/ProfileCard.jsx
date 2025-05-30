@@ -45,6 +45,7 @@ export default function ProfileHeader({
         <CardHeader className="profile-card-header">
           <Flex className="profile-card-header-flex">
             <HStack className="profile-card-avatar-stack">
+              {/** Avatar container **/}
               <Box
                 role="group"
                 position="relative"
@@ -65,13 +66,34 @@ export default function ProfileHeader({
                       ref={fileInput}
                       display="none"
                       onChange={(e) => {
-                        const file = e.target.files[0];
+                        const file = e.target.files?.[0];
                         if (!file) return;
+
                         const reader = new FileReader();
                         reader.readAsDataURL(file);
                         reader.onload = () => {
-                          onProfileChange("avatar_url", reader.result);
+                          const img = new window.Image();
+                          img.src = reader.result;
+
+                          img.onload = () => {
+                            // set a max width or height
+                            const MAX_DIM = 500;
+                            const scale = Math.min(MAX_DIM / img.width, MAX_DIM / img.height, 1);
+                            const w = img.width * scale;
+                            const h = img.height * scale;
+
+                            const canvas = document.createElement("canvas");
+                            canvas.width = w;
+                            canvas.height = h;
+                            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+                            // quality between 0.5–0.8 gives good results without huge size
+                            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+                            onProfileChange("avatar_url", compressedDataUrl);
+                          };
                         };
+                        // clear input so same file retriggers onChange
+                        e.target.value = "";
                       }}
                     />
 
