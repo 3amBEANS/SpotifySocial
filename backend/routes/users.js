@@ -12,6 +12,7 @@ router.get("/public", async (req, res) => {
       return {
         id: doc.id,
         display_name: data.display_name || data.username || data.name || "Unnamed User",
+        avatar_url: data.avatar_url || data.profile_picture || null, // added
       };
     });
     res.status(200).json(users);
