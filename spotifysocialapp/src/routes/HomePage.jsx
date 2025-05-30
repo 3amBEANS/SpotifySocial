@@ -3,6 +3,7 @@ import axios from "axios";
 import { keyframes } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import {
+  AspectRatio,
   Box,
   Flex,
   Text,
@@ -24,47 +25,46 @@ import { AuthContext } from "../AuthContext";
 import * as artistImages from "../assets/artists";
 import LoginModal from "../components/LoginModal";
 
+const scroll = keyframes`
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+`;
+
 export default function HomePage() {
   // Mock data
-  const likedSongs = [
+  const featuredTracks = [
     {
       id: 1,
-      title: "The Less I Know The Better",
-      artist: "Tame Impala",
-      image: "/placeholder.svg?height=120&width=120",
+      embedSrc: "https://open.spotify.com/embed/track/2CGNAOSuO1MEFCbBRgUzjd?utm_source=generator",
+      link: "https://open.spotify.com/track/2CGNAOSuO1MEFCbBRgUzjd",
     },
     {
       id: 2,
-      title: "Motion Sickness",
-      artist: "Phoebe Bridgers",
-      image: "/placeholder.svg?height=120&width=120",
+      embedSrc: "https://open.spotify.com/embed/track/2u9S9JJ6hTZS3Vf22HOZKg?utm_source=generator",
+      link: "https://open.spotify.com/track/2u9S9JJ6hTZS3Vf22HOZKg",
     },
     {
       id: 3,
-      title: "Good News",
-      artist: "Mac Miller",
-      image: "/placeholder.svg?height=120&width=120",
+      embedSrc: "https://open.spotify.com/embed/track/1Es7AUAhQvapIcoh3qMKDL?utm_source=generator",
+      link: "https://open.spotify.com/track/1Es7AUAhQvapIcoh3qMKDL",
     },
   ];
 
-  const topArtists = [
+  const featuredArtists = [
     {
       id: 1,
-      name: "Tame Impala",
-      image: "/placeholder.svg?height=80&width=80",
-      followers: "2.1M",
+      embedSrc: "https://open.spotify.com/embed/artist/6eUKZXaKkcviH0Ku9w2n3V?utm_source=generator",
+      link: "https://open.spotify.com/artist/6eUKZXaKkcviH0Ku9w2n3V",
     },
     {
       id: 2,
-      name: "Phoebe Bridgers",
-      image: "/placeholder.svg?height=80&width=80",
-      followers: "1.8M",
+      embedSrc: "https://open.spotify.com/embed/artist/6qqNVTkY8uBg9cP3Jd7DAH?utm_source=generator",
+      link: "https://open.spotify.com/artist/6qqNVTkY8uBg9cP3Jd7DAH",
     },
     {
       id: 3,
-      name: "Mac Miller",
-      image: "/placeholder.svg?height=80&width=80",
-      followers: "3.2M",
+      embedSrc: "https://open.spotify.com/embed/artist/1HY2Jd0NmPuamShAr6KMms?utm_source=generator",
+      link: "https://open.spotify.com/artist/1HY2Jd0NmPuamShAr6KMms",
     },
   ];
 
@@ -140,43 +140,59 @@ export default function HomePage() {
 
   const filmArtists = [...localFilmArtists, ...localFilmArtists];
 
-  const scroll = keyframes`
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  `;
-
   return (
-    <Box minH="100vh">
-      <Box position="relative" minH="240px" overflow="hidden" mb={8}>
+    <>
+      <Box position="relative" overflow="hidden" h={{ base: "320px", md: "480px" }} mb={8}>
         <Flex
-          as="div"
           position="absolute"
           top={0}
           left={0}
-          w="200%" // duplicate list
+          w="200%"
           h="100%"
           animation={`${scroll} 60s linear infinite`}
           zIndex={0}
         >
-          {[...filmArtists, ...filmArtists].map((artist, i) => (
-            <Box
-              key={`${artist.id}-${i}`}
+          {filmArtists.map((artist, i) => (
+            <AspectRatio
+              key={i}
+              ratio={3 / 4} // forces 3:4 width:height
+              w={{ base: "200px", md: "240px", lg: "300px" }}
+              mx={2}
               flex="0 0 auto"
-              w="120px"
-              h="240px"
-              mx="2"
-              overflow="hidden"
-              bg="gray.800"
             >
-              <Image src={artist.imageUrl} alt={artist.name} objectFit="cover" w="100%" h="100%" />
-            </Box>
+              <Box bg="gray.800">
+                <Image src={artist.imageUrl} alt="" objectFit="cover" w="100%" h="100%" />
+              </Box>
+            </AspectRatio>
           ))}
         </Flex>
-        <Container maxW="6xl" position="relative" zIndex={1} pt={16} pb={8} textAlign="center">
-          <Heading size="2xl" color="white" fontWeight="bold" mb={4}>
+
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          w="100%"
+          h="100%"
+          bg="rgba(0,0,0,0.6)"
+          zIndex={1}
+        />
+
+        <Container
+          maxW="6xl"
+          position="relative"
+          zIndex={2}
+          h="100%"
+          display="flex"
+          flexDir="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          px={4}
+        >
+          <Heading color="white" size="2xl" mb={4}>
             Welcome to Spotify Connect
           </Heading>
-          <Text fontSize="lg" color="whiteAlpha.800" maxW="2xl" mx="auto" my={6}>
+          <Text color="whiteAlpha.800" maxW="2xl" mb={6}>
             Engage with your favorite tracks and connect with other music lovers. Discover new
             sounds, share your taste, and join the conversation.
           </Text>
@@ -204,7 +220,10 @@ export default function HomePage() {
               <Heading size="xl" color="white">
                 Your Liked Songs
               </Heading>
-              <Text color="whiteAlpha.600">Here are the songs you love the most</Text>
+              <Text color="whiteAlpha.600">
+                View up to 50 of your most recently-liked tracks. Click “My Liked Songs” to see your
+                full collection.
+              </Text>
               <Button
                 bg="#93C259"
                 color="white"
@@ -212,40 +231,28 @@ export default function HomePage() {
                 leftIcon={<Icon as={FaPlay} color="white" boxSize="4" m="4" />}
                 onClick={() => handleProtectedNav("/library/liked-songs")}
               >
-                Listen Again
+                My Liked Songs
               </Button>
             </VStack>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-              {likedSongs.map((song) => (
+              {featuredTracks.map((track) => (
                 <Card
-                  key={song.id}
-                  bg="#1a1a1a"
-                  border="none"
-                  _hover={{ bg: "#222" }}
-                  transition="background 0.2s"
+                  key={track.id}
+                  href={track.link}
+                  bg="#0f0e17"
+                  _hover={{ bg: "#0f0e17", transform: "translateY(-4px)" }}
+                  transition="all 0.2s"
+                  cursor="pointer"
                 >
-                  <CardBody>
-                    <VStack spacing={4}>
-                      <Box
-                        w="120px"
-                        h="120px"
-                        bg="spotify.primary"
-                        borderRadius="lg"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Icon as={FaMusic} color="white" boxSize={8} />
-                      </Box>
-                      <VStack spacing={1} textAlign="center">
-                        <Text fontWeight="bold" color="white" fontSize="sm">
-                          {song.title}
-                        </Text>
-                        <Text color="whiteAlpha.600" fontSize="sm">
-                          {song.artist}
-                        </Text>
-                      </VStack>
-                    </VStack>
+                  <CardBody p={0}>
+                    <AspectRatio ratio={4 / 2.6} w="100%" overflow="hidden">
+                      <iframe
+                        style={{ borderRadius: 20 }}
+                        src={track.embedSrc}
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                      />
+                    </AspectRatio>
                   </CardBody>
                 </Card>
               ))}
@@ -258,7 +265,10 @@ export default function HomePage() {
               <Heading size="xl" color="white">
                 Your Top Artists
               </Heading>
-              <Text color="whiteAlpha.600">Artists you can't get enough of</Text>
+              <Text color="whiteAlpha.600">
+                See up to 50 of the artists you listen to most. Click “My Top Artists” to browse
+                your full list.
+              </Text>
               <Button
                 bg="#93C259"
                 color="white"
@@ -266,36 +276,29 @@ export default function HomePage() {
                 leftIcon={<Icon as={FaUsers} />}
                 onClick={() => handleProtectedNav("/library/top-artists")}
               >
-                View All Artists
+                My Top Artists
               </Button>
             </VStack>
+
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-              {topArtists.map((artist) => (
+              {featuredArtists.map((artist) => (
                 <Card
                   key={artist.id}
-                  bg="#1a1a1a"
-                  border="none"
-                  _hover={{ bg: "#222" }}
-                  transition="background 0.2s"
+                  href={artist.link}
+                  bg="#0f0e17"
+                  _hover={{ bg: "#0f0e17", transform: "translateY(-4px)" }}
+                  transition="all 0.2s"
+                  cursor="pointer"
                 >
-                  <CardBody>
-                    <VStack spacing={4}>
-                      <Avatar
-                        size="xl"
-                        src={artist.image}
-                        bg="spotify.tertiary"
-                        color="white"
-                        name={artist.name}
-                      />
-                      <VStack spacing={1} textAlign="center">
-                        <Text fontWeight="bold" color="white">
-                          {artist.name}
-                        </Text>
-                        <Text color="whiteAlpha.600" fontSize="sm">
-                          {artist.followers} followers
-                        </Text>
-                      </VStack>
-                    </VStack>
+                  <CardBody p={0}>
+                    <iframe
+                      src={artist.embedSrc}
+                      width="100%"
+                      height="352"
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      style={{ display: "block", borderRadius: 20 }}
+                    />
                   </CardBody>
                 </Card>
               ))}
@@ -441,6 +444,6 @@ export default function HomePage() {
           </Box>
         </VStack>
       </Container>
-    </Box>
+    </>
   );
 }
