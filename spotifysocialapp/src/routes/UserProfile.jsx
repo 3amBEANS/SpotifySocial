@@ -24,14 +24,14 @@ import SetupModal from "../components/user_profile/SetupModal";
 import "../styles/userProfile.css";
 
 export default function UserProfile() {
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const toast = useToast();
   const navigate = useNavigate();
 
-  // New vs old user state
   const [loading, setLoading] = useState(true);
   const [isOpeningProfile, setIsOpeningProfile] = useState(true);
 
+  // New vs old user state
   const [isNew, setIsNew] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
