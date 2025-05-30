@@ -48,24 +48,23 @@ export default function UserProfile() {
   const [topSongs, setTopSongs] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
 
-
   useEffect(() => {
     if (!user) return;
     const id = user.id;
     setLoading(true);
-  
+
     axios
       .get(`/api/users/${id}`)
       .then((res) => {
         const data = res.data;
-  
+
         if (!data.isProfileSetup) {
           setIsNew(true);
           setDisplayName(data.spotifyDisplayName || "");
           setLoading(false);
           return;
         }
-  
+
         setProfileData(data);
         setIsPrivate(!data.isPublic);
       })
@@ -76,7 +75,7 @@ export default function UserProfile() {
       .finally(() => {
         if (!isNew) setLoading(false);
       });
-  }, [user, toast, isNew]);  
+  }, [user, toast, isNew]);
 
   {
     /* fetch user's liked songs */
@@ -85,9 +84,9 @@ export default function UserProfile() {
     const fetchLikedSongs = async () => {
       try {
         const response = await axios.get("https://api.spotify.com/v1/me/tracks?limit=5");
-        const songs = response.data.items.map(item => ({
+        const songs = response.data.items.map((item) => ({
           title: item.track.name,
-          artist: item.track.artists.map(artist => artist.name).join(", "),
+          artist: item.track.artists.map((artist) => artist.name).join(", "),
           album: item.track.album.name,
           image: item.track.album.images[0]?.url,
         }));
@@ -108,13 +107,15 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchTopSongs = async () => {
       try {
-          const response = await axios.get(`https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=short_term`);   
-          const songs = response.data.items.map(track => ({
-            title: track.name,
-            artist: track.artists.map(artist => artist.name).join(", "),
-            album: track.album.name,
-            image: track.album.images[0]?.url,
-          }));
+        const response = await axios.get(
+          `https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=short_term`
+        );
+        const songs = response.data.items.map((track) => ({
+          title: track.name,
+          artist: track.artists.map((artist) => artist.name).join(", "),
+          album: track.album.name,
+          image: track.album.images[0]?.url,
+        }));
         setTopSongs(songs);
       } catch (err) {
         console.error("Error fetching top songs:", err);
@@ -122,7 +123,7 @@ export default function UserProfile() {
         setLoading(false);
       }
     };
-  
+
     if (user) fetchTopSongs();
   }, [user]);
 
@@ -132,13 +133,15 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchTopArtists = async () => {
       try {
-          const response = await axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short_term`);   
-          const artists = response.data.items.map(item => ({
-            name: item.name,
-            image: item.images[0]?.url,
-            genres: item.genres.join(", "),
-            id: item.id,
-          }));
+        const response = await axios.get(
+          `https://api.spotify.com/v1/me/top/artists?limit=5&time_range=short_term`
+        );
+        const artists = response.data.items.map((item) => ({
+          name: item.name,
+          image: item.images[0]?.url,
+          genres: item.genres.join(", "),
+          id: item.id,
+        }));
         setTopArtists(artists);
       } catch (err) {
         console.error("Error fetching top artists:", err);
@@ -146,7 +149,7 @@ export default function UserProfile() {
         setLoading(false);
       }
     };
-  
+
     if (user) fetchTopArtists();
   }, [user]);
 
