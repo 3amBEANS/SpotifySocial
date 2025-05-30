@@ -535,7 +535,7 @@ export default function ForumPage() {
                           @you
                         </Badge>
                       </HStack>
-                      <HStack justify="space-between">
+                      {/* <HStack justify="space-between">
                         <VStack align="flex-start" spacing={1}>
                           <Text color="white" fontSize="sm">
                             Visibility
@@ -547,7 +547,7 @@ export default function ForumPage() {
                         <Badge variant="outline" borderColor="whiteAlpha.200" color="whiteAlpha.600">
                           Public
                         </Badge>
-                      </HStack>
+                      </HStack> */}
                     </VStack>
                   </Box>
                 </VStack>
