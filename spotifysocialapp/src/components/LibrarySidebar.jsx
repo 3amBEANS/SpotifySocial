@@ -1,9 +1,10 @@
 import { Link as RouterLink } from "react-router-dom";
-import React from 'react';
+import { React } from 'react';
 import { Box, VStack, Icon, Text } from '@chakra-ui/react';
 import { FaMusic, FaUser, FaHeart } from 'react-icons/fa';
 
-const LibrarySidebar = () => {
+const LibrarySidebar = ( box ) => {
+console.log("VIEW: " + box);
   return (
     <Box bg="#1b1b1b" p={4} minW="200px" height="100vh">
       <VStack align="start" spacing={6}>
@@ -16,10 +17,11 @@ const LibrarySidebar = () => {
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "gray.100",
+            bg: "white",
             color: "#43b164",
             cursor: "pointer"
           }}
+          
         >
           <Icon as={FaHeart} mr={2} />
           <Text>Liked Songs</Text>
@@ -32,10 +34,11 @@ const LibrarySidebar = () => {
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "gray.100",
+            bg: "white",
             color: "#43b164",
             cursor: "pointer"
           }}
+         
         >
           <Icon as={FaUser} mr={2} />
           <Text>Top Artists</Text>
@@ -48,10 +51,11 @@ const LibrarySidebar = () => {
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "gray.100",
+            bg: "white",
             color: "#43b164",
             cursor: "pointer"
           }}
+         
         >
           <Icon as={FaMusic} mr={2} />
           <Text>Top Songs</Text>
