@@ -1,3 +1,35 @@
+import { useState, useEffect } from "react";
+import { useLocation, Link as RouterLink } from "react-router-dom";
+import { Box, Flex, VStack, Text, Button, IconButton, Icon, Divider } from "@chakra-ui/react";
+import { FaMusic, FaUser, FaHeart } from "react-icons/fa";
+import { IoLibrary } from "react-icons/io5";
+import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
+
+const navItems = [
+  { label: "Liked Songs", icon: FaHeart, to: "/library/liked-songs" },
+  { label: "Top Artists", icon: FaUser, to: "/library/top-artists" },
+  { label: "Top Songs", icon: FaMusic, to: "/library/top-songs" },
+];
+
+export default function LibrarySidebar({ children }) {
+  const { pathname } = useLocation();
+
+  // Read initial collapse state from localStorage (default to false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem("librarySidebarCollapsed");
+    return stored === "true";
+  });
+
+  // Whenever isCollapsed changes, write it back to localStorage
+  useEffect(() => {
+    localStorage.setItem("librarySidebarCollapsed", isCollapsed);
+  }, [isCollapsed]);
+
+  // Widths for the two modes
+  const expandedW = "220px";
+  const collapsedW = "60px";
+  const sidebarWidth = isCollapsed ? collapsedW : expandedW;
+
 import { Link as RouterLink } from "react-router-dom";
 import { React } from 'react';
 import { Box, VStack, Icon, Text } from '@chakra-ui/react';
@@ -17,11 +49,10 @@ console.log("VIEW: " + box);
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "white",
+            bg: "gray.100",
             color: "#43b164",
             cursor: "pointer"
           }}
-          
         >
           <Icon as={FaHeart} mr={2} />
           <Text>Liked Songs</Text>
@@ -34,11 +65,10 @@ console.log("VIEW: " + box);
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "white",
+            bg: "gray.100",
             color: "#43b164",
             cursor: "pointer"
           }}
-         
         >
           <Icon as={FaUser} mr={2} />
           <Text>Top Artists</Text>
@@ -51,11 +81,10 @@ console.log("VIEW: " + box);
           p={2}
           borderRadius="md"
           _hover={{
-            bg: "white",
+            bg: "gray.100",
             color: "#43b164",
             cursor: "pointer"
           }}
-         
         >
           <Icon as={FaMusic} mr={2} />
           <Text>Top Songs</Text>
@@ -63,6 +92,4 @@ console.log("VIEW: " + box);
       </VStack>
     </Box>
   );
-};
-
-export default LibrarySidebar;
+}

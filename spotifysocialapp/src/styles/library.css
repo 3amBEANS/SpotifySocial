@@ -6,3 +6,8 @@
 .content-area {
   overflow-y: auto;
 }
+/* global stylesheet or a component-level CSS module */
+.main-content {
+  margin-left: 200px; /* equal to your sidebar width */
+  padding-top: 64px; /* equal to your navbar height */
+}

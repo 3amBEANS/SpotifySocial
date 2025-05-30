@@ -4,14 +4,15 @@ import {
   ModalContent,
   Box,
   HStack,
-  Circle,
   Text,
   VStack,
   Heading,
   Button,
   Divider,
 } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon, CloseIcon } from "@chakra-ui/icons";
+import { FaSpotify } from "react-icons/fa";
+import { IconButton } from "@chakra-ui/react";
 import SpotifyLogo from "../assets/spotify.png";
 import "../styles/loginPage.css";
 
@@ -23,8 +24,20 @@ export default function LoginModal({ isOpen, onClose }) {
         <Box className="login-container">
           {/* Header bar */}
           <Box className="login-header">
-            <HStack>
-              <Circle className="login-header-circle" />
+            <IconButton
+              aria-label="Close login modal"
+              icon={<CloseIcon />}
+              onClick={onClose}
+              position="absolute"
+              top="8px"
+              right="8px"
+              size="sm"
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "rgba(30, 114, 41, 0.466)" }}
+            />
+            <HStack spacing={2} align="center">
+              <FaSpotify className="login-header-icon" />
               <Text className="login-header-text">Welcome to Spotify Connect</Text>
             </HStack>
           </Box>
@@ -55,7 +68,13 @@ export default function LoginModal({ isOpen, onClose }) {
             <VStack className="login-section">
               <Heading className="login-heading">Don't have a Spotify Account?</Heading>
               <Text className="login-text">Creating a Spotify account is free!</Text>
-              <Button className="login-button">
+              <Button
+                as="a"
+                href="https://www.spotify.com/us/signup?forward_url=https%3A%2F%2Fopen.spotify.com%2F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="login-button"
+              >
                 Register <ExternalLinkIcon />
               </Button>
             </VStack>
