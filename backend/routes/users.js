@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../firebase");
 const fetch = require("node-fetch");
+const axios = require("axios");
 
 // ✅ GET /api/users/public – returns only public users with all their data
 router.get("/public", async (req, res) => {
@@ -17,6 +18,49 @@ router.get("/public", async (req, res) => {
   } catch (err) {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+router.post("/spotify/refresh-token", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json({ error: "Missing refresh token" });
+  }
+
+  const authHeader = Buffer.from(
+    `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+  ).toString("base64");
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+      }),
+      {
+        headers: {
+          Authorization: `Basic ${authHeader}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const newAccessToken = response.data.access_token;
+
+    // Optional: Store the new access token in Firestore if you want
+    // Example: req.body.userId must be passed to this endpoint if storing
+    if (req.body.userId) {
+      await db.collection("users").doc(req.body.userId).update({
+        accessToken: newAccessToken,
+      });
+    }
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error("Error refreshing Spotify token:", error.response?.data || error.message);
+    res.status(500).json({ error: "Failed to refresh token" });
   }
 });
 

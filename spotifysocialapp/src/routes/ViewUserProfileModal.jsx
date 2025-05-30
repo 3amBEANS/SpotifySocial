@@ -31,61 +31,101 @@ export default function ViewUserProfileModal({ userId, onClose }) {
   const [topSongs, setTopSongs] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        setLoading(true);
-        const [profileRes, artistsRes, songsRes, likedRes] = await Promise.all([
-          axios.get(`/api/users/${userId}`),
-          axios.get(`https://api.spotify.com/v1/me/top/artists?limit=5`),
-          axios.get(`https://api.spotify.com/v1/me/top/tracks?limit=5`),
-          axios.get(`https://api.spotify.com/v1/me/tracks?limit=5`),
-        ]);
-        
-        setProfileData(profileRes.data);
-        
-        // Process top artists
-        const artists = artistsRes.data.items.map((item) => ({
-          name: item.name,
-          image: item.images[0]?.url,
-          genres: item.genres.join(", "),
-          id: item.id,
-        }));
-        setTopArtists(artists);
-        
-        // Process top songs
-        const songs = songsRes.data.items.map((track) => ({
-          title: track.name,
-          artist: track.artists.map((artist) => artist.name).join(", "),
-          album: track.album.name,
-          image: track.album.images[0]?.url,
-        }));
-        setTopSongs(songs);
-        
-        // Process liked songs
-        const likedSongsData = likedRes.data.items.map((item) => ({
-          title: item.track.name,
-          artist: item.track.artists.map((artist) => artist.name).join(", "),
-          album: item.track.album.name,
-          image: item.track.album.images[0]?.url,
-        }));
-        setLikedSongs(likedSongsData);
-      } catch (err) {
-        console.error("Error fetching profile data:", err);
-        toast({ 
-          title: "Error", 
-          description: "Could not load profile data", 
-          status: "error" 
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  const refreshAccessToken = async (refreshToken, userId) => {
+    const res = await axios.post("/api/users/spotify/refresh-token", {
+      refreshToken,
+      userId,
+    });
+    return res.data.accessToken;
+  };
 
-    if (userId) {
-      fetchProfileData();
+  useEffect(() => {
+  const fetchProfileData = async () => {
+    setLoading(true);
+
+    try {
+      // Step 1: Get user profile from your backend
+      const profileRes = await axios.get(`/api/users/${userId}`);
+      const { accessToken, refreshToken } = profileRes.data;
+      setProfileData(profileRes.data);
+
+      let token = accessToken;
+
+      const getSpotifyData = async (tokenToUse) => {
+        const headers = {
+          headers: {
+            Authorization: `Bearer ${tokenToUse}`,
+          },
+        };
+
+        return await Promise.all([
+          axios.get("https://api.spotify.com/v1/me/top/artists?limit=5", headers),
+          axios.get("https://api.spotify.com/v1/me/top/tracks?limit=5", headers),
+          axios.get("https://api.spotify.com/v1/me/tracks?limit=5", headers),
+        ]);
+      };
+
+      let artistsRes, songsRes, likedRes;
+
+      try {
+        [artistsRes, songsRes, likedRes] = await getSpotifyData(token);
+      } catch (err) {
+        // Token might be expired — try refreshing
+        if (err.response?.status === 401 && refreshToken) {
+          token = await refreshAccessToken(refreshToken, userId);
+
+          // Retry with new token
+          [artistsRes, songsRes, likedRes] = await getSpotifyData(token);
+        } else {
+          throw err;
+        }
+      }
+
+      // Set Top Artists
+      const artists = artistsRes.data.items.map((item) => ({
+        name: item.name,
+        image: item.images[0]?.url,
+        genres: item.genres.join(", "),
+        id: item.id,
+      }));
+      setTopArtists(artists);
+
+      // Set Top Songs
+      const songs = songsRes.data.items.map((track) => ({
+        title: track.name,
+        artist: track.artists.map((artist) => artist.name).join(", "),
+        album: track.album.name,
+        image: track.album.images[0]?.url,
+      }));
+      setTopSongs(songs);
+
+      // Set Liked Songs
+      const likedSongsData = likedRes.data.items.map((item) => ({
+        title: item.track.name,
+        artist: item.track.artists.map((artist) => artist.name).join(", "),
+        album: item.track.album.name,
+        image: item.track.album.images[0]?.url,
+      }));
+      setLikedSongs(likedSongsData);
+
+    } catch (err) {
+      console.error("Error loading profile data:", err);
+      toast({
+        title: "Failed to load profile",
+        description: err.message,
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
-  }, [userId, toast]);
+  };
+
+  if (userId) {
+    fetchProfileData();
+  }
+}, [userId, toast]);
 
   if (loading) {
     return (
@@ -140,17 +180,17 @@ export default function ViewUserProfileModal({ userId, onClose }) {
 
           {/* music cards */}
           <Grid className="user-profile-grid">
-            {topArtists.length > 0 && (
+            {profileData?.showTopArtists && topArtists.length > 0 && (
               <GridItem>
                 <TopArtistsCard data={topArtists} />
               </GridItem>
             )}
-            {topSongs.length > 0 && (
+            {profileData?.showTopSongs && topSongs.length > 0 && (
               <GridItem>
                 <TopSongsCard data={topSongs} />
               </GridItem>
             )}
-            {likedSongs.length > 0 && (
+            {profileData?.showLikedSongs && likedSongs.length > 0 && (
               <GridItem className="liked-songs-item">
                 <LikedSongsCard data={likedSongs} />
               </GridItem>
