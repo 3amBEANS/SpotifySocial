@@ -5,14 +5,15 @@ import {
   HStack,
   Text,
   Button,
-  IconButton,
-  InputGroup,
-  InputLeftElement,
-  Input,
+  // IconButton,
+  // InputGroup,
+  // InputLeftElement,
+  // Input,
   Avatar,
 } from "@chakra-ui/react";
 import LoginModal from "./LoginModal";
-import { SearchIcon } from "@chakra-ui/icons";
+// import { SearchIcon } from "@chakra-ui/icons";
+import { FaSpotify } from "react-icons/fa";
 import { MdOutlineLogout, MdOutlineLogin } from "react-icons/md";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
@@ -27,7 +28,7 @@ export default function Navbar() {
   const [profileSetup, setProfileSetup] = useState(false);
   const [navAvatarUrl, setNavAvatarUrl] = useState(null);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  // const [searchOpen, setSearchOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -94,7 +95,8 @@ export default function Navbar() {
         <Flex className="navbar-container">
           {/* Logo flush left */}
           <Box className="logo">
-            <Link to="/">
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+              <FaSpotify className="logo-icon" />
               <Text className="logo-text">Spotify Connect</Text>
             </Link>
           </Box>
@@ -121,9 +123,8 @@ export default function Navbar() {
           <Box className="spacer" />
 
           {/* Search flush right */}
-          <Box className="search-container">
+          {/* <Box className="search-container">
             {searchOpen ? (
-              /* full search bar */
               <InputGroup className="search-expanded">
                 <InputLeftElement className="search-icon">
                   <SearchIcon />
@@ -137,7 +138,6 @@ export default function Navbar() {
                 />
               </InputGroup>
             ) : (
-              /* just the icon button */
               <IconButton
                 aria-label="Search"
                 icon={<SearchIcon />}
@@ -145,7 +145,7 @@ export default function Navbar() {
                 onClick={() => setSearchOpen(true)}
               />
             )}
-          </Box>
+          </Box> */}
 
           {/* Profile / Sign In toggle */}
           {profileSetup ? (
