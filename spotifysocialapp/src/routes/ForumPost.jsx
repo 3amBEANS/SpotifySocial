@@ -20,6 +20,7 @@ import {
   Icon,
   Wrap,
   WrapItem,
+  useToast,
 } from "@chakra-ui/react";
 import { SearchIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import {
@@ -46,6 +47,7 @@ export default function ForumPost() {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
 
   // pulled from Firebase posts data
   const [posts, setPosts] = useState([]);
@@ -59,8 +61,31 @@ export default function ForumPost() {
     postCount: 0
   });
 
-
-  
+  const handleSharePost = (post) => {
+    const textToCopy = `${post.title}\n\n${post.content}`;
+    
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        toast({
+          title: "Copied to clipboard!",
+          description: "Post text was copied to your clipboard",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "bottom",
+        });
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        toast({
+          title: "Copy failed",
+          description: "Could not copy post text",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      });
+  };  
 
   const filteredPosts = posts.filter(
     (post) =>
@@ -403,12 +428,12 @@ export default function ForumPost() {
                         color="whiteAlpha.600"
                         _hover={{ color: "spotify.primary" }}
                         leftIcon={
-                          <Icon as={FaHeart} fill={post.isLiked ? "currentColor" : "none"} />
+                          <Icon as={FaHeart} fill={post.isLiked ? "#43b164" : "currentColor"} />
                         }
                       >
                         {post.likes}
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         color="whiteAlpha.600"
@@ -416,12 +441,13 @@ export default function ForumPost() {
                         leftIcon={<Icon as={FaComment} />}
                       >
                         {post.replies}
-                      </Button>
-                      <Button
+                      </Button> */}
+                       <Button
                         variant="ghost"
                         size="sm"
                         color="whiteAlpha.600"
                         _hover={{ color: "spotify.primary" }}
+                        onClick={() => handleSharePost(post)}  // Add this onClick handler
                         leftIcon={<Icon as={FaShare} />}
                       >
                         Share
