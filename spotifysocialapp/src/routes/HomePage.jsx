@@ -1,6 +1,5 @@
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { keyframes } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import {
   AspectRatio,
@@ -8,7 +7,6 @@ import {
   Flex,
   Text,
   Button,
-  Avatar,
   Card,
   CardBody,
   VStack,
@@ -18,17 +16,14 @@ import {
   Heading,
   SimpleGrid,
   Image,
+  Divider,
 } from "@chakra-ui/react";
-import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa";
+import { FaMusic, FaUsers, FaHeart, FaPlay, FaArrowRight } from "react-icons/fa";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { AuthContext } from "../AuthContext";
 import * as artistImages from "../assets/artists";
 import LoginModal from "../components/LoginModal";
-
-const scroll = keyframes`
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-`;
+import "../styles/homePage.css";
 
 export default function HomePage() {
   // Mock data
@@ -68,45 +63,33 @@ export default function HomePage() {
     },
   ];
 
-  const forumPosts = [
+  const quickNavItems = [
     {
-      id: 1,
-      title: "What do you think about the new album by XYZ?",
-      author: "MusicLover",
-      timestamp: "2 hours ago",
-      replies: 24,
-      likes: 156,
+      label: "User Profile",
+      icon: FaUsers,
+      link: "/profile",
+      description: "View and edit your profile settings",
     },
     {
-      id: 2,
-      title: "I can't stop listening to this track!",
-      author: "BeatFinder",
-      timestamp: "4 hours ago",
-      replies: 18,
-      likes: 89,
+      label: "Liked Songs",
+      icon: FaHeart,
+      link: "/library/liked-songs",
+      description: "Your collection of favorite tracks",
+    },
+    {
+      label: "Top Artists",
+      icon: FaMusic,
+      link: "/library/top-artists",
+      description: "Your most played artists",
+    },
+    {
+      label: "Top Songs",
+      icon: FaArrowTrendUp,
+      link: "/library/top-songs",
+      description: "Your most played tracks",
     },
   ];
 
-  const publicProfiles = [
-    {
-      id: 1,
-      name: "User01",
-      avatar: "/placeholder.svg?height=60&width=60",
-      isOnline: true,
-    },
-    {
-      id: 2,
-      name: "MusicLover99",
-      avatar: "/placeholder.svg?height=60&width=60",
-      isOnline: false,
-    },
-    {
-      id: 3,
-      name: "TravelingTunes",
-      avatar: "/placeholder.svg?height=60&width=60",
-      isOnline: true,
-    },
-  ];
   const navigate = useNavigate();
   const images = Object.values(artistImages);
   const { user } = useContext(AuthContext);
@@ -142,24 +125,10 @@ export default function HomePage() {
 
   return (
     <>
-      <Box position="relative" overflow="hidden" h={{ base: "320px", md: "480px" }} mb={8}>
-        <Flex
-          position="absolute"
-          top={0}
-          left={0}
-          w="200%"
-          h="100%"
-          animation={`${scroll} 60s linear infinite`}
-          zIndex={0}
-        >
+      <Box className="hero">
+        <Flex className="hero-slider">
           {filmArtists.map((artist, i) => (
-            <AspectRatio
-              key={i}
-              ratio={3 / 4} // forces 3:4 width:height
-              w={{ base: "200px", md: "240px", lg: "300px" }}
-              mx={2}
-              flex="0 0 auto"
-            >
+            <AspectRatio key={i} className="hero-slide">
               <Box bg="gray.800">
                 <Image src={artist.imageUrl} alt="" objectFit="cover" w="100%" h="100%" />
               </Box>
@@ -167,40 +136,16 @@ export default function HomePage() {
           ))}
         </Flex>
 
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          w="100%"
-          h="100%"
-          bg="rgba(0,0,0,0.6)"
-          zIndex={1}
-        />
+        <Box className="hero-overlay" />
 
-        <Container
-          maxW="6xl"
-          position="relative"
-          zIndex={2}
-          h="100%"
-          display="flex"
-          flexDir="column"
-          alignItems="center"
-          justifyContent="center"
-          textAlign="center"
-          px={4}
-        >
-          <Heading color="white" size="2xl" mb={4}>
-            Welcome to Spotify Connect
-          </Heading>
-          <Text color="whiteAlpha.800" maxW="2xl" mb={6}>
+        <Container className="hero-content">
+          <Heading className="hero-heading">Welcome to Spotify Connect</Heading>
+          <Text className="hero-text">
             Engage with your favorite tracks and connect with other music lovers. Discover new
             sounds, share your taste, and join the conversation.
           </Text>
           <Button
-            size="lg"
-            bg="#93C259"
-            color="white"
-            _hover={{ bg: "blackAlpha.800" }}
+            className="hero-button"
             rightIcon={<Icon as={FaArrowRight} />}
             onClick={() => handleProtectedNav("/profile")}
           >
@@ -212,40 +157,32 @@ export default function HomePage() {
       {/* Login Modal */}
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
 
-      <Container maxW="6xl" py={16}>
+      <Container className="main-container">
         <VStack spacing={16} align="stretch">
+          <Divider className="section-divider" />
+
           {/* Your Liked Songs Section */}
           <Box>
-            <VStack spacing={6} textAlign="center" mb={8}>
-              <Heading size="xl" color="white">
-                Your Liked Songs
-              </Heading>
-              <Text color="whiteAlpha.600">
+            <VStack className="section">
+              <Heading className="section-title">Your Liked Songs</Heading>
+              <Text className="section-subtitle">
                 View up to 50 of your most recently-liked tracks. Click “My Liked Songs” to see your
                 full collection.
               </Text>
               <Button
-                bg="#93C259"
-                color="white"
-                _hover={{ opacity: 0.9 }}
-                leftIcon={<Icon as={FaPlay} color="white" boxSize="4" m="4" />}
+                className="section-button"
+                leftIcon={<Icon as={FaPlay} color="white" boxSize="3.5" m="1" />}
                 onClick={() => handleProtectedNav("/library/liked-songs")}
               >
                 My Liked Songs
               </Button>
             </VStack>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+
+            <SimpleGrid className="grid-3col">
               {featuredTracks.map((track) => (
-                <Card
-                  key={track.id}
-                  href={track.link}
-                  bg="#0f0e17"
-                  _hover={{ bg: "#0f0e17", transform: "translateY(-4px)" }}
-                  transition="all 0.2s"
-                  cursor="pointer"
-                >
-                  <CardBody p={0}>
-                    <AspectRatio ratio={4 / 2.6} w="100%" overflow="hidden">
+                <Card key={track.id} href={track.link} className="card-link">
+                  <CardBody className="card-body">
+                    <AspectRatio ratio={4 / 2.32} w="100%" overflow="hidden">
                       <iframe
                         style={{ borderRadius: 20 }}
                         src={track.embedSrc}
@@ -259,38 +196,29 @@ export default function HomePage() {
             </SimpleGrid>
           </Box>
 
+          <Divider className="section-divider" />
+
           {/* Top Artists Section */}
           <Box>
-            <VStack spacing={6} textAlign="center" mb={8}>
-              <Heading size="xl" color="white">
-                Your Top Artists
-              </Heading>
-              <Text color="whiteAlpha.600">
+            <VStack className="section">
+              <Heading className="section-title">Your Top Artists</Heading>
+              <Text className="section-subtitle">
                 See up to 50 of the artists you listen to most. Click “My Top Artists” to browse
                 your full list.
               </Text>
               <Button
-                bg="#93C259"
-                color="white"
-                _hover={{ opacity: 0.9 }}
-                leftIcon={<Icon as={FaUsers} />}
+                className="section-button"
+                leftIcon={<Icon as={FaUsers} color="white" boxSize="5" m="1" />}
                 onClick={() => handleProtectedNav("/library/top-artists")}
               >
                 My Top Artists
               </Button>
             </VStack>
 
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+            <SimpleGrid className="grid-3col">
               {featuredArtists.map((artist) => (
-                <Card
-                  key={artist.id}
-                  href={artist.link}
-                  bg="#0f0e17"
-                  _hover={{ bg: "#0f0e17", transform: "translateY(-4px)" }}
-                  transition="all 0.2s"
-                  cursor="pointer"
-                >
-                  <CardBody p={0}>
+                <Card key={artist.id} href={artist.link} className="card-link">
+                  <CardBody className="card-body">
                     <iframe
                       src={artist.embedSrc}
                       width="100%"
@@ -305,141 +233,32 @@ export default function HomePage() {
             </SimpleGrid>
           </Box>
 
+          <Divider className="section-divider" />
+
           {/* Quick Navigation Cards */}
           <Box>
-            <VStack spacing={6} textAlign="center" mb={8}>
-              <Heading size="xl" color="white">
-                Quick Access
-              </Heading>
-              <Text color="whiteAlpha.600">Jump to your favorite sections</Text>
+            <VStack className="section">
+              <Heading className="section-title">Quick Access</Heading>
+              <Text>Jump to your favorite sections</Text>
             </VStack>
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
-              gap={6}
-            >
-              <Card
-                bg="#1a1a1a"
-                border="none"
-                _hover={{ bg: "#222", transform: "translateY(-4px)" }}
-                transition="all 0.2s"
-                cursor="pointer"
-                onClick={() => handleProtectedNav("/profile")}
-              >
-                <CardBody textAlign="center">
-                  <VStack spacing={4}>
-                    <Box
-                      w={16}
-                      h={16}
-                      bg="spotify.primary"
-                      borderRadius="full"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Icon as={FaUsers} color="white" boxSize={8} />
-                    </Box>
-                    <Text fontWeight="bold" color="white">
-                      User Profile
-                    </Text>
-                    <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
-                      View and edit your profile settings
-                    </Text>
-                  </VStack>
-                </CardBody>
-              </Card>
-
-              <Card
-                bg="#1a1a1a"
-                border="none"
-                _hover={{ bg: "#222", transform: "translateY(-4px)" }}
-                transition="all 0.2s"
-                cursor="pointer"
-                onClick={() => handleProtectedNav("/library/liked-songs")}
-              >
-                <CardBody textAlign="center">
-                  <VStack spacing={4}>
-                    <Box
-                      w={16}
-                      h={16}
-                      bg="spotify.primary"
-                      borderRadius="full"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Icon as={FaHeart} color="white" boxSize={8} />
-                    </Box>
-                    <Text fontWeight="bold" color="white">
-                      Liked Songs
-                    </Text>
-                    <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
-                      Your collection of favorite tracks
-                    </Text>
-                  </VStack>
-                </CardBody>
-              </Card>
-
-              <Card
-                bg="#1a1a1a"
-                border="none"
-                _hover={{ bg: "#222", transform: "translateY(-4px)" }}
-                transition="all 0.2s"
-                cursor="pointer"
-                onClick={() => handleProtectedNav("/library/top-artists")}
-              >
-                <CardBody textAlign="center">
-                  <VStack spacing={4}>
-                    <Box
-                      w={16}
-                      h={16}
-                      bg="spotify.primary"
-                      borderRadius="full"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Icon as={FaMusic} color="white" boxSize={8} />
-                    </Box>
-                    <Text fontWeight="bold" color="white">
-                      Top Artists
-                    </Text>
-                    <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
-                      Your most played artists
-                    </Text>
-                  </VStack>
-                </CardBody>
-              </Card>
-
-              <Card
-                bg="#1a1a1a"
-                border="none"
-                _hover={{ bg: "#222", transform: "translateY(-4px)" }}
-                transition="all 0.2s"
-                cursor="pointer"
-                onClick={() => handleProtectedNav("/library/top-songs")}
-              >
-                <CardBody textAlign="center">
-                  <VStack spacing={4}>
-                    <Box
-                      w={16}
-                      h={16}
-                      bg="spotify.primary"
-                      borderRadius="full"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Icon as={FaArrowTrendUp} color="white" boxSize={8} />
-                    </Box>
-                    <Text fontWeight="bold" color="white">
-                      Top Songs
-                    </Text>
-                    <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
-                      Your most played tracks
-                    </Text>
-                  </VStack>
-                </CardBody>
-              </Card>
+            <Grid className="quick-grid">
+              {quickNavItems.map((item) => (
+                <Card
+                  key={item.label}
+                  className="quick-grid_card-link"
+                  onClick={() => handleProtectedNav(item.link)}
+                >
+                  <CardBody>
+                    <VStack className="quick-grid_vstack" k>
+                      <Box className="quick-grid_iconwrapper">
+                        <Icon as={item.icon} color="white" boxSize={9} mb={3} />
+                      </Box>
+                      <Text className="quick-grid_label">{item.label}</Text>
+                      <Text className="quick-grid_description">{item.description}</Text>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              ))}
             </Grid>
           </Box>
         </VStack>
