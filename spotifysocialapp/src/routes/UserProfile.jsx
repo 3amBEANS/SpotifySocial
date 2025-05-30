@@ -268,6 +268,7 @@ export default function UserProfile() {
       const payload = {
         display_name: profileData.display_name,
         bio: profileData.bio,
+        avatar_url: profileData.avatar_url,
       };
       // send it
       const res = await axios.patch(`/api/users/${user.id}`, payload);
