@@ -80,8 +80,8 @@ export default function ChatList() {
           <Text color="gray.400">No messages yet.</Text>
         ) : (
           messages.map((msg) => (
-            <Box key={msg.id} p={4} bg="gray.700" borderRadius="md">
-              <Text fontWeight="bold">
+            <Box key={msg.id} p={4} borderRadius="md">
+              <Text fontWeight="bold" fontSize="lg">
                 {msg.from === user.id ? `To ${msg.toName}` : `From ${msg.fromName}`}
               </Text>
               <Text mt={1}>{msg.message}</Text>

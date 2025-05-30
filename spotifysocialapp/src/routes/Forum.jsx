@@ -186,7 +186,8 @@ export default function ForumPage() {
                 color="white"
                 border="1px solid"
                 borderColor="white"
-                _hover={{ opacity: 0.9 }}
+                _hover={{ bg: "#43b164",
+                  opacity: 0.9 }}
                 leftIcon={<Icon as={FaPlus} />}
               >
                 Create Forum
@@ -534,7 +535,7 @@ export default function ForumPage() {
                           @you
                         </Badge>
                       </HStack>
-                      <HStack justify="space-between">
+                      {/* <HStack justify="space-between">
                         <VStack align="flex-start" spacing={1}>
                           <Text color="white" fontSize="sm">
                             Visibility
@@ -546,7 +547,7 @@ export default function ForumPage() {
                         <Badge variant="outline" borderColor="whiteAlpha.200" color="whiteAlpha.600">
                           Public
                         </Badge>
-                      </HStack>
+                      </HStack> */}
                     </VStack>
                   </Box>
                 </VStack>

@@ -75,7 +75,7 @@ export default function LibrarySidebar({ children }) {
                   aria-label={item.label}
                   variant="ghost"
                   color={isActive ? "white" : "whiteAlpha.600"}
-                  _hover={{ bg: "gray.700", color: "#43b164" }}
+                  _hover={{ bg: "white", color: "#43b164" }}
                 />
               ) : (
                 <Button
@@ -93,7 +93,7 @@ export default function LibrarySidebar({ children }) {
                   bg={isActive ? "white" : "transparent"}
                   color={isActive ? "black" : "whiteAlpha.800"}
                   _hover={{
-                    bg: "gray.100",
+                    bg: "white",
                     color: "#43b164",
                     cursor: "pointer",
                   }}
