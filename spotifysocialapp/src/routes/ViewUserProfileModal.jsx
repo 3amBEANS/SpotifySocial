@@ -145,12 +145,12 @@ export default function ViewUserProfileModal({ userId, onClose }) {
 
   // Prepare the prop shape for ProfileCard
   const cardProfile = {
-    name: profileData?.display_name ?? profileData?.name ?? "",
-    username: profileData?.username,
-    bio: profileData?.bio,
-    location: profileData?.location,
-    joinDate: profileData?.createdAt || "Unknown",
-  };
+  name: profileData?.display_name ?? profileData?.name ?? "",
+  username: profileData?.username,
+  bio: profileData?.bio?.trim() ? profileData.bio : "Avid Listener and Promoter of Great Music",
+  location: profileData?.location,
+  joinDate: profileData?.createdAt || "Unknown",
+};
 
   return (
     <Box className="user-profile-page">
