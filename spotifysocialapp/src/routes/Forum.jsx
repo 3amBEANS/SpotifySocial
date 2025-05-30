@@ -177,11 +177,12 @@ export default function ForumPage() {
           {/* Header */}
           <VStack spacing={4} align="stretch">
             <Flex justify="space-between" align="center">
-              <Text fontSize="3xl" fontWeight="bold" color="white">
+              <Text fontSize="5xl" fontWeight="bold" color="white">
                 Community Forums
               </Text>
               <Button
                 onClick={onOpen}
+                size="lg"
                 bg="spotify.primary"
                 color="white"
                 border="1px solid"
@@ -193,7 +194,7 @@ export default function ForumPage() {
                 Create Forum
               </Button>
             </Flex>
-            <Text color="whiteAlpha.600">
+            <Text fontSize="lg" color="whiteAlpha.600">
               Join discussions about music, discover new artists, and connect with fellow music lovers
             </Text>
           </VStack>
@@ -220,7 +221,7 @@ export default function ForumPage() {
                 <WrapItem key={category}>
                   <Button
                     variant={selectedCategory === category ? "solid" : "outline"}
-                    size="sm"
+                    size="md"
                     onClick={() => setSelectedCategory(category)}
                     bg={selectedCategory === category ? "#43b164" : "transparent"}
                     borderColor="spotify.primary"
