@@ -249,7 +249,7 @@ export default function HomePage() {
                   onClick={() => handleProtectedNav(item.link)}
                 >
                   <CardBody>
-                    <VStack className="quick-grid_vstack" k>
+                    <VStack className="quick-grid_vstack">
                       <Box className="quick-grid_iconwrapper">
                         <Icon as={item.icon} color="white" boxSize={9} mb={3} />
                       </Box>

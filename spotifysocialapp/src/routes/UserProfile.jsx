@@ -32,6 +32,7 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [isNew, setIsNew] = useState(false);
   const [profileData, setProfileData] = useState(null);
+  const [originalProfile, setOriginalProfile] = useState(null);
 
   // Setup profile
   const [avatar_url, setAvatarUrl] = useState(null);
@@ -225,6 +226,62 @@ export default function UserProfile() {
     joinDate: profileData?.createdAt || "Unknown",
   };
 
+  const handleTogglePrivate = async (checked) => {
+    // checked = true means user wants a PRIVATE profile, so isPublic = !checked
+    setIsPrivate(checked);
+
+    try {
+      const res = await axios.patch(`/api/users/${user.id}`, {
+        isPublic: !checked,
+      });
+      // update our local copy too:
+      setProfileData((p) => ({ ...p, isPublic: res.data.isPublic }));
+    } catch (err) {
+      console.error("Failed to update privacy:", err);
+      toast({
+        description: "Could not update privacy setting",
+        status: "error",
+      });
+      // roll back the toggle
+      setIsPrivate((prev) => !prev);
+    }
+  };
+
+  const handleEdit = () => {
+    // keep a copy of the current profileData so we can restore it
+    setOriginalProfile({ ...profileData });
+    setIsEditing(true);
+  };
+
+  // when user clicks “Cancel”
+  const handleCancelEdit = () => {
+    // throw away any edits and restore original
+    if (originalProfile) {
+      setProfileData(originalProfile);
+    }
+    setIsEditing(false);
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      // build only the fields you want to update
+      const payload = {
+        display_name: profileData.display_name,
+        bio: profileData.bio,
+        avatar_url: profileData.avatar_url,
+      };
+      // send it
+      const res = await axios.patch(`/api/users/${user.id}`, payload);
+      // replace local copy, exit edit mode
+      setProfileData(res.data);
+      setIsEditing(false);
+      toast({ description: "Profile updated!", status: "success" });
+    } catch (err) {
+      console.error("Save profile failed:", err);
+      toast({ description: "Could not save profile", status: "error" });
+    }
+  };
+
   return (
     <Box className="user-profile-page">
       <Box className="user-profile-container">
@@ -247,11 +304,11 @@ export default function UserProfile() {
             showTopArtists={showTopArtists}
             showTopSongs={showTopSongs}
             showLikedSongs={showLikedSongs}
-            onEdit={() => setIsEditing(true)}
-            onSave={() => setIsEditing(false)}
-            onCancel={() => setIsEditing(false)}
+            onEdit={handleEdit}
+            onSave={handleSaveProfile}
+            onCancel={handleCancelEdit}
             onProfileChange={(field, val) => setProfileData((pd) => ({ ...pd, [field]: val }))}
-            onTogglePrivate={setIsPrivate}
+            onTogglePrivate={handleTogglePrivate}
             onToggleShowTopArtists={setShowTopArtists}
             onToggleShowTopSongs={setShowTopSongs}
             onToggleShowLikedSongs={setShowLikedSongs}

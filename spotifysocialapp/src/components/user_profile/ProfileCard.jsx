@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Flex,
   Text,
@@ -35,6 +36,8 @@ export default function ProfileHeader({
   onToggleShowTopSongs,
   onToggleShowLikedSongs,
 }) {
+  const fileInput = useRef();
+
   return (
     <>
       {/* Profile Card */}
@@ -42,32 +45,69 @@ export default function ProfileHeader({
         <CardHeader className="profile-card-header">
           <Flex className="profile-card-header-flex">
             <HStack className="profile-card-avatar-stack">
-              <Avatar
-                size="xl"
-                src={avatar_url || profile.avatar_url || "/placeholder.svg?height=96&width=96"}
-                name={profile.name.slice(0, 2)}
-                className="profile-card-avatar"
-              />
+              <Box
+                role="group"
+                position="relative"
+                w="96px"
+                h="96px"
+                borderRadius="full"
+                overflow="hidden"
+                cursor={isEditing ? "pointer" : "default"}
+                onClick={() => isEditing && fileInput.current.click()}
+              >
+                <Avatar size="xl" src={avatar_url || profile.avatar_url} name={profile.name[0]} />
+
+                {isEditing && (
+                  <>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInput}
+                      display="none"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => {
+                          onProfileChange("avatar_url", reader.result);
+                        };
+                      }}
+                    />
+
+                    {/* overlay edit icon */}
+                    <Box
+                      position="absolute"
+                      inset="0"
+                      bg="blackAlpha.600"
+                      color="white"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      opacity={0}
+                      _groupHover={{ opacity: 1 }}
+                      transition="opacity 0.2s"
+                    >
+                      <EditIcon boxSize={6} />
+                    </Box>
+                  </>
+                )}
+              </Box>
               <VStack className="profile-card-text-stack">
                 {isEditing ? (
                   <VStack className="profile-card-text-stack">
                     <Input
                       value={profile.name}
-                      onChange={(e) => onProfileChange("name", e.target.value)}
+                      onChange={(e) => onProfileChange("display_name", e.target.value)}
                       className="profile-card-input_name"
-                    />
-                    <Input
-                      value={profile.username}
-                      onChange={(e) => onProfileChange("username", e.target.value)}
-                      className="profile-card-input_username"
                     />
                   </VStack>
                 ) : (
                   <>
                     <Text className="profile-card-name">{profile.name}</Text>
-                    <Text className="profile-card-username">{profile.username}</Text>
                   </>
                 )}
+                <Text className="profile-card-username">@{profile.username}</Text>
                 <HStack className="profile-card-meta">
                   <Text>📍 {profile.location}</Text>
                   <Text>📅 Joined {profile.joinDate}</Text>
