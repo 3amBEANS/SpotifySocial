@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Box, Button, Flex, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  VStack,
+  Icon,
+  Text,
+} from "@chakra-ui/react";
+import { MdSend, MdChatBubble } from "react-icons/md";
 import MessageForm from "../components/MessageForm";
 import ChatList from "../components/ChatList";
 
@@ -9,48 +16,66 @@ export default function Inbox() {
   return (
     <Flex minHeight="100vh">
       {/* Sidebar */}
-      <Box bg="gray.100" w="220px" p={4}>
-        <VStack spacing={4} align="stretch">
-          <Button
-            colorScheme={view === "send" ? "green" : "gray"}
+      <Box bg="#1b1b1b" p={4} minW="200px" height="100vh">
+        <VStack align="start" spacing={6}>
+          <Text fontWeight="bold" fontSize="lg">Messages</Text>
+
+          <Box
+            display="flex"
+            alignItems="center"
+            p={2}
+            borderRadius="md"
             onClick={() => setView("send")}
+            _hover={{
+              bg: "gray.100",
+              color: "#43b164",
+              cursor: "pointer",
+            }}
+            bg={view === "send" ? "gray.800" : "transparent"}
+            color={view === "send" ? "#43b164" : "white"}
+            w="100%"
           >
-            Send Message
-          </Button>
-          <Button
-            colorScheme={view === "chats" ? "green" : "gray"}
+            <Icon as={MdSend} mr={2} />
+            <Text>Send Message</Text>
+          </Box>
+
+          <Box
+            display="flex"
+            alignItems="center"
+            p={2}
+            borderRadius="md"
             onClick={() => setView("chats")}
+            _hover={{
+              bg: "gray.100",
+              color: "#43b164",
+              cursor: "pointer",
+            }}
+            bg={view === "chats" ? "gray.800" : "transparent"}
+            color={view === "chats" ? "#43b164" : "white"}
+            w="100%"
           >
-            All Chats
-          </Button>
+            <Icon as={MdChatBubble} mr={2} />
+            <Text>All Chats</Text>
+          </Box>
         </VStack>
       </Box>
 
       {/* Main Content */}
-      <Box flex="1" bg="gray.900" color="white">
-        <Box bg="green.700" py={6} px={10}>
-          <Box textAlign="center">
-            <Box as="h2" fontSize="2xl" fontWeight="bold">
-              {view === "send" ? "Your Messages" : "Your Inbox"}
-            </Box>
-            <Box mt={1} fontSize="md">
-              Connect with other music lovers.
-            </Box>
-          </Box>
+      <Box flex="1" bg="gray.900" color="white" px={10} py={10}>
+        <Box textAlign="center" mb={6}>
+          <Text fontSize="2xl" fontWeight="bold">
+            {view === "send" ? "Send a Message" : "Your Chats"}
+          </Text>
+          <Text mt={1} fontSize="md" color="gray.300">
+            Connect with other music lovers.
+          </Text>
         </Box>
 
-        <Box p={10}>{view === "send" ? <MessageForm /> : <ChatList />}</Box>
-
-        <Box
-          textAlign="center"
-          fontSize="sm"
-          color="gray.500"
-          py={6}
-          borderTop="1px solid #2d3748"
-        >
-        </Box>
+        {view === "send" ? <MessageForm /> : <ChatList />}
       </Box>
     </Flex>
   );
 }
+
+
 
