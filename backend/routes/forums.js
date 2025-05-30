@@ -114,7 +114,7 @@ router.patch("/:forumId", async (req, res) => {
         },
         ...recentPosts
       ].slice(0, 2);  // Hard limit to 2 posts
-      updates.recentPosts = updatedRecentPosts;
+      updates.recentPosts = updatedRecentPosts; 
 
       transaction.update(forumRef, updates);
     });
