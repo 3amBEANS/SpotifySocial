@@ -171,7 +171,7 @@ export default function ForumPage() {
   }, []);
 
   return (
-    <Box minH="100vh" p={4} bg="black">
+    <Box minH="100vh" p={4} >
       <Box maxW="7xl" mx="auto">
         <VStack spacing={6} align="stretch">
           {/* Header */}
@@ -221,7 +221,7 @@ export default function ForumPage() {
                     variant={selectedCategory === category ? "solid" : "outline"}
                     size="sm"
                     onClick={() => setSelectedCategory(category)}
-                    bg={selectedCategory === category ? "green" : "transparent"}
+                    bg={selectedCategory === category ? "#43b164" : "transparent"}
                     borderColor="spotify.primary"
                     color={selectedCategory === category ? "white" : "spotify.primary"}
                     _hover={{

@@ -90,7 +90,7 @@ export default function DiscoverPage() {
   };
 
   return (
-    <Box minH="100vh" p={4} bg="black">
+    <Box minH="100vh" p={4} >
       <Box maxW="7xl" mx="auto">
         <VStack spacing={6} align="stretch">
           {/* Header */}
