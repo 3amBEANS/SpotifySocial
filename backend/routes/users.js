@@ -146,6 +146,9 @@ router.post("/:id/setup", async (req, res) => {
         bio: "",
         tags: [],
         isProfileSetup: true,
+        showLikedSongs: true,
+        showTopArtists: true,
+        showTopSongs: true,
       },
       { merge: true }
     );
