@@ -1,5 +1,6 @@
 # SpotifyConnect
 
+<<<<<<< Updated upstream
 # Project Description
 
 The purpose of the app is to keep users engaged with Spotify by allowing them to view their top artists and songs, create a profile that other users can view, post in message boards, and message other users.
@@ -12,10 +13,34 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 4. [Tech Stack](#Tech Stack)
 5. [Credits](#Credits)
 
+<<<<<<< HEAD
+# Installation 
+=======
+Spotify Connect
+
+# Project Description
+
+The purpose of the app is to keep users engaged with Spotify by allowing them to view their top artists and songs, create a profile that other users can view, post in message boards, and message other users. 
+
+# Table of Contents
+
+Installation
+Login
+Major Components and Features
+Tech Stack
+Credits
+
+# Installation 
+
+>>>>>>> Stashed changes
+Cd into the backend folder and type the command `npm install`, 
+Follow the instructions in this GitHub repository to download the `test-spotify-site.local-key. pem ` and to host your server on `https://test-spotify-site.local:5050`: 
+=======
 # Installation
 
 Cd into the backend folder and type the command `npm install`,
 Follow the instructions in this GitHub repository to download the `test-spotify-site.local-key. pem ` and to host your server on `https://test-spotify-site.local:5050`:
+>>>>>>> 186ce7bbcaa4636f6020df132974d1894593da3f
 Contact one of the members in order to gain access to the .env files and permissions.json file
 Run `npm start` in your backend file to run your server
 Cd into the spotifysocialapp folder
@@ -29,8 +54,23 @@ App sends you to the server’s /login route
 Server gets your access token and saves it in Firebase.
 User gets sent to the profile page, using their tokens to fetch your data.
 
+<<<<<<< Updated upstream
+# Major Components and Features
+<<<<<<< HEAD
+=======
+# How to use the Project
+
+User clicks “Sign in” to sign in with their Spotify account
+App sends you to the server’s /login route
+Server gets your access token and saves it in Firebase.
+User gets sent to the profile page, using their tokens to fetch your data.
+
 # Major Components and Features
 
+>>>>>>> Stashed changes
+=======
+
+>>>>>>> 186ce7bbcaa4636f6020df132974d1894593da3f
 Library Page with a sidebar to 3 pages
 Liked Songs Page where user’s 50 most recently liked songs are shown.
 Top Artists Page which displays the user’s most listened to artists of All Time, Last Year, Last Month.
@@ -40,9 +80,35 @@ Discover page that shows users' profiles and allows you to message them
 Inbox page that shows your chats with other users
 Forum page that displays all of the discussion boards, which users can click on to access the posts
 
+<<<<<<< Updated upstream
 # How to use the Project
 
 # Tech Stack
+<<<<<<< HEAD
+=======
+
+# Tech Stack
+
+>>>>>>> Stashed changes
+React
+JavaScript
+
+# Credits:
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
+Spotify Web API
+ChakraUI
+Aiden Ha
+Julia Rieger
+Mehnaz Tasnim
+David Villon
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
+=======
 
 React
 JavaScript
@@ -61,3 +127,4 @@ JavaScript
 - [Julia Rieger](https://github.com/jvrieger)
 - [Mehnaz Tasnim](https://github.com/Mehnaz300)
 - [David Villon](https://github.com/davidvillon04)
+>>>>>>> 186ce7bbcaa4636f6020df132974d1894593da3f

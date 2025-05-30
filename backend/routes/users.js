@@ -1,17 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../firebase");
+const fetch = require("node-fetch");
 
-// GET /api/users/public
+// ✅ GET /api/users/public – returns only public users with id + display_name
 router.get("/public", async (req, res) => {
   try {
     const snapshot = await db.collection("users").where("isPublic", "==", true).get();
-
-    const users = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
+    const users = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        display_name: data.display_name || data.username || data.name || "Unnamed User",
+        avatar_url: data.avatar_url || data.profile_picture || null, // added
+      };
+    });
     res.status(200).json(users);
   } catch (err) {
     console.error("Error fetching users:", err);
@@ -32,7 +35,6 @@ router.get("/:id/top", async (req, res) => {
       return res.status(400).json({ error: "No Spotify token available" });
     }
 
-    // define headers for Spotify calls
     const headers = { Authorization: `Bearer ${accessToken}` };
 
     const [artistsRes, tracksRes, likedRes] = await Promise.all([
@@ -41,7 +43,6 @@ router.get("/:id/top", async (req, res) => {
       fetch("https://api.spotify.com/v1/me/tracks?limit=4", { headers }),
     ]);
 
-    // check for any upstream errors
     if (!artistsRes.ok || !tracksRes.ok || !likedRes.ok) {
       console.error(
         "Spotify API error:",
@@ -55,7 +56,6 @@ router.get("/:id/top", async (req, res) => {
       return res.status(502).json({ error: "Spotify upstream error" });
     }
 
-    // pull out the JSON
     const artistsData = await artistsRes.json();
     const tracksData = await tracksRes.json();
     const likedData = await likedRes.json();
@@ -97,13 +97,13 @@ router.post("/:id/setup", async (req, res) => {
       {
         username,
         createdAt: formatted,
-        avatar_url: req.body.avatar_url,
+        avatar_url: avatar_url,
         display_name,
         location,
         isPublic: true,
         bio: "",
         tags: [],
-        isProfileSetup: true, // now mark setup complete
+        isProfileSetup: true,
       },
       { merge: true }
     );
@@ -115,7 +115,7 @@ router.post("/:id/setup", async (req, res) => {
   }
 });
 
-// ✅ POST /api/users/seed
+// ✅ POST /api/users/seed – Add mock users
 router.post("/seed", async (req, res) => {
   try {
     const mockUsers = [
@@ -146,9 +146,12 @@ router.post("/seed", async (req, res) => {
     await batch.commit();
     res.status(200).send("Mock users added");
   } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ error: "Failed to fetch users" });
+    console.error("Seeding error:", err);
+    res.status(500).send("Seeding failed");
+    console.error("Error seeding users:", err);
+    res.status(500).json({ error: "Failed to seed users" });
   }
 });
 
 module.exports = router;
+

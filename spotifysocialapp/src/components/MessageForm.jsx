@@ -49,6 +49,7 @@ export default function MessageForm() {
         from: user.id,
         to: recipient,
         message,
+        participants: [user.id, recipient], // ✅ FIXED: now correctly stored
         timestamp: serverTimestamp(),
       });
       setMessage("");

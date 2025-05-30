@@ -22,9 +22,9 @@ const SongList = ({ displayedCards, type, header }) => {
               src={
                 type === 'song'
                   ? card.image || `https://via.placeholder.com/300?text=Album+art+of+${card.title}`
-                  : card.image || `https://via.placeholder.com/300?text=Artist+${card.artist}`
+                  : card.image || `https://via.placeholder.com/300?text=Artist+${card.name}`
               } 
-              alt={type === 'song' ? `${card.title} cover` : `${card.artist} photo`}
+              alt={type === 'song' ? `${card.title} cover` : `${card.name} photo`}
             />
             <Box p={4}>
             {type === 'song' ? (
