@@ -52,7 +52,7 @@ export default function MessagePage() {
 
       {/* Main Content */}
       <Box flex="1" bg="gray.900" color="white">
-        <Box bg="green.700" py={6} px={10}>
+        <Box bg="transparent" py={6} px={10}>
           <Heading size="lg"><center>Your Messages</center></Heading>
           <Text mt={1}><center>Connect with other music lovers.</center></Text>
         </Box>
