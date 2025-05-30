@@ -39,7 +39,6 @@ export default function MessagePage() {
   };
 
   return (
-<<<<<<< HEAD
     <Flex minHeight="100vh">
       {/* Sidebar */}
       <Box bg="gray.100" w="220px" p={4}>
@@ -54,8 +53,12 @@ export default function MessagePage() {
       {/* Main Content */}
       <Box flex="1" bg="gray.900" color="white">
         <Box bg="transparent" py={6} px={10}>
-          <Heading size="lg"><center>Your Messages</center></Heading>
-          <Text mt={1}><center>Connect with other music lovers.</center></Text>
+          <Heading size="lg">
+            <center>Your Messages</center>
+          </Heading>
+          <Text mt={1}>
+            <center>Connect with other music lovers.</center>
+          </Text>
         </Box>
 
         <Box p={10}>
@@ -100,10 +103,5 @@ export default function MessagePage() {
         </Box>
       </Box>
     </Flex>
-=======
-    <>
-    </>
->>>>>>> c0b4911e7eac57977707694b25e873ce61c3a7fa
   );
 }
-
