@@ -151,7 +151,7 @@ export default function Navbar() {
           {profileSetup ? (
             <>
               <Link to="/profile" className="avatar-link">
-                <Avatar src={navAvatarUrl || undefined} name={user.display_name} size="sm" />
+                <Avatar src={navAvatarUrl || undefined} name={user?.display_name ?? ""} size="sm" />
               </Link>
 
               {/* vertical line between avatar & logout */}
