@@ -3,16 +3,14 @@ const router = express.Router();
 const db = require("../firebase");
 const fetch = require("node-fetch");
 
-// ✅ GET /api/users/public – returns only public users with id + display_name
+// ✅ GET /api/users/public – returns only public users with all their data
 router.get("/public", async (req, res) => {
   try {
     const snapshot = await db.collection("users").where("isPublic", "==", true).get();
     const users = snapshot.docs.map((doc) => {
-      const data = doc.data();
       return {
         id: doc.id,
-        display_name: data.display_name || data.username || data.name || "Unnamed User",
-        avatar_url: data.avatar_url || data.profile_picture || null, // added
+        ...doc.data()
       };
     });
     res.status(200).json(users);
