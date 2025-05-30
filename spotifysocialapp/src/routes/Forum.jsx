@@ -51,6 +51,7 @@ import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import TimeAgo from 'react-timeago';
 
+
 export default function ForumPage() {
   const { user, loading: authLoading } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("")
@@ -64,7 +65,27 @@ export default function ForumPage() {
     isPrivate: false,
   })
 
+  const formatTimeAgo = (timestamp) => {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000)
   
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  }
+  
+  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+    const interval = Math.floor(seconds / secondsInUnit)
+    if (interval >= 1) {
+      return `${interval} ${unit}${interval === 1 ? '' : 's'} ago`
+    }
+  }
+  
+  return 'Just now'
+}
 
   const [forums, setForums] = useState([]);
 
@@ -98,29 +119,51 @@ export default function ForumPage() {
   }
 
   const handleCreateForum = async () => {
-    const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`); 
-    if (newForum.title.trim() && newForum.description.trim()) {
+     if (newForum.title.trim() && newForum.description.trim()) {
+    try {
+      // 1. Get user data
+      const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
+      
+      // 2. Create forum object
       const forum = {
         name: newForum.title,
         description: newForum.description,
         category: newForum.category,
         memberCount: 1,
         postCount: 0,
-        lastActivity: Date.now().toString(),
+        lastActivity: Date.now(),
         isPopular: false,
         isPinned: false,
         moderators: [response.data.username],
+        members: [user.id],
         recentPosts: [],
-      }
-      console.log("Creating forum:", forum)
-      axios.post("https://test-spotify-site.local:5050/api/forums/seed", forum, { withCredentials: false })
-        .then((res) => {
-            console.log("Public users response:", res.data);
-        })
-        .catch((err) => console.error("Seeding error", err));
-      getForums();
+      };
+
+      // 3. Wait for creation to complete
+      await axios.post(
+        "https://test-spotify-site.local:5050/api/forums/seed", 
+        forum, 
+        { withCredentials: false }
+      );
+
+      // 4. Add slight delay for Firestore propagation
+      //await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // 5. Refresh forums
+      await getForums();
+      setNewForum({
+        title: "",
+        description: "",
+        category: "Discussion",
+        isPrivate: false,
+      });
+      
+      // 6. Close modal
       onClose();
+    } catch (err) {
+      console.error("Forum creation error:", err);
     }
+  }
   }
   
   useEffect(() => {
@@ -198,22 +241,22 @@ export default function ForumPage() {
           {/* Forums Grid */}
           <VStack spacing={6} align="stretch">
             {filteredForums.map((forum) => (
-              <Card key={forum.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s">
+              <Card key={forum.id} bg="#1a1a1a" border="none" _hover={{ bg: "#222" }} transition="background 0.2s" onClick={() => handleForumClick(forum.id)}>
                 <CardHeader pb={4}>
                   <Flex justify="space-between" align="flex-start">
                     <HStack spacing={3} align="flex-start">
                       <Flex w={12} h={12} borderRadius="lg" bg="spotify.primary" align="center" justify="center">
                         <Icon as={FaCommentDots} color="white" boxSize={6} />
                       </Flex>
-                      <Box flex={1}>
-                        <HStack spacing={2} mb={1}>
+                      <Box flex={1} >
+                        <HStack spacing={2} mb={1} >
                           <Text
                             color="white"
                             fontWeight="semibold"
                             _hover={{ color: "spotify.primary" }}
                             cursor="pointer"
                             transition="color 0.2s"
-                            onClick={() => handleForumClick(forum.id)}
+                            // onClick={() => handleForumClick(forum.id)}
                           > 
                             {forum.name}
                           </Text>
@@ -242,7 +285,7 @@ export default function ForumPage() {
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
                             <Text>Last Activity:</Text>
-                            <TimeAgo date={parseInt(forum.lastActivity)} />
+                            <TimeAgo date={forum.lastActivity} /> 
                           </HStack>
                         </HStack>
                       </Box>
@@ -284,9 +327,13 @@ export default function ForumPage() {
                             </Text>
                             <HStack spacing={3} mt={1} fontSize="xs" color="whiteAlpha.500">
                               <Text>by {post.author}</Text>
-                              <Text>{post.timestamp}</Text>
+                              <Text>{formatTimeAgo(
+                                typeof post.timestamp === 'string' 
+                                  ? parseInt(post.timestamp) 
+                                  : post.timestamp
+                              )}</Text>
                             </HStack>
-                            <HStack spacing={4} mt={2}>
+                            {/* <HStack spacing={4} mt={2}>
                               <Button
                                 variant="ghost"
                                 size="xs"
@@ -313,7 +360,7 @@ export default function ForumPage() {
                               >
                                 Share
                               </Button>
-                            </HStack>
+                            </HStack> */}
                           </Box>
                         </HStack>
                       </Box>

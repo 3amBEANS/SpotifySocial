@@ -36,6 +36,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../AuthContext";
 import TimeAgo from 'react-timeago';
+import { useNavigate } from 'react-router-dom'; 
 
 export default function ForumPost() {
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -44,18 +45,20 @@ export default function ForumPost() {
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const [newPost, setNewPost] = useState({ title: "", content: "" });
   const params = useParams();
+  const navigate = useNavigate();
 
   // pulled from Firebase posts data
   const [posts, setPosts] = useState([]);
 
   // Mock forum data
-  const forumData = {
+  const [forumData, setForumData] = useState({
     id: params.id,
-    name: "New Music Discoveries",
-    description: "Share and discover the latest tracks, albums, and artists",
-    memberCount: 15420,
-    postCount: 3240,
-  };
+    name: "Loading...",
+    description: "",
+    memberCount: 0,
+    postCount: 0
+  });
+
 
   
 
@@ -71,17 +74,28 @@ export default function ForumPost() {
         const response = await axios.get(`https://test-spotify-site.local:5050/api/posts/public?forumID=${forumID}`);
         //console.log(response.data);
         setPosts(response.data);
-        //return response.data;
+        return response.data;
+    } catch(e){
+        console.error("Error fetching posts:", e);
+    }    
+  }
+
+  const getForumData = async (forumID) => {
+    try {
+        const response = await axios.get(`https://test-spotify-site.local:5050/api/forums/public/${forumID}`);
+        //console.log(response.data);
+        setForumData(response.data)
     } catch(e){
         console.error("Error fetching posts:", e);
     }    
   }
 
   useEffect(() => {
-    if(forumData.id){
-        getPosts(forumData.id);
+    if(params.id){
+        getForumData(params.id);
+        getPosts(params.id);        
     }    
-  }, [forumData.id]);
+  }, [params.id]);
 
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
@@ -128,9 +142,8 @@ export default function ForumPost() {
   };
 
   const handleCreatePost = async () => {
-
+  try {
     const response = await axios.get(`https://test-spotify-site.local:5050/api/users/${user.id}`);
-    //console.log(response); <-- used for debugging purposes
 
     if (newPost.title.trim() && newPost.content.trim()) {
       const post = {
@@ -139,7 +152,7 @@ export default function ForumPost() {
         content: newPost.content,
         author: response.data.display_name,
         authorAvatar: response.data.avatar_url,
-        timestamp: Date.now().toString(),
+        timestamp: Date.now(), // Store as number
         likes: 0,
         isLiked: false,
         replies: 0,
@@ -148,20 +161,39 @@ export default function ForumPost() {
         tags: [],
       };
 
-      //sending to ui right now:
+      // Clear form immediately for UX
       setNewPost({ title: "", content: "" });
       setShowNewPostForm(false);
-      //console.log(params);
 
-      //later, updating the backend stuff:
-      axios.post("https://test-spotify-site.local:5050/api/posts/seed", post, { withCredentials: false })
-        .then((res) => {
-            console.log("Public users response:", res.data);
-        })
-        .catch((err) => console.error("Seeding error", err));
-      getPosts(forumData.id);
+      // Execute in proper sequence
+      await axios.post("/api/posts/seed", post)
+        .then(async (res) => {
+          const postPreview = {
+            title: newPost.title,
+            author: response.data.display_name,
+            authorAvatar: response.data.avatar_url,
+            timestamp: Date.now(), // Match number format
+            likes: 0,
+            replies: 0
+          };
+
+          await axios.patch(`/api/forums/${forumData.id}`, {
+            userId: user.id,
+            postId: res.data.id,
+            postPreview: postPreview
+          });
+          
+          // Wait 300ms for Firestore propagation
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Then refresh posts
+          await getPosts(forumData.id);
+        });
     }
-  };
+  } catch (err) {
+    console.error("Post creation error:", err);
+  }
+};
 
   return (
     <Box minH="100vh" p={4} bg="black">
@@ -173,7 +205,7 @@ export default function ForumPost() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.history.back()}
+                onClick={() => navigate('/forum')}
                 borderColor="whiteAlpha.200"
                 color="white"
                 _hover={{ bg: "whiteAlpha.100" }}
