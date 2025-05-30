@@ -247,7 +247,7 @@ export default function SetupModal({
             </VStack>
 
             {/* Right side: name & location form */}
-            <Box bg="gray.400" p={6} borderRadius="md">
+            <Box bg="#0f0e17" p={6} borderRadius="md">
               <VStack spacing={4} align="stretch">
                 <FormControl isInvalid={!!createError}>
                   <FormLabel color="white">Display Name</FormLabel>

@@ -53,21 +53,16 @@ export default function ProfileHeader({
                   <VStack className="profile-card-text-stack">
                     <Input
                       value={profile.name}
-                      onChange={(e) => onProfileChange("name", e.target.value)}
+                      onChange={(e) => onProfileChange("display_name", e.target.value)}
                       className="profile-card-input_name"
-                    />
-                    <Input
-                      value={profile.username}
-                      onChange={(e) => onProfileChange("username", e.target.value)}
-                      className="profile-card-input_username"
                     />
                   </VStack>
                 ) : (
                   <>
                     <Text className="profile-card-name">{profile.name}</Text>
-                    <Text className="profile-card-username">{profile.username}</Text>
                   </>
                 )}
+                <Text className="profile-card-username">@{profile.username}</Text>
                 <HStack className="profile-card-meta">
                   <Text>📍 {profile.location}</Text>
                   <Text>📅 Joined {profile.joinDate}</Text>

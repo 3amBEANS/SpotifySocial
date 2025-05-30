@@ -153,5 +153,28 @@ router.post("/seed", async (req, res) => {
   }
 });
 
-module.exports = router;
+router.patch("/:id", async (req, res) => {
+  const { isPublic, display_name, bio } = req.body;
+  const userRef = db.collection("users").doc(req.params.id);
 
+  // Only include fields your client actually sent
+  const updateData = {};
+  if (typeof isPublic !== "undefined") updateData.isPublic = isPublic;
+  if (typeof display_name !== "undefined") updateData.display_name = display_name;
+  if (typeof bio !== "undefined") updateData.bio = bio;
+
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: "Nothing to update" });
+  }
+
+  try {
+    await userRef.update(updateData);
+    const updated = await userRef.get();
+    return res.json(updated.data());
+  } catch (err) {
+    console.error("User update failed", err);
+    return res.status(500).json({ error: "Update failed" });
+  }
+});
+
+module.exports = router;
