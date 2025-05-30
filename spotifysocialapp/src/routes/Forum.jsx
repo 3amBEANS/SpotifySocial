@@ -186,7 +186,8 @@ export default function ForumPage() {
                 color="white"
                 border="1px solid"
                 borderColor="white"
-                _hover={{ opacity: 0.9 }}
+                _hover={{ bg: "#43b164",
+                  opacity: 0.9 }}
                 leftIcon={<Icon as={FaPlus} />}
               >
                 Create Forum
