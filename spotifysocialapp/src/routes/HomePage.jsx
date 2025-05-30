@@ -11,7 +11,6 @@ import {
   Card,
   CardBody,
   VStack,
-  HStack,
   Grid,
   Icon,
   Container,
@@ -21,8 +20,8 @@ import {
 } from "@chakra-ui/react";
 import { FaMusic, FaUsers, FaHeart, FaPlay, FaCommentDots, FaArrowRight } from "react-icons/fa";
 import { FaArrowTrendUp } from "react-icons/fa6";
-
 import { AuthContext } from "../AuthContext";
+import * as artistImages from "../assets/artists";
 import LoginModal from "../components/LoginModal";
 
 export default function HomePage() {
@@ -109,10 +108,10 @@ export default function HomePage() {
     },
   ];
   const navigate = useNavigate();
+  const images = Object.values(artistImages);
   const { user } = useContext(AuthContext);
   const [profileSetup, setProfileSetup] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const filmArtists = [...localFilmArtists, ...localFilmArtists];
 
   useEffect(() => {
     if (!user) {
@@ -134,10 +133,12 @@ export default function HomePage() {
     }
   };
 
-  const localFilmArtists = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    imageUrl: `/assets/artists/${i + 1}.jpg`,
+  const localFilmArtists = images.map((src, idx) => ({
+    id: idx + 1,
+    imageUrl: src,
   }));
+
+  const filmArtists = [...localFilmArtists, ...localFilmArtists];
 
   const scroll = keyframes`
     0%   { transform: translateX(0); }
@@ -146,14 +147,7 @@ export default function HomePage() {
 
   return (
     <Box minH="100vh">
-      {/* Hero Section */}
-      {/* <Box h="200px" bg="gray.900" overflow="hidden" position="relative" mb={8}> */}
       <Box position="relative" minH="240px" overflow="hidden" mb={8}>
-        {/* <Flex
-          as="div"
-          animation={`${scroll} 60s linear infinite`}
-          width="200%" // we duplicate the list
-        > */}
         <Flex
           as="div"
           position="absolute"
@@ -179,7 +173,6 @@ export default function HomePage() {
           ))}
         </Flex>
         <Container maxW="6xl" position="relative" zIndex={1} pt={16} pb={8} textAlign="center">
-          {/* <VStack spacing={6} textAlign="center"> */}
           <Heading size="2xl" color="white" fontWeight="bold" mb={4}>
             Welcome to Spotify Connect
           </Heading>
@@ -197,17 +190,11 @@ export default function HomePage() {
           >
             Explore Your Profile
           </Button>
-          {/* </VStack> */}
         </Container>
       </Box>
 
       {/* Login Modal */}
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
-
-      {/* <Box bg="linear-gradient(135deg, #71B340 0%, #669D31 100%)" py={20}> */}
-
-      {/* <Container maxW="6xl" py={16}> */}
-      {/* </Box> */}
 
       <Container maxW="6xl" py={16}>
         <VStack spacing={16} align="stretch">
