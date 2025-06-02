@@ -13,10 +13,10 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 # Table of Contents
 
 1. ### [Installation](https://github.com/3amBEANS/SpotifySocial/edit/main/README.md#installation-1)
-2. ### [How Login Works](#How-Login-Works)
-3. ### [Major Components and Features](#Major-Components-and-Feautres)
-4. ### [Tech Stack](#Tech-Stack)
-5. ### [Credits](#Credits)
+2. ### How Login Works
+3. ### [Major Components and Features](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#major-components-and-features-1)
+4. ### [Tech Stack](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#tech-stack-1)
+5. ### Credits
 
 # Installation 
 Cd into the backend folder and type the command `npm install`, 
