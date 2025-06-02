@@ -12,22 +12,22 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 
 # Table of Contents
 
-1. ### Installation
-2. ### How Login Works
-3. ### Major Components and Features
-4. ### Tech Stack
-5. ### Credits
+1. ### Installation[Installation]
+2. ### How Login Works[How-Login-Works]
+3. ### Major Components and Features[Major-Components-and-Feautres]
+4. ### Tech Stack[Tech-Stack]
+5. ### Credits[Credits]
 
 # Installation 
 Cd into the backend folder and type the command `npm install`, 
 Follow the instructions in this GitHub repository to download the `test-spotify-site.local-key. pem ' and to host your server on https://test-spotify-site.local:5050: https://github.com/swe-instructors-forge25/spotify-demo 
 
-Contact one of the members in order to gain access to the .env files and permissions.json file
+Contact one of the members in order to gain access to the .env files and permissions.json files
 Run `npm start` in your backend file to run your server
 
 Cd into the spotifysocialapp folder
 Run `Npm install` to install the dependencies
-Finally, run "npm run dev" to start the Vite app and open your localhost port to access the webpage.
+Finally, run `npm run dev` to start the Vite app and open your localhost port to access the webpage.
 
 # How Login Works
 
