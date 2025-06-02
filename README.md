@@ -13,7 +13,7 @@ The purpose of the app is to keep users engaged with Spotify by allowing them to
 # Table of Contents
 
 1. ### [Installation](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#installation-1)
-2. ### How Login Works
+2. ### [How Login Works](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#how-login-works-1)
 3. ### [Major Components and Features](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#major-components-and-features-1)
 4. ### [Tech Stack](https://github.com/3amBEANS/SpotifySocial/blob/main/README.md#tech-stack-1)
 5. ### Credits
