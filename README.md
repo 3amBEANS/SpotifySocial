@@ -57,6 +57,8 @@ React Frontend
 Express Backend
 Firebase Data Storage
 
+# Credits
+
 ### Technologies
 
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api)
